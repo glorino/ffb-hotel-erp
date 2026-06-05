@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+Disallow: /config/
+Disallow: /includes/
+Disallow: /auth/
+Disallow: /owner/
+Disallow: /admin/
+Disallow: /branch-manager/
+Disallow: /reception/
+Disallow: /kitchen/
+Disallow: /waiter/
+Disallow: /inventory/
+Disallow: /housekeeping/
+Disallow: /accountant/
+Disallow: /customer/
+Disallow: /modules/
+Disallow: /sidebars/
+Disallow: /database/
+Disallow: /vendor/
+Disallow: /assets/uploads/
+
+Sitemap: https://www.ffbhotel.com/hotel/sitemap.xml

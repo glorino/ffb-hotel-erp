@@ -1,0 +1,247 @@
+/* ============================================================
+   PREMIUM RESPONSIVE SYSTEM - FFB Hotel
+   ============================================================ */
+
+@media (max-width: 1400px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .gallery-grid .gallery-item:nth-child(4) { grid-column: span 1; }
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .rooms-layout {
+    grid-template-columns: 1fr;
+  }
+  .filter-sidebar {
+    position: static;
+    margin-bottom: 24px;
+  }
+  .about-hero .about-grid,
+  .story-section .about-grid {
+    gap: 40px;
+  }
+  .service-detail {
+    gap: 40px;
+  }
+  .footer-grid {
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 32px;
+  }
+  .footer-grid .footer-col:last-child {
+    grid-column: span 3;
+  }
+}
+
+@media (max-width: 992px) {
+  .header-nav { display: none; }
+  .header-actions .btn-login { display: none; }
+  .hamburger { display: flex; }
+
+  .hero-title { font-size: clamp(2.4rem, 8vw, 3.5rem); }
+  .hero-badge { font-size: 10px; padding: 6px 16px; }
+
+  .booking-search-card { margin-top: -60px; padding: 0 16px; }
+  .booking-search-inner { padding: 24px; }
+  .booking-search-inner .row > div { margin-bottom: 8px; }
+  .booking-search-inner .btn-search { min-height: 44px; }
+
+  .section-padding { padding: 80px 0; }
+  .section-header { margin-bottom: 40px; }
+
+  .room-grid .col-lg-4,
+  .service-grid .col-lg-4 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .about-hero .about-grid,
+  .story-section .about-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .about-image .experience-badge {
+    position: relative;
+    bottom: 0;
+    right: 0;
+    margin-top: 16px;
+    display: inline-block;
+  }
+
+  .mission-vision { grid-template-columns: 1fr; }
+
+  .contact-section { grid-template-columns: 1fr; gap: 40px; }
+  .service-detail { grid-template-columns: 1fr; gap: 32px; }
+
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+
+  .auth-card { margin: 100px auto 40px; padding: 32px 24px; }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 200px;
+  }
+  .gallery-grid .gallery-item:nth-child(1) {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  .gallery-grid .gallery-item:nth-child(4) { grid-column: span 2; }
+
+  .site-header { height: 72px; }
+  .site-header.scrolled { height: 64px; }
+  .header-container { padding: 0 16px; }
+  .header-logo .logo-main { font-size: 1.5rem; }
+
+  .page-header { padding: 130px 0 40px; }
+
+  footer .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  footer .footer-grid .footer-col:last-child {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero { min-height: 90vh; }
+  .hero-content { padding: 60px 16px 30px; }
+  .hero-title { font-size: clamp(2rem, 10vw, 2.8rem); }
+  .hero-title .hero-welcome { font-size: 0.3em; letter-spacing: 4px; }
+  .hero-subtitle { font-size: 0.95rem; }
+  .hero-badge { font-size: 9px; padding: 5px 14px; }
+  .hero-actions .btn { font-size: 10px; padding: 12px 20px; }
+  .hero-scroll-indicator { display: none; }
+
+  .booking-search-card { margin-top: -30px; padding: 0 12px; }
+
+  .section-padding { padding: 60px 0; }
+  .section-padding-sm { padding: 40px 0; }
+  .section-header { margin-bottom: 32px; }
+  .section-subtitle { font-size: 10px; letter-spacing: 3px; }
+  .section-title { font-size: clamp(1.5rem, 5vw, 2rem); }
+  .section-desc { font-size: 0.88rem; }
+
+  .room-grid .col-lg-4,
+  .room-grid .col-md-6 { flex: 0 0 100%; max-width: 100%; }
+
+  .room-card-horizontal { flex-direction: column; }
+  .room-card-horizontal .room-card-image {
+    width: 100%;
+    min-height: 200px;
+  }
+
+  .service-grid .col-lg-4,
+  .service-grid .col-md-6 { flex: 0 0 100%; max-width: 100%; }
+
+  .gallery-grid { gap: 8px; grid-auto-rows: 180px; }
+  .gallery-grid .gallery-item:nth-child(1) { height: 220px; }
+  .gallery-grid .gallery-item { height: 140px; }
+
+  .cta-section { padding: 80px 0; }
+  .cta-title { font-size: 1.6rem; }
+  .cta-actions .btn { width: 100%; }
+
+  .newsletter-section .input-group { flex-direction: column; gap: 8px; }
+  .newsletter-section .input-group .form-control { border-radius: var(--radius-sm) !important; }
+  .newsletter-section .input-group .btn { border-radius: var(--radius-sm) !important; width: 100%; }
+
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .stat-item .stat-number { font-size: 2rem; }
+  .stat-item .stat-label { font-size: 10px; }
+
+  .team-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+  .auth-card { margin: 90px auto 30px; padding: 28px 20px; }
+
+  .contact-section { gap: 28px; }
+  .contact-info-item { gap: 12px; }
+  .contact-info-item .ci-icon { width: 40px; height: 40px; font-size: 0.9rem; }
+
+  .booking-form-card { padding: 24px 20px; }
+  .form-row-3, .form-row-2 { grid-template-columns: 1fr; }
+
+  .map-container { height: 280px; }
+
+  .page-header { padding: 100px 0 32px; }
+  .page-header h1 { font-size: 1.8rem; }
+  .page-header p { font-size: 0.9rem; }
+
+  .footer-main { padding: 60px 0 30px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .footer-grid .footer-col:last-child { grid-column: span 1; }
+  .footer-brand-col .footer-desc { max-width: 100%; }
+  .footer-bottom .container { flex-direction: column; gap: 8px; text-align: center; }
+
+  body { font-size: 15px; }
+  h1 { font-size: clamp(1.8rem, 7vw, 2.2rem); }
+  h2 { font-size: clamp(1.4rem, 5vw, 1.7rem); }
+  h3 { font-size: clamp(1.15rem, 4vw, 1.35rem); }
+
+  .btn, .btn-gold, .btn-outline-gold { min-height: 44px; }
+  .btn-sm { min-height: 36px; padding: 8px 16px; }
+  .btn-lg { min-height: 48px; padding: 14px 28px; }
+
+  .hamburger { padding: 10px 6px; }
+  .hamburger span { width: 24px; }
+
+  .flash-message {
+    top: 80px;
+    right: 12px;
+    left: 12px;
+    max-width: none;
+    font-size: 0.85rem;
+  }
+
+  .breadcrumb { font-size: 9px; }
+  .modal { margin: 12px; }
+  .modal-header { padding: 16px 20px; }
+  .modal-body { padding: 20px; }
+  .modal-footer { padding: 12px 20px; }
+
+  .lightbox-overlay { padding: 20px; }
+  .lightbox-overlay .lightbox-close { top: 12px; right: 16px; font-size: 2rem; }
+  .lightbox-overlay .lightbox-caption { font-size: 0.9rem; bottom: 16px; }
+
+  .back-to-top { bottom: 20px; right: 20px; width: 42px; height: 42px; font-size: 1rem; }
+
+  .pagination .page-item { min-width: 36px; height: 36px; font-size: 11px; }
+
+  .table-scroll .data-table { min-width: 600px; }
+  .data-table th, .data-table td { padding: 10px 12px; font-size: 0.82rem; }
+
+  .mobile-overlay { max-width: 100%; padding: 100px 24px 32px; }
+  .mobile-overlay .mobile-nav-link { font-size: 1.3rem; padding: 12px 0; }
+
+  .gallery-item .gallery-view { width: 44px; height: 44px; font-size: 1rem; }
+}
+
+@media (max-width: 576px) {
+  .container { padding: 0 16px; }
+
+  .hero { min-height: 85vh; padding-top: 60px; }
+  .hero-content { padding: 40px 12px 20px; }
+  .hero-title { font-size: clamp(1.8rem, 12vw, 2.4rem); }
+  .hero-subtitle { font-size: 0.88rem; }
+  .hero-badge { font-size: 8px; padding: 4px 12px; letter-spacing: 2px; }
+  .hero-actions { flex-direction: column; gap: 10px; }
+  .hero-actions .btn { width: 100%; font-size: 0.8rem; padding: 12px 16px; }
+
+  .booking-search-card { margin-top: -40px; padding: 0 8px; }
+  .booking-search-inner { padding: 16px; border-radius: var(--radius); }
+
+  .gallery-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .gallery-grid .gallery-item:nth-child(1) { grid-column: span 2; }
+  .gallery-grid .gallery-item { height: 120px; }
+
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .team-grid { grid-template-columns: 1fr; }
+
+  .page-header { padding: 85px 0 24px; }
+
+  .footer-wave { height: 40px; }
+  .footer-wave svg { height: 40px; }
+}

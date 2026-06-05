@@ -1,0 +1,31 @@
+# Dependencies
+vendor/
+
+# Uploads
+assets/uploads/*
+!assets/uploads/.gitkeep
+
+# Environment
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+error_log
+
+# Temp
+tmp/
+temp/

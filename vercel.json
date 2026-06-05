@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "**/*.php",
+      "use": "@vercel/php"
+    }
+  ],
+  "routes": [
+    { "src": "^/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "^/favicon\\.ico$", "dest": "/favicon.ico" },
+    { "src": "^/robots\\.txt$", "dest": "/robots.txt" },
+    { "src": "^/sitemap\\.xml$", "dest": "/sitemap.xml" },
+    { "src": "/(.*)\\.php$", "dest": "/$1.php" },
+    { "src": "/(.*)", "dest": "/$1.php", "methods": ["GET", "POST"] }
+  ],
+  "env": {
+    "DATABASE_URL": "postgresql://neondb_owner:npg_f1ndjyuvbC6R@ep-plain-sky-aq9k1xu9-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require",
+    "APP_ENV": "production",
+    "APP_URL": "https://hotel-glopresc.vercel.app"
+  }
+}
