@@ -61,44 +61,33 @@ $room_types = getRoomTypes();
     </div>
 </section>
 
-<div class="booking-search-card">
-    <div class="container">
-        <div class="booking-search-inner" data-animate>
-            <form action="<?php echo BASE_URL; ?>rooms.php" method="GET" class="search-form">
-                <div class="row g-3 align-items-end">
-                    <div class="col-lg-3 col-md-6">
-                        <label class="form-label">Check-In</label>
-                        <input type="date" class="form-control" name="check_in" id="heroCheckIn" min="<?php echo date('Y-m-d'); ?>">
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <label class="form-label">Check-Out</label>
-                        <input type="date" class="form-control" name="check_out" id="heroCheckOut" min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>">
-                    </div>
-                    <div class="col-lg-2 col-md-4">
-                        <label class="form-label">Guests</label>
-                        <select class="form-select" name="guests">
-                            <?php for ($i = 1; $i <= 6; $i++): ?>
-                            <option value="<?php echo $i; ?>"><?php echo $i; ?> Guest<?php echo $i > 1 ? 's' : ''; ?></option>
-                            <?php endfor; ?>
-                        </select>
-                    </div>
-                    <div class="col-lg-2 col-md-4">
-                        <label class="form-label">Room Type</label>
-                        <select class="form-select" name="room_type">
-                            <option value="">All Types</option>
-                            <?php foreach ($room_types as $rt): ?>
-                            <option value="<?php echo $rt['id']; ?>"><?php echo htmlspecialchars($rt['name']); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="col-lg-2 col-md-4">
-                        <button type="submit" class="btn btn-gold btn-search">
-                            <i class="bi bi-search me-2"></i>Search
-                        </button>
-                    </div>
+<div style="max-width:680px;margin:-60px auto 0;position:relative;z-index:3;padding:0 16px;">
+    <div style="background:var(--navy-mid);border-radius:var(--radius-lg);padding:24px 28px;box-shadow:0 20px 50px rgba(0,0,0,0.3);">
+        <form action="<?php echo BASE_URL; ?>rooms.php" method="GET">
+            <div class="row g-2 align-items-end">
+                <div class="col-lg-4 col-md-6">
+                    <label style="font-family:var(--font-accent);font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px;">Check-In</label>
+                    <input type="date" class="form-control" name="check_in" id="heroCheckIn" min="<?php echo date('Y-m-d'); ?>" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:8px 12px;font-size:0.82rem;color:var(--white);width:100%;">
                 </div>
-            </form>
-        </div>
+                <div class="col-lg-4 col-md-6">
+                    <label style="font-family:var(--font-accent);font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px;">Check-Out</label>
+                    <input type="date" class="form-control" name="check_out" id="heroCheckOut" min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:8px 12px;font-size:0.82rem;color:var(--white);width:100%;">
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <label style="font-family:var(--font-accent);font-size:9px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px;">Guests</label>
+                    <select name="guests" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);padding:8px 12px;font-size:0.82rem;color:var(--white);width:100%;">
+                        <?php for ($i = 1; $i <= 6; $i++): ?>
+                        <option value="<?php echo $i; ?>" style="background:var(--navy);color:var(--white);"><?php echo $i; ?> Guest<?php echo $i > 1 ? 's' : ''; ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <button type="submit" class="btn btn-gold" style="width:100%;padding:8px 16px;font-size:0.78rem;letter-spacing:1.5px;">
+                        <i class="bi bi-search me-1"></i>Search
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
