@@ -38,131 +38,68 @@ if (empty($suites)) {
 
 <section class="section-padding">
     <div class="container">
-        <!-- Penthouse -->
-        <div class="suite-card">
-            <div class="suite-gallery">
-                <div class="suite-main-img" style="background: linear-gradient(135deg, #0a0a1a, #1a1a2e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:4rem;">
-                    <i class="bi bi-building"></i>
+        <div class="listing-grid">
+            <div class="listing-card">
+                <div class="listing-image">
+                    <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400&h=280&fit=crop" alt="The Penthouse" loading="lazy">
+                    <button class="listing-wishlist" aria-label="Save to wishlist"><i class="bi bi-heart"></i></button>
+                    <div class="listing-status" style="background:rgba(245,158,11,0.85);">Ultimate Luxury</div>
                 </div>
-                <div class="suite-sub-img" style="background: linear-gradient(135deg, #16213e, #1a1a2e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:2rem;">
-                    <i class="bi bi-house-heart"></i>
-                </div>
-                <div class="suite-sub-img" style="background: linear-gradient(135deg, #1a1a2e, #16213e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:2rem;">
-                    <i class="bi bi-stars"></i>
-                </div>
-            </div>
-            <div class="suite-content">
-                <div class="suite-type">&#9733; Ultimate Luxury</div>
-                <h2 class="suite-name">The Penthouse</h2>
-                <p class="suite-desc">
-                    The epitome of luxury living, our Penthouse spans the entire top floor with a private rooftop terrace, 
-                    infinity pool, and 360-degree panoramic city views. Featuring a grand living room, formal dining for 
-                    eight, a fully equipped gourmet kitchen, private cinema, and a master suite with a spa-like bathroom. 
-                    Your personal butler is available 24/7 to cater to your every need.
-                </p>
-                <div class="suite-amenities">
-                    <span class="amenity-badge"><i class="bi bi-wifi"></i> Free WiFi</span>
-                    <span class="amenity-badge"><i class="bi bi-snow"></i> A/C</span>
-                    <span class="amenity-badge"><i class="bi bi-tv"></i> Cinema Room</span>
-                    <span class="amenity-badge"><i class="bi bi-water"></i> Private Pool</span>
-                    <span class="amenity-badge"><i class="bi bi-cup-hot"></i> Full Kitchen</span>
-                    <span class="amenity-badge"><i class="bi bi-person-badge"></i> Butler Service</span>
-                    <span class="amenity-badge"><i class="bi bi-tree"></i> Rooftop Terrace</span>
-                    <span class="amenity-badge"><i class="bi bi-people"></i> 6 Guests</span>
-                </div>
-                <div class="suite-footer">
-                    <div>
-                        <div class="suite-price"><?php echo CURRENCY_SYMBOL; ?>950,000 <small>/ night</small></div>
+                <div class="listing-body">
+                    <div class="listing-type">&#9733; The Penthouse</div>
+                    <h3 class="listing-title">The Penthouse</h3>
+                    <p class="listing-desc">The epitome of luxury living, spanning the entire top floor with a private rooftop terrace, infinity pool, and 360-degree city views.</p>
+                    <div class="listing-features">
+                        <span><i class="bi bi-people"></i> 6 guests</span>
+                        <span><i class="bi bi-water"></i> Pool</span>
+                        <span><i class="bi bi-person-badge"></i> Butler</span>
                     </div>
-                    <a href="<?php echo BASE_URL; ?>booking.php?room_type=5" class="btn btn-gold btn-lg">
-                        <i class="bi bi-calendar-check me-2"></i>Book This Suite
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Presidential Suite -->
-        <div class="suite-card">
-            <div class="suite-gallery">
-                <div class="suite-main-img" style="background: linear-gradient(135deg, #1a1a2e, #16213e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:4rem;">
-                    <i class="bi bi-building"></i>
-                </div>
-                <div class="suite-sub-img" style="background: linear-gradient(135deg, #16213e, #1a1a2e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:2rem;">
-                    <i class="bi bi-journal"></i>
-                </div>
-                <div class="suite-sub-img" style="background: linear-gradient(135deg, #1a1a2e, #16213e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:2rem;">
-                    <i class="bi bi-cup-straw"></i>
-                </div>
-            </div>
-            <div class="suite-content">
-                <div class="suite-type">&#9733; Presidential Class</div>
-                <h2 class="suite-name">Presidential Suite</h2>
-                <p class="suite-desc">
-                    A statement of prestige and sophistication, our Presidential Suite offers a magnificent living space 
-                    with separate dining room, study, and a palatial bedroom. Floor-to-ceiling windows frame breathtaking 
-                    city panoramas. Enjoy exclusive lounge access, private check-in, and a dedicated concierge. The marble 
-                    bathroom features a deep soaking tub and rain shower.
-                </p>
-                <div class="suite-amenities">
-                    <span class="amenity-badge"><i class="bi bi-wifi"></i> Free WiFi</span>
-                    <span class="amenity-badge"><i class="bi bi-snow"></i> A/C</span>
-                    <span class="amenity-badge"><i class="bi bi-tv"></i> 65" TV</span>
-                    <span class="amenity-badge"><i class="bi bi-water"></i> Jacuzzi</span>
-                    <span class="amenity-badge"><i class="bi bi-book"></i> Study Room</span>
-                    <span class="amenity-badge"><i class="bi bi-person-badge"></i> Butler Service</span>
-                    <span class="amenity-badge"><i class="bi bi-cup-straw"></i> Private Dining</span>
-                    <span class="amenity-badge"><i class="bi bi-people"></i> 4 Guests</span>
-                </div>
-                <div class="suite-footer">
-                    <div>
-                        <div class="suite-price"><?php echo CURRENCY_SYMBOL; ?>600,000 <small>/ night</small></div>
+                    <div class="listing-footer">
+                        <div class="listing-price"><?php echo CURRENCY_SYMBOL; ?>950,000 <span>/night</span></div>
+                        <a href="<?php echo BASE_URL; ?>booking.php?room_type=5" class="listing-book">Book Now</a>
                     </div>
-                    <a href="<?php echo BASE_URL; ?>booking.php?room_type=4" class="btn btn-gold btn-lg">
-                        <i class="bi bi-calendar-check me-2"></i>Book This Suite
-                    </a>
                 </div>
             </div>
-        </div>
-
-        <!-- Luxury Suite -->
-        <div class="suite-card">
-            <div class="suite-gallery">
-                <div class="suite-main-img" style="background: linear-gradient(135deg, #16213e, #1a1a2e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:4rem;">
-                    <i class="bi bi-building"></i>
+            <div class="listing-card">
+                <div class="listing-image">
+                    <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&h=280&fit=crop" alt="Presidential Suite" loading="lazy">
+                    <button class="listing-wishlist" aria-label="Save to wishlist"><i class="bi bi-heart"></i></button>
+                    <div class="listing-status" style="background:rgba(245,158,11,0.85);">Presidential Class</div>
                 </div>
-                <div class="suite-sub-img" style="background: linear-gradient(135deg, #1a1a2e, #16213e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:2rem;">
-                    <i class="bi bi-heart"></i>
-                </div>
-                <div class="suite-sub-img" style="background: linear-gradient(135deg, #16213e, #1a1a2e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:2rem;">
-                    <i class="bi bi-flower1"></i>
-                </div>
-            </div>
-            <div class="suite-content">
-                <div class="suite-type">&#9733; Luxury Experience</div>
-                <h2 class="suite-name">Luxury Suite</h2>
-                <p class="suite-desc">
-                    Elegantly designed with a separate living area and sumptuous bedroom, the Luxury Suite offers 
-                    the perfect balance of space and sophistication. Unwind in your private jacuzzi, enjoy complimentary 
-                    champagne upon arrival, and experience the personalized attention of our dedicated suite concierge. 
-                    Every detail has been carefully curated for an unforgettable stay.
-                </p>
-                <div class="suite-amenities">
-                    <span class="amenity-badge"><i class="bi bi-wifi"></i> Free WiFi</span>
-                    <span class="amenity-badge"><i class="bi bi-snow"></i> A/C</span>
-                    <span class="amenity-badge"><i class="bi bi-tv"></i> 55" TV</span>
-                    <span class="amenity-badge"><i class="bi bi-water"></i> Jacuzzi</span>
-                    <span class="amenity-badge"><i class="bi bi-house-heart"></i> Living Room</span>
-                    <span class="amenity-badge"><i class="bi bi-person-badge"></i> Butler Service</span>
-                    <span class="amenity-badge"><i class="bi bi-cup-hot"></i> Mini Bar</span>
-                    <span class="amenity-badge"><i class="bi bi-people"></i> 3 Guests</span>
-                </div>
-                <div class="suite-footer">
-                    <div>
-                        <div class="suite-price"><?php echo CURRENCY_SYMBOL; ?>350,000 <small>/ night</small></div>
+                <div class="listing-body">
+                    <div class="listing-type">&#9733; Presidential Suite</div>
+                    <h3 class="listing-title">Presidential Suite</h3>
+                    <p class="listing-desc">A statement of prestige with separate dining room, study, and palatial bedroom. Floor-to-ceiling windows with breathtaking city panoramas.</p>
+                    <div class="listing-features">
+                        <span><i class="bi bi-people"></i> 4 guests</span>
+                        <span><i class="bi bi-water"></i> Jacuzzi</span>
+                        <span><i class="bi bi-book"></i> Study</span>
                     </div>
-                    <a href="<?php echo BASE_URL; ?>booking.php?room_type=3" class="btn btn-gold btn-lg">
-                        <i class="bi bi-calendar-check me-2"></i>Book This Suite
-                    </a>
+                    <div class="listing-footer">
+                        <div class="listing-price"><?php echo CURRENCY_SYMBOL; ?>600,000 <span>/night</span></div>
+                        <a href="<?php echo BASE_URL; ?>booking.php?room_type=4" class="listing-book">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="listing-card">
+                <div class="listing-image">
+                    <img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=400&h=280&fit=crop" alt="Luxury Suite" loading="lazy">
+                    <button class="listing-wishlist" aria-label="Save to wishlist"><i class="bi bi-heart"></i></button>
+                    <div class="listing-status" style="background:rgba(245,158,11,0.85);">Luxury Experience</div>
+                </div>
+                <div class="listing-body">
+                    <div class="listing-type">&#9733; Luxury Suite</div>
+                    <h3 class="listing-title">Luxury Suite</h3>
+                    <p class="listing-desc">Elegantly designed with a separate living area, private jacuzzi, complimentary champagne, and dedicated suite concierge.</p>
+                    <div class="listing-features">
+                        <span><i class="bi bi-people"></i> 3 guests</span>
+                        <span><i class="bi bi-water"></i> Jacuzzi</span>
+                        <span><i class="bi bi-house-heart"></i> Living Room</span>
+                    </div>
+                    <div class="listing-footer">
+                        <div class="listing-price"><?php echo CURRENCY_SYMBOL; ?>350,000 <span>/night</span></div>
+                        <a href="<?php echo BASE_URL; ?>booking.php?room_type=3" class="listing-book">Book Now</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -190,42 +127,43 @@ if (empty($suites)) {
 
 <section class="section-padding">
     <div class="container">
-        <?php foreach ($suites as $suite): 
-            $amenities_list = explode(',', $suite['amenities'] ?? '');
-        ?>
-        <div class="suite-card">
-            <div class="suite-gallery">
-                <div class="suite-main-img" style="background: linear-gradient(135deg, #1a1a2e, #16213e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:4rem;">
+        <?php $suite_photos = ['1631049307264-da0ec9d70304', '1590490362-c33d57733427', '1578683010236-d716f9a3f461', '1582719508461-905c673771fd', '1595576508890-0ad5c879a061']; ?>
+        <div class="listing-grid">
+            <?php foreach ($suites as $suite): 
+                $amenities_list = explode(',', $suite['amenities'] ?? '');
+                $amenities_list = array_slice($amenities_list, 0, 3);
+            ?>
+            <div class="listing-card">
+                <div class="listing-image">
                     <?php if ($suite['image']): ?>
-                    <img src="<?php echo BASE_URL; ?>assets/images/rooms/<?php echo htmlspecialchars($suite['image']); ?>" alt="<?php echo htmlspecialchars($suite['type_name']); ?>" style="width:100%;height:100%;object-fit:cover;">
+                    <img src="<?php echo BASE_URL; ?>assets/images/rooms/<?php echo htmlspecialchars($suite['image']); ?>" alt="<?php echo htmlspecialchars($suite['type_name']); ?>" loading="lazy">
                     <?php else: ?>
-                    <i class="bi bi-building"></i>
+                    <img src="https://images.unsplash.com/photo-<?php echo $suite_photos[$suite['id'] % 5]; ?>?w=400&h=280&fit=crop" alt="<?php echo htmlspecialchars($suite['type_name']); ?>" loading="lazy">
                     <?php endif; ?>
+                    <button class="listing-wishlist" aria-label="Save to wishlist"><i class="bi bi-heart"></i></button>
+                    <div class="listing-status" style="background:rgba(245,158,11,0.85);"><?php echo $suite['type_name'] === 'Penthouse' ? 'Ultimate' : ($suite['type_name'] === 'Presidential Suite' ? 'Presidential' : 'Luxury'); ?></div>
                 </div>
-                <div class="suite-sub-img" style="background: linear-gradient(135deg, #16213e, #1a1a2e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:2rem;"><i class="bi bi-house-heart"></i></div>
-                <div class="suite-sub-img" style="background: linear-gradient(135deg, #1a1a2e, #16213e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:2rem;"><i class="bi bi-stars"></i></div>
-            </div>
-            <div class="suite-content">
-                <div class="suite-type">&#9733; <?php echo $suite['type_name'] === 'Penthouse' ? 'Ultimate Luxury' : ($suite['type_name'] === 'Presidential Suite' ? 'Presidential Class' : 'Luxury Experience'); ?></div>
-                <h2 class="suite-name"><?php echo htmlspecialchars($suite['type_name']); ?> - Room <?php echo htmlspecialchars($suite['room_number']); ?></h2>
-                <p class="suite-desc"><?php echo htmlspecialchars($suite['description'] ?? $suite['type_description'] ?? 'Experience the height of luxury in this exceptional suite.'); ?></p>
-                <div class="suite-amenities">
-                    <?php foreach ($amenities_list as $amenity): ?>
-                    <span class="amenity-badge"><i class="bi bi-check-circle"></i> <?php echo htmlspecialchars(trim($amenity)); ?></span>
-                    <?php endforeach; ?>
-                    <span class="amenity-badge"><i class="bi bi-people"></i> <?php echo $suite['max_guests']; ?> Guests</span>
-                </div>
-                <div class="suite-footer">
-                    <div>
-                        <div class="suite-price"><?php echo formatMoney($suite['price_per_night']); ?> <small>/ night</small></div>
+                <div class="listing-body">
+                    <div class="listing-type">&#9733; <?php echo htmlspecialchars($suite['type_name']); ?></div>
+                    <h3 class="listing-title">Room <?php echo htmlspecialchars($suite['room_number']); ?></h3>
+                    <p class="listing-desc"><?php echo htmlspecialchars(truncate($suite['description'] ?? $suite['type_description'] ?? 'Experience the height of luxury.', 60)); ?></p>
+                    <div class="listing-features">
+                        <span><i class="bi bi-people"></i> <?php echo $suite['max_guests']; ?> guests</span>
+                        <?php foreach ($amenities_list as $amenity): ?>
+                        <span><i class="bi bi-check-lg"></i> <?php echo htmlspecialchars(trim($amenity)); ?></span>
+                        <?php endforeach; ?>
                     </div>
-                    <a href="<?php echo BASE_URL; ?>booking.php?room_id=<?php echo $suite['id']; ?>" class="btn btn-gold btn-lg">
-                        <i class="bi bi-calendar-check me-2"></i>Book This Suite
-                    </a>
+                    <div class="listing-footer">
+                        <div class="listing-price">
+                            <?php echo formatMoney($suite['price_per_night']); ?>
+                            <span>/night</span>
+                        </div>
+                        <a href="<?php echo BASE_URL; ?>booking.php?room_id=<?php echo $suite['id']; ?>" class="listing-book">Book Now</a>
+                    </div>
                 </div>
             </div>
+            <?php endforeach; ?>
         </div>
-        <?php endforeach; ?>
     </div>
 </section>
 <?php } ?>

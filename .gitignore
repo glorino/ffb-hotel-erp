@@ -29,3 +29,6 @@ error_log
 # Temp
 tmp/
 temp/
+
+.vercel
+.env*.local

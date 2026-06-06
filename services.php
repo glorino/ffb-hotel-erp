@@ -38,121 +38,90 @@ $has_db_services = !empty($services);
             <?php if (!empty($categories)): ?>
                 <?php foreach ($categories as $category): ?>
                 <div class="mb-5">
-                    <h3 style="font-family: var(--font-serif); color: var(--charcoal); margin-bottom: 24px;">
+                    <h3 style="font-family: var(--font-serif); color: var(--charcoal); margin-bottom: 20px;">
                         <i class="bi bi-<?php echo $category === 'room_service' ? 'bell' : ($category === 'restaurant' ? 'cup-straw' : ($category === 'pool' ? 'water' : ($category === 'gym' ? 'dumbbell' : ($category === 'spa' ? 'flower1' : 'star')))); ?> me-2" style="color: var(--gold);"></i>
                         <?php echo htmlspecialchars(ucwords(str_replace('_', ' ', $category))); ?>
                     </h3>
-                    <div class="row g-4">
+                    <div class="listing-grid">
+                        <?php $svc_idx = 0; ?>
                         <?php foreach ($services as $service): ?>
                             <?php if ($service['category'] === $category): ?>
-                            <div class="col-lg-4 col-md-6">
-                                <div class="service-card">
-                                    <div class="service-icon">
-                                        <i class="bi bi-<?php echo $category === 'room_service' ? 'bell' : ($category === 'restaurant' ? 'cup-straw' : ($category === 'pool' ? 'water' : ($category === 'gym' ? 'dumbbell' : ($category === 'spa' ? 'flower1' : 'star')))); ?>"></i>
-                                    </div>
-                                    <h3 class="service-title"><?php echo htmlspecialchars($service['name']); ?></h3>
-                                    <p class="service-desc"><?php echo htmlspecialchars($service['description'] ?? 'Premium service to enhance your stay.'); ?></p>
-                                    <div class="service-price">
-                                        <?php echo $service['price'] > 0 ? formatMoney($service['price']) : 'Complimentary'; ?>
+                            <?php $svc_grads = ['0b1320,#1a2a4a','1a0a20,#2a1a3a','0a2010,#1a3a2a','20100a,#3a2a1a','100a20,#2a1a3a']; ?>
+                            <div class="listing-card">
+                                <div class="listing-image">
+                                    <div class="listing-img-bg" style="background:linear-gradient(135deg,<?php echo $svc_grads[$svc_idx % 5]; ?>)"></div>
+                                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:2.2rem;"><i class="bi bi-<?php echo $category === 'room_service' ? 'bell' : ($category === 'restaurant' ? 'cup-straw' : ($category === 'pool' ? 'water' : ($category === 'gym' ? 'dumbbell' : ($category === 'spa' ? 'flower1' : 'star')))); ?>"></i></div>
+                                </div>
+                                <div class="listing-body">
+                                    <h3 class="listing-title" style="font-size:0.95rem;"><?php echo htmlspecialchars($service['name']); ?></h3>
+                                    <p class="listing-desc"><?php echo htmlspecialchars(truncate($service['description'] ?? 'Premium service to enhance your stay.', 70)); ?></p>
+                                    <div class="listing-footer" style="border:none;padding:8px 0 12px;">
+                                        <div class="listing-price" style="font-size:0.85rem;font-family:var(--font-accent);font-weight:500;">
+                                            <?php echo !empty($service['price']) ? formatMoney($service['price']) : 'Complimentary'; ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <?php $svc_idx++; ?>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     </div>
                 </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <div class="row g-4">
+                <div class="listing-grid">
+                    <?php $svc_idx = 0; ?>
                     <?php foreach ($services as $service): ?>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="service-card">
-                            <div class="service-icon"><i class="bi bi-star"></i></div>
-                            <h3 class="service-title"><?php echo htmlspecialchars($service['name']); ?></h3>
-                            <p class="service-desc"><?php echo htmlspecialchars($service['description'] ?? 'Premium service to enhance your stay.'); ?></p>
-                            <div class="service-price">
-                                <?php echo $service['price'] > 0 ? formatMoney($service['price']) : 'Complimentary'; ?>
+                    <?php $svc_grads = ['0b1320,#1a2a4a','1a0a20,#2a1a3a','0a2010,#1a3a2a','20100a,#3a2a1a','100a20,#2a1a3a']; ?>
+                    <div class="listing-card">
+                        <div class="listing-image">
+                            <div class="listing-img-bg" style="background:linear-gradient(135deg,<?php echo $svc_grads[$svc_idx % 5]; ?>)"></div>
+                            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:2.2rem;"><i class="bi bi-star"></i></div>
+                        </div>
+                        <div class="listing-body">
+                            <h3 class="listing-title" style="font-size:0.95rem;"><?php echo htmlspecialchars($service['name']); ?></h3>
+                            <p class="listing-desc"><?php echo htmlspecialchars(truncate($service['description'] ?? 'Premium service to enhance your stay.', 70)); ?></p>
+                            <div class="listing-footer" style="border:none;padding:8px 0 12px;">
+                                <div class="listing-price" style="font-size:0.85rem;font-family:var(--font-accent);font-weight:500;">
+                                    <?php echo !empty($service['price']) ? formatMoney($service['price']) : 'Complimentary'; ?>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <?php $svc_idx++; ?>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
         <?php else: ?>
-            <!-- Static premium services -->
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-bell"></i></div>
-                        <h3 class="service-title">24/7 Room Service</h3>
-                        <p class="service-desc">Round-the-clock in-room dining and concierge service. Enjoy gourmet meals, refreshments, and assistance whenever you need it.</p>
-                        <div class="service-price">Complimentary</div>
+            <div class="listing-grid">
+                <?php $svcs = [
+                    ['icon' => 'bell', 'title' => '24/7 Room Service', 'desc' => 'Round-the-clock in-room dining and concierge service. Enjoy gourmet meals whenever you need it.', 'price' => 'Complimentary', 'grad' => '0b1320,#1a2a4a'],
+                    ['icon' => 'cup-straw', 'title' => 'Fine Dining Restaurant', 'desc' => 'Award-winning restaurant serving exquisite local and international cuisine by world-class chefs.', 'price' => 'From '.CURRENCY_SYMBOL.'15,000', 'grad' => '1a0a20,#2a1a3a'],
+                    ['icon' => 'water', 'title' => 'Infinity Pool', 'desc' => 'Stunning infinity-edge swimming pool with panoramic city views and poolside bar.', 'price' => 'Complimentary', 'grad' => '0a2010,#1a3a2a'],
+                    ['icon' => 'dumbbell', 'title' => 'Fitness Center', 'desc' => 'State-of-the-art facility with premium cardio machines, free weights, and personal training.', 'price' => 'Complimentary', 'grad' => '20100a,#3a2a1a'],
+                    ['icon' => 'flower1', 'title' => 'Spa &amp; Wellness', 'desc' => 'Full-service spa offering massages, facials, body treatments, and holistic wellness therapies.', 'price' => 'From '.CURRENCY_SYMBOL.'25,000', 'grad' => '100a20,#2a1a3a'],
+                    ['icon' => 'building', 'title' => 'Conference &amp; Events', 'desc' => 'Versatile event spaces for business meetings, conferences, weddings, and celebrations.', 'price' => 'From '.CURRENCY_SYMBOL.'100,000', 'grad' => '0b1320,#1a2a4a'],
+                    ['icon' => 'car-front', 'title' => 'Airport Transfers', 'desc' => 'Luxury airport transfers in premium vehicles with professional chauffeurs.', 'price' => 'From '.CURRENCY_SYMBOL.'30,000', 'grad' => '1a0a20,#2a1a3a'],
+                    ['icon' => 'wifi', 'title' => 'High-Speed WiFi', 'desc' => 'Complimentary high-speed wireless internet throughout all properties.', 'price' => 'Complimentary', 'grad' => '0a2010,#1a3a2a'],
+                    ['icon' => 'bag', 'title' => 'Concierge Service', 'desc' => 'Personalized concierge service for bookings, recommendations, and special requests.', 'price' => 'Complimentary', 'grad' => '20100a,#3a2a1a'],
+                ]; ?>
+                <?php foreach ($svcs as $s): ?>
+                <div class="listing-card">
+                    <div class="listing-image">
+                        <div class="listing-img-bg" style="background:linear-gradient(135deg,<?php echo $s['grad']; ?>)"></div>
+                        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:2.2rem;"><i class="bi bi-<?php echo $s['icon']; ?>"></i></div>
+                    </div>
+                    <div class="listing-body">
+                        <h3 class="listing-title" style="font-size:0.95rem;"><?php echo $s['title']; ?></h3>
+                        <p class="listing-desc"><?php echo $s['desc']; ?></p>
+                        <div class="listing-footer" style="border:none;padding:8px 0 12px;">
+                            <div class="listing-price" style="font-size:0.85rem;font-family:var(--font-accent);font-weight:500;">
+                                <?php echo $s['price']; ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-cup-straw"></i></div>
-                        <h3 class="service-title">Fine Dining Restaurant</h3>
-                        <p class="service-desc">Award-winning restaurant serving exquisite local and international cuisine crafted by our world-class chefs.</p>
-                        <div class="service-price">From <?php echo CURRENCY_SYMBOL; ?>15,000</div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-water"></i></div>
-                        <h3 class="service-title">Infinity Pool</h3>
-                        <p class="service-desc">Stunning infinity-edge swimming pool with panoramic city views, poolside bar, and lounge area.</p>
-                        <div class="service-price">Complimentary</div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-dumbbell"></i></div>
-                        <h3 class="service-title">Fitness Center</h3>
-                        <p class="service-desc">State-of-the-art fitness facility equipped with premium cardio machines, free weights, and personal training.</p>
-                        <div class="service-price">Complimentary</div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-flower1"></i></div>
-                        <h3 class="service-title">Spa &amp; Wellness</h3>
-                        <p class="service-desc">Full-service spa offering massages, facials, body treatments, and holistic wellness therapies.</p>
-                        <div class="service-price">From <?php echo CURRENCY_SYMBOL; ?>25,000</div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-building"></i></div>
-                        <h3 class="service-title">Conference &amp; Events</h3>
-                        <p class="service-desc">Versatile event spaces for business meetings, conferences, weddings, and social celebrations.</p>
-                        <div class="service-price">From <?php echo CURRENCY_SYMBOL; ?>100,000</div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-car-front"></i></div>
-                        <h3 class="service-title">Airport Transfers</h3>
-                        <p class="service-desc">Luxury airport transfers in premium vehicles with professional chauffeurs.</p>
-                        <div class="service-price">From <?php echo CURRENCY_SYMBOL; ?>30,000</div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-wifi"></i></div>
-                        <h3 class="service-title">High-Speed WiFi</h3>
-                        <p class="service-desc">Complimentary high-speed wireless internet throughout all properties.</p>
-                        <div class="service-price">Complimentary</div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="service-card">
-                        <div class="service-icon"><i class="bi bi-bag"></i></div>
-                        <h3 class="service-title">Concierge Service</h3>
-                        <p class="service-desc">Personalized concierge service to assist with bookings, recommendations, and special requests.</p>
-                        <div class="service-price">Complimentary</div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </div>

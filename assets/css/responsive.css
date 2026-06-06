@@ -53,6 +53,8 @@
   .section-padding { padding: 80px 0; }
   .section-header { margin-bottom: 40px; }
 
+  .listing-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
   .room-grid .col-lg-4,
   .service-grid .col-lg-4 {
     flex: 0 0 50%;
@@ -125,13 +127,9 @@
   .section-title { font-size: clamp(1.5rem, 5vw, 2rem); }
   .section-desc { font-size: 0.88rem; }
 
-  .room-grid .col-lg-4,
-  .room-grid .col-md-6 { flex: 0 0 100%; max-width: 100%; }
-
-  .room-card-horizontal { flex-direction: column; }
-  .room-card-horizontal .room-card-image {
-    width: 100%;
-    min-height: 200px;
+  .listing-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
 
   .service-grid .col-lg-4,
@@ -221,6 +219,8 @@
 
 @media (max-width: 576px) {
   .container { padding: 0 16px; }
+
+  .listing-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
   .hero { min-height: 85vh; padding-top: 60px; }
   .hero-content { padding: 40px 12px 20px; }

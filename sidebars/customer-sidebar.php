@@ -1,5 +1,5 @@
-<?php
-$current_page = basename($_SERVER['PHP_SELF']);
+﻿<?php
+$current_page = $current_page ?? basename($_SERVER['PHP_SELF']);
 ?>
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">

@@ -166,41 +166,36 @@ $statuses = ['available', 'reserved', 'occupied', 'cleaning', 'maintenance', 'ou
                 <?php endif; ?>
 
                 <?php if (!empty($rooms)): ?>
-                <div class="row g-4">
+                <?php $room_photos = ['1631049307264-da0ec9d70304', '1590490362-c33d57733427', '1611892440504-42a792e24d32', '1578683010236-d716f9a3f461', '1582719508461-905c673771fd', '1566665797739-1674de7a421a', '1595576508890-0ad5c879a061', '1618773928121-c32242e63f39', '1602002418082-a4443e081dd1']; ?>
+                <div class="listing-grid">
                     <?php foreach ($rooms as $room): ?>
-                    <div class="col-md-6">
-                        <div class="room-card">
-                            <div class="room-card-image">
-                                <?php if ($room['image']): ?>
-                                <img src="<?php echo BASE_URL; ?>assets/images/rooms/<?php echo htmlspecialchars($room['image']); ?>" alt="<?php echo htmlspecialchars($room['type_name']); ?>" class="room-img">
-                                <?php else: ?>
-                                <div class="room-img" style="background: linear-gradient(135deg, #1a1a2e, #16213e); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:3rem;">
-                                    <i class="bi bi-building"></i>
-                                </div>
-                                <?php endif; ?>
-                                <div class="room-status-badge"><?php echo getRoomStatusBadge($room['status']); ?></div>
-                                <div class="room-type-badge"><?php echo htmlspecialchars($room['type_name']); ?></div>
-                                <div class="room-price-badge"><?php echo formatMoney($room['price_per_night']); ?> <small>/ night</small></div>
+                    <div class="listing-card">
+                        <div class="listing-image">
+                            <?php if ($room['image']): ?>
+                            <img src="<?php echo BASE_URL; ?>assets/images/rooms/<?php echo htmlspecialchars($room['image']); ?>" alt="<?php echo htmlspecialchars($room['type_name']); ?>" loading="lazy">
+                            <?php else: ?>
+                            <img src="https://images.unsplash.com/photo-<?php echo $room_photos[$room['id'] % 9]; ?>?w=400&h=280&fit=crop" alt="<?php echo htmlspecialchars($room['type_name']); ?>" loading="lazy">
+                            <?php endif; ?>
+                            <button class="listing-wishlist" aria-label="Save to wishlist"><i class="bi bi-heart"></i></button>
+                            <div class="listing-status" style="background: <?php echo $room['status'] === 'available' ? 'rgba(16,185,129,0.85)' : ($room['status'] === 'occupied' ? 'rgba(239,68,68,0.85)' : 'rgba(245,158,11,0.85)'); ?>"><?php echo htmlspecialchars(ucfirst($room['status'])); ?></div>
+                        </div>
+                        <div class="listing-body">
+                            <div class="listing-type"><?php echo htmlspecialchars($room['type_name']); ?></div>
+                            <h3 class="listing-title">Room <?php echo htmlspecialchars($room['room_number']); ?></h3>
+                            <p class="listing-desc"><?php echo htmlspecialchars(truncate($room['description'] ?? $room['type_description'] ?? 'Experience luxury at its finest.', 60)); ?></p>
+                            <div class="listing-features">
+                                <span><i class="bi bi-people"></i> <?php echo $room['max_guests']; ?> guests</span>
+                                <?php $amenities_list = array_slice(explode(',', $room['amenities'] ?? ''), 0, 2);
+                                foreach ($amenities_list as $amenity): ?>
+                                <span><i class="bi bi-check-lg"></i> <?php echo htmlspecialchars(trim($amenity)); ?></span>
+                                <?php endforeach; ?>
                             </div>
-                            <div class="room-card-body">
-                                <h3 class="room-type"><?php echo htmlspecialchars($room['type_name']); ?> - Room <?php echo htmlspecialchars($room['room_number']); ?></h3>
-                                <p class="room-desc"><?php echo htmlspecialchars(truncate($room['description'] ?? $room['type_description'] ?? 'Beautifully appointed room designed for your ultimate comfort and relaxation.', 150)); ?></p>
-                                <div class="room-amenities">
-                                    <span class="amenity-tag"><i class="bi bi-people"></i> <?php echo $room['max_guests']; ?> Guests</span>
-                                    <span class="amenity-tag"><i class="bi bi-layers"></i> Floor <?php echo htmlspecialchars($room['floor'] ?? 'N/A'); ?></span>
-                                    <?php
-                                    $amenities_list = explode(',', $room['amenities'] ?? '');
-                                    $amenities_list = array_slice($amenities_list, 0, 3);
-                                    foreach ($amenities_list as $amenity):
-                                    ?>
-                                    <span class="amenity-tag"><i class="bi bi-check-circle"></i> <?php echo htmlspecialchars(trim($amenity)); ?></span>
-                                    <?php endforeach; ?>
+                            <div class="listing-footer">
+                                <div class="listing-price">
+                                    <?php echo formatMoney($room['price_per_night']); ?>
+                                    <span>/night</span>
                                 </div>
-                            </div>
-                            <div class="room-card-footer">
-                                <a href="<?php echo BASE_URL; ?>booking.php?room_id=<?php echo $room['id']; ?>" class="btn btn-gold w-100">
-                                    <i class="bi bi-calendar-check me-2"></i>Book Now
-                                </a>
+                                <a href="<?php echo BASE_URL; ?>booking.php?room_id=<?php echo $room['id']; ?>" class="listing-book">Book Now</a>
                             </div>
                         </div>
                     </div>
