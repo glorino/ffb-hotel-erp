@@ -198,36 +198,26 @@ $room_types = getRoomTypes();
     </div>
 </section>
 
-<section class="section-padding bg-cream" id="restaurant">
+<section class="section-padding" id="restaurant">
     <div class="container">
-        <div class="row g-5 align-items-center justify-content-center">
-            <div class="col-xl-5 col-lg-6" data-animate>
-                <div class="section-header text-start mb-4">
-                    <span class="section-subtitle">Fine Dining</span>
-                    <h2 class="section-title">A Culinary Journey</h2>
-                    <div class="gold-divider" style="margin: 0 0 20px;"></div>
-                    <p class="section-desc" style="margin: 0;">Indulge in an exquisite culinary experience at our signature restaurant. Every dish is a masterpiece, crafted by world-class chefs using the finest ingredients from around the globe.</p>
-                </div>
-                <p style="color: var(--text-light); line-height: 1.8; margin-bottom: 24px;">
-                    Our restaurant offers a sophisticated ambiance with panoramic views, an extensive wine cellar boasting over 500 labels, and a menu that celebrates both local heritage and international culinary artistry.
-                </p>
-                <div class="d-flex gap-3 flex-wrap">
-                    <a href="<?php echo BASE_URL; ?>order.php" class="btn btn-gold">
-                        <i class="bi bi-cup-hot me-2"></i>View Menu
-                    </a>
-                    <a href="<?php echo BASE_URL; ?>reservation.php" class="btn btn-outline-gold">
-                        <i class="bi bi-calendar me-2"></i>Reserve a Table
-                    </a>
-                </div>
-            </div>
-            <div class="col-xl-4 col-lg-5" data-animate data-delay="200">
-                <div class="about-image" style="height: 380px;">
-                    <div style="width:100%;height:100%;background:linear-gradient(135deg, var(--navy), var(--navy-light));display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:5rem;border-radius:var(--radius-lg);">
-                        <i class="bi bi-cup-straw"></i>
+        <div class="mx-auto" style="max-width:780px;">
+            <div class="row g-4 align-items-center" style="background:var(--cream);border-radius:var(--radius-lg);padding:40px;box-shadow:var(--shadow-sm);">
+                <div class="col-md-7" data-animate>
+                    <span class="section-subtitle" style="color:var(--gold);font-size:0.75rem;text-transform:uppercase;letter-spacing:3px;font-weight:600;">Fine Dining</span>
+                    <h3 style="font-family:var(--font-heading);font-size:1.5rem;color:var(--charcoal);margin:6px 0 10px;">A Culinary Journey</h3>
+                    <p style="color:var(--text-light);font-size:0.85rem;line-height:1.6;margin-bottom:14px;">Indulge in an exquisite culinary experience at our signature restaurant. Every dish is a masterpiece, crafted by world-class chefs using the finest ingredients.</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="<?php echo BASE_URL; ?>order.php" class="btn btn-gold btn-sm">
+                            <i class="bi bi-cup-hot me-1"></i>View Menu
+                        </a>
+                        <a href="<?php echo BASE_URL; ?>reservation.php" class="btn btn-outline-gold btn-sm">
+                            <i class="bi bi-calendar me-1"></i>Reserve a Table
+                        </a>
                     </div>
-                    <div class="experience-badge">
-                        <span class="number">50+</span>
-                        <span class="label">Wine Labels</span>
+                </div>
+                <div class="col-md-5" data-animate data-delay="200">
+                    <div style="height:220px;background:linear-gradient(135deg,var(--navy),var(--navy-light));display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:3.5rem;border-radius:var(--radius);">
+                        <i class="bi bi-cup-straw"></i>
                     </div>
                 </div>
             </div>
