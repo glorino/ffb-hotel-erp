@@ -731,6 +731,21 @@ body.menu-open {
   .section-header { margin-bottom: 32px; }
 }
 
+.section-box {
+  background: var(--off-white);
+  border-radius: var(--radius-lg);
+  padding: 48px 40px;
+  box-shadow: var(--shadow-sm);
+}
+.section-box-dark {
+  background: linear-gradient(135deg, var(--navy-dark), var(--navy));
+  border-radius: var(--radius-lg);
+  padding: 48px 40px;
+  box-shadow: var(--shadow);
+}
+.section-box-dark .section-title { color: var(--white); }
+.section-box-dark .section-desc { color: rgba(255,255,255,0.5); }
+
 .bg-cream { background: var(--cream); }
 .bg-off-white { background: var(--off-white); }
 .bg-white { background: var(--white); }

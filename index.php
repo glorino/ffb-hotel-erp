@@ -104,6 +104,7 @@ $room_types = getRoomTypes();
 
 <section class="section-padding" id="rooms">
     <div class="container">
+        <div class="section-box">
         <div class="section-header" data-animate>
             <span class="section-subtitle">Accommodation</span>
             <h2 class="section-title">Rooms &amp; Suites</h2>
@@ -196,6 +197,7 @@ $room_types = getRoomTypes();
             </a>
         </div>
     </div>
+    </div>
 </section>
 
 <section class="section-padding" id="restaurant">
@@ -227,6 +229,7 @@ $room_types = getRoomTypes();
 
 <section class="section-padding" id="services">
     <div class="container">
+        <div class="section-box">
         <div class="section-header" data-animate>
             <span class="section-subtitle">Our Offerings</span>
             <h2 class="section-title">Premium Services</h2>
@@ -286,10 +289,12 @@ $room_types = getRoomTypes();
             </a>
         </div>
     </div>
+    </div>
 </section>
 
-<section class="section-padding bg-off-white" id="gallery">
+<section class="section-padding" id="gallery">
     <div class="container">
+        <div class="section-box">
         <div class="section-header" data-animate>
             <span class="section-subtitle">Moments Captured</span>
             <h2 class="section-title">Our Gallery</h2>
@@ -343,10 +348,12 @@ $room_types = getRoomTypes();
             </a>
         </div>
     </div>
+    </div>
 </section>
 
-<section class="section-padding testimonials-section" id="testimonials">
+<section class="section-padding" id="testimonials">
     <div class="container">
+        <div class="section-box-dark">
         <div class="section-header" data-animate>
             <span class="section-subtitle">Guest Voices</span>
             <h2 class="section-title" style="color: var(--white);">What Our Guests Say</h2>
@@ -374,10 +381,12 @@ $room_types = getRoomTypes();
             <?php endforeach; ?>
         </div>
     </div>
+    </div>
 </section>
 
-<section class="section-padding bg-white" id="branches">
+<section class="section-padding" id="branches">
     <div class="container">
+        <div class="section-box">
         <div class="section-header" data-animate>
             <span class="section-subtitle">Our Locations</span>
             <h2 class="section-title">Find Us</h2>
@@ -449,25 +458,29 @@ $room_types = getRoomTypes();
             <?php endif; ?>
         </div>
     </div>
+    </div>
 </section>
 
-<section class="cta-section">
-    <div class="container" data-animate>
-        <h2 class="cta-title">Experience Luxury Today</h2>
-        <p class="cta-desc">Book your stay and discover a world where every detail is crafted for your comfort and delight. Let us create unforgettable memories for you.</p>
-        <div class="cta-actions">
-            <a href="<?php echo BASE_URL; ?>booking.php" class="btn btn-gold btn-lg pulse">
-                <i class="bi bi-calendar-check me-2"></i>Book Your Stay
-            </a>
-            <a href="<?php echo BASE_URL; ?>contact.php" class="btn btn-outline-light btn-lg">
-                <i class="bi bi-telephone me-2"></i>Contact Us
-            </a>
+<section class="section-padding">
+    <div class="container">
+        <div class="section-box-dark text-center" data-animate>
+            <h2 class="cta-title" style="font-family:var(--font-heading);font-size:2rem;color:var(--white);margin-bottom:12px;">Experience Luxury Today</h2>
+            <p style="color:rgba(255,255,255,0.5);max-width:600px;margin:0 auto 24px;">Book your stay and discover a world where every detail is crafted for your comfort and delight. Let us create unforgettable memories for you.</p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="<?php echo BASE_URL; ?>booking.php" class="btn btn-gold btn-lg pulse">
+                    <i class="bi bi-calendar-check me-2"></i>Book Your Stay
+                </a>
+                <a href="<?php echo BASE_URL; ?>contact.php" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-telephone me-2"></i>Contact Us
+                </a>
+            </div>
         </div>
     </div>
 </section>
 
-<section class="newsletter-section section-padding-sm">
+<section class="section-padding-sm">
     <div class="container">
+        <div class="section-box">
         <div class="row justify-content-center">
             <div class="col-lg-6 text-center" data-animate>
                 <span class="section-subtitle">Stay Connected</span>
@@ -484,6 +497,7 @@ $room_types = getRoomTypes();
                 </form>
             </div>
         </div>
+    </div>
     </div>
 </section>
 
