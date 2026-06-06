@@ -10,7 +10,7 @@ $stmt = $db->prepare("
     JOIN room_types rt ON r.room_type_id = rt.id
     WHERE r.status = 'available' AND rt.status = 'active'
     ORDER BY r.price_per_night DESC
-    LIMIT 9
+    LIMIT 8
 ");
 $stmt->execute();
 $featured_rooms = $stmt->fetchAll();
@@ -122,7 +122,6 @@ $room_types = getRoomTypes();
                 ['id' => 6, 'room_number' => '102', 'price_per_night' => 120000, 'type_name' => 'Deluxe Room', 'desc' => 'Modern amenities in a cozy setting', 'amenities' => 'WiFi, Air Conditioning, Mini Bar, Flat-screen TV', 'max_guests' => 2, 'area' => 38, 'img' => 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=400&h=280&fit=crop', 'status' => 'available'],
                 ['id' => 7, 'room_number' => '304', 'price_per_night' => 250000, 'type_name' => 'Luxury Suite', 'desc' => 'Spacious suite with jacuzzi and cityscape', 'amenities' => 'WiFi, Air Conditioning, Living Room, Jacuzzi', 'max_guests' => 3, 'area' => 60, 'img' => 'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=400&h=280&fit=crop', 'status' => 'available'],
                 ['id' => 8, 'room_number' => '205', 'price_per_night' => 150000, 'type_name' => 'Executive Room', 'desc' => 'Perfect for business travelers', 'amenities' => 'WiFi, Air Conditioning, Mini Bar, Coffee Machine', 'max_guests' => 2, 'area' => 42, 'img' => 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400&h=280&fit=crop', 'status' => 'available'],
-                ['id' => 9, 'room_number' => '103', 'price_per_night' => 100000, 'type_name' => 'Deluxe Room', 'desc' => 'Cozy retreat with essential comforts', 'amenities' => 'WiFi, Air Conditioning, TV, Work Desk', 'max_guests' => 2, 'area' => 35, 'img' => 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=400&h=280&fit=crop', 'status' => 'available'],
             ];
             foreach ($fallback as $room): ?>
             <div class="listing-card" data-animate>
@@ -161,8 +160,8 @@ $room_types = getRoomTypes();
                     <?php if ($room['image'] && file_exists(__DIR__ . '/assets/images/rooms/' . $room['image'])): ?>
                     <img src="<?php echo BASE_URL; ?>assets/images/rooms/<?php echo htmlspecialchars($room['image']); ?>" alt="<?php echo htmlspecialchars($room['type_name']); ?>" loading="lazy">
                     <?php else: ?>
-                    <?php $room_photos = ['1631049307264-da0ec9d70304', '1590490362-c33d57733427', '1611892440504-42a792e24d32', '1578683010236-d716f9a3f461', '1582719508461-905c673771fd', '1566665797739-1674de7a421a', '1595576508890-0ad5c879a061', '1618773928121-c32242e63f39', '1602002418082-a4443e081dd1']; ?>
-                    <img src="https://images.unsplash.com/photo-<?php echo $room_photos[$room['id'] % 9]; ?>?w=400&h=280&fit=crop" alt="<?php echo htmlspecialchars($room['type_name']); ?>" loading="lazy">
+                    <?php $room_photos = ['1631049307264-da0ec9d70304', '1590490362-c33d57733427', '1611892440504-42a792e24d32', '1578683010236-d716f9a3f461', '1582719508461-905c673771fd', '1566665797739-1674de7a421a', '1595576508890-0ad5c879a061', '1618773928121-c32242e63f39']; ?>
+                    <img src="https://images.unsplash.com/photo-<?php echo $room_photos[$room['id'] % 8]; ?>?w=400&h=280&fit=crop" alt="<?php echo htmlspecialchars($room['type_name']); ?>" loading="lazy">
                     <?php endif; ?>
                     <button class="listing-wishlist" aria-label="Save to wishlist"><i class="bi bi-heart"></i></button>
                     <div class="listing-status"><?php echo htmlspecialchars(ucfirst($room['status'])); ?></div>
@@ -201,8 +200,8 @@ $room_types = getRoomTypes();
 
 <section class="section-padding bg-cream" id="restaurant">
     <div class="container">
-        <div class="row g-5 align-items-center">
-            <div class="col-lg-6" data-animate>
+        <div class="row g-5 align-items-center justify-content-center">
+            <div class="col-xl-5 col-lg-6" data-animate>
                 <div class="section-header text-start mb-4">
                     <span class="section-subtitle">Fine Dining</span>
                     <h2 class="section-title">A Culinary Journey</h2>
@@ -221,8 +220,8 @@ $room_types = getRoomTypes();
                     </a>
                 </div>
             </div>
-            <div class="col-lg-6" data-animate data-delay="200">
-                <div class="about-image" style="height: 450px;">
+            <div class="col-xl-4 col-lg-5" data-animate data-delay="200">
+                <div class="about-image" style="height: 380px;">
                     <div style="width:100%;height:100%;background:linear-gradient(135deg, var(--navy), var(--navy-light));display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:5rem;border-radius:var(--radius-lg);">
                         <i class="bi bi-cup-straw"></i>
                     </div>

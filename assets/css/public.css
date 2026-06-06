@@ -6,10 +6,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;700&display=swap');
 
 :root {
-  --navy: #0b1320;
-  --navy-dark: #060d17;
-  --navy-mid: #111d2e;
-  --navy-light: #1a2a42;
+  --navy: #0f1a2e;
+  --navy-dark: #091220;
+  --navy-mid: #162240;
+  --navy-light: #1e3050;
   --charcoal: #141824;
   --gold: #c9a84c;
   --gold-light: #dfc26b;
@@ -642,10 +642,8 @@ body.menu-open {
   max-width: 1280px;
 }
 .booking-search-inner {
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--navy-mid);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-lg);
   padding: 32px 36px;
   max-width: 1060px;
