@@ -55,20 +55,20 @@ INSERT INTO room_types (id, name, description, base_price, max_guests, amenities
 -- Rooms
 -- -----------------------------------------------------------
 INSERT INTO rooms (id, branch_id, room_type_id, room_number, floor, price_per_night, status) VALUES
-(1,  1, 1, 'Amber',   '1', 120000.00, 'available'),
+(1,  1, 1, 'Coral',   '1', 120000.00, 'available'),
 (2,  1, 1, 'Jade',    '1', 120000.00, 'available'),
 (3,  1, 1, 'Ivory',   '1', 120000.00, 'available'),
-(4,  1, 1, 'Coral',   '1', 120000.00, 'available'),
-(5,  1, 1, 'Pearl',   '1', 120000.00, 'available'),
-(6,  1, 2, 'Sapphire','2', 180000.00, 'available'),
-(7,  1, 2, 'Onyx',    '2', 180000.00, 'available'),
-(8,  1, 2, 'Opal',    '2', 180000.00, 'available'),
-(9,  1, 2, 'Ruby',    '2', 180000.00, 'available'),
-(10, 1, 2, 'Topaz',   '2', 180000.00, 'available'),
-(11, 1, 3, 'Emerald Suite',  '3', 350000.00, 'available'),
-(12, 1, 3, 'Sapphire Suite', '3', 350000.00, 'available'),
-(13, 1, 3, 'Diamond Suite',  '3', 350000.00, 'available'),
-(14, 1, 4, 'The Presidency', '4', 600000.00, 'available'),
+(4,  1, 1, 'Pearl',   '1', 120000.00, 'available'),
+(5,  1, 1, 'Amber',   '1', 120000.00, 'available'),
+(6,  1, 2, 'Obsidian', '2', 180000.00, 'available'),
+(7,  1, 2, 'Amethyst', '2', 180000.00, 'available'),
+(8,  1, 2, 'Garnet',   '2', 180000.00, 'available'),
+(9,  1, 2, 'Jasper',   '2', 180000.00, 'available'),
+(10, 1, 2, 'Quartz',   '2', 180000.00, 'available'),
+(11, 1, 3, 'The Palm Suite',    '3', 350000.00, 'available'),
+(12, 1, 3, 'The Lotus Suite',   '3', 350000.00, 'available'),
+(13, 1, 3, 'The Orchid Suite',  '3', 350000.00, 'available'),
+(14, 1, 4, 'The Presidency',    '4', 600000.00, 'available'),
 (15, 1, 5, 'The Crown Penthouse', '5', 950000.00, 'available');
 
 -- -----------------------------------------------------------
