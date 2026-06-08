@@ -14,6 +14,6 @@
   ],
   "env": {
     "APP_ENV": "production",
-    "APP_URL": "https://hotel-erp-php.vercel.app"
+    "APP_URL": "https://ffbhotel.vercel.app"
   }
 }

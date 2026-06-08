@@ -1,6 +1,6 @@
 <?php
 define('APP_NAME', 'FFB Hotel ERP');
-define('APP_URL', getenv('APP_URL') ?: 'https://hotel-erp-php.vercel.app');
+define('APP_URL', getenv('APP_URL') ?: 'https://ffbhotel.vercel.app');
 define('APP_ENV', 'production');
 define('TIMEZONE', 'Africa/Lagos');
 define('CURRENCY', 'NGN');
