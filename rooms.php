@@ -240,7 +240,7 @@ $statuses = ['available', 'reserved', 'occupied', 'cleaning', 'maintenance', 'ou
                         </div>
                         <div class="listing-body">
                             <div class="listing-type"><?php echo htmlspecialchars($room['type_name']); ?></div>
-                            <h3 class="listing-title">Room <?php echo htmlspecialchars($room['room_number']); ?></h3>
+                            <h3 class="listing-title"><?php echo htmlspecialchars($room['room_number']); ?></h3>
                             <p class="listing-desc"><?php echo htmlspecialchars(truncate($room['description'] ?? $room['type_description'] ?? 'Experience luxury at its finest.', 60)); ?></p>
                             <div class="listing-features">
                                 <span><i class="bi bi-people"></i> <?php echo $room['max_guests']; ?> guests</span>

@@ -128,14 +128,14 @@ $room_types = getRoomTypes();
         <div class="listing-grid">
             <?php if (empty($featured_rooms)): ?>
             <?php $fallback = [
-                ['id' => 1, 'room_number' => '301', 'price_per_night' => 350000, 'type_name' => 'Presidential Suite', 'desc' => 'Panoramic city views with private butler service', 'amenities' => 'WiFi, Air Conditioning, Full Bar, Living Room', 'max_guests' => 3, 'area' => 80, 'img' => 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&h=280&fit=crop', 'status' => 'available'],
-                ['id' => 2, 'room_number' => '201', 'price_per_night' => 180000, 'type_name' => 'Executive Room', 'desc' => 'Premium business amenities with lounge access', 'amenities' => 'WiFi, Air Conditioning, Mini Bar, TV', 'max_guests' => 2, 'area' => 45, 'img' => 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400&h=280&fit=crop', 'status' => 'available'],
-                ['id' => 3, 'room_number' => '101', 'price_per_night' => 120000, 'type_name' => 'Deluxe Room', 'desc' => 'Elegant comfort with premium city views', 'amenities' => 'WiFi, Air Conditioning, Mini Bar, Flat-screen TV', 'max_guests' => 2, 'area' => 38, 'img' => 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=400&h=280&fit=crop', 'status' => 'available'],
-                ['id' => 4, 'room_number' => '302', 'price_per_night' => 350000, 'type_name' => 'Presidential Suite', 'desc' => 'Luxury living with separate living area', 'amenities' => 'WiFi, Air Conditioning, Full Bar, Living Room', 'max_guests' => 3, 'area' => 80, 'img' => 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=400&h=280&fit=crop', 'status' => 'available'],
-                ['id' => 5, 'room_number' => '202', 'price_per_night' => 180000, 'type_name' => 'Executive Room', 'desc' => 'Refined furnishings with exclusive perks', 'amenities' => 'WiFi, Air Conditioning, Mini Bar, TV', 'max_guests' => 2, 'area' => 45, 'img' => 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400&h=280&fit=crop', 'status' => 'available'],
-                ['id' => 6, 'room_number' => '102', 'price_per_night' => 120000, 'type_name' => 'Deluxe Room', 'desc' => 'Modern amenities in a cozy setting', 'amenities' => 'WiFi, Air Conditioning, Mini Bar, Flat-screen TV', 'max_guests' => 2, 'area' => 38, 'img' => 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=400&h=280&fit=crop', 'status' => 'available'],
-                ['id' => 7, 'room_number' => '304', 'price_per_night' => 250000, 'type_name' => 'Luxury Suite', 'desc' => 'Spacious suite with jacuzzi and cityscape', 'amenities' => 'WiFi, Air Conditioning, Living Room, Jacuzzi', 'max_guests' => 3, 'area' => 60, 'img' => 'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=400&h=280&fit=crop', 'status' => 'available'],
-                ['id' => 8, 'room_number' => '205', 'price_per_night' => 150000, 'type_name' => 'Executive Room', 'desc' => 'Perfect for business travelers', 'amenities' => 'WiFi, Air Conditioning, Mini Bar, Coffee Machine', 'max_guests' => 2, 'area' => 42, 'img' => 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400&h=280&fit=crop', 'status' => 'available'],
+                ['id' => 1, 'room_number' => 'The Crown Penthouse', 'price_per_night' => 950000, 'type_name' => 'Penthouse', 'desc' => 'Ultra-luxury penthouse with rooftop terrace and 24/7 concierge', 'amenities' => 'WiFi, Rooftop Terrace, Private Pool, Cinema, Full Kitchen', 'max_guests' => 6, 'area' => 120, 'img' => 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&h=280&fit=crop', 'status' => 'available'],
+                ['id' => 2, 'room_number' => 'The Presidency', 'price_per_night' => 600000, 'type_name' => 'Presidential Suite', 'desc' => 'Top-tier suite with panoramic views, private dining, and butler', 'amenities' => 'WiFi, Private Dining, Butler Service, Jacuzzi, Living Room', 'max_guests' => 4, 'area' => 80, 'img' => 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=400&h=280&fit=crop', 'status' => 'available'],
+                ['id' => 3, 'room_number' => 'Emerald Suite', 'price_per_night' => 350000, 'type_name' => 'Luxury Suite', 'desc' => 'Spacious suite with jacuzzi and cityscape', 'amenities' => 'WiFi, Living Room, Jacuzzi, Full Bar, Butler Service', 'max_guests' => 3, 'area' => 60, 'img' => 'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=400&h=280&fit=crop', 'status' => 'available'],
+                ['id' => 4, 'room_number' => 'Sapphire Suite', 'price_per_night' => 350000, 'type_name' => 'Luxury Suite', 'desc' => 'Elegant suite with separate living area and premium amenities', 'amenities' => 'WiFi, Living Room, Jacuzzi, Full Bar, Butler Service', 'max_guests' => 3, 'area' => 60, 'img' => 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=400&h=280&fit=crop', 'status' => 'available'],
+                ['id' => 5, 'room_number' => 'Diamond Suite', 'price_per_night' => 350000, 'type_name' => 'Luxury Suite', 'desc' => 'Refined furnishings with exclusive perks and city views', 'amenities' => 'WiFi, Living Room, Jacuzzi, Full Bar, Butler Service', 'max_guests' => 3, 'area' => 60, 'img' => 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=400&h=280&fit=crop', 'status' => 'available'],
+                ['id' => 6, 'room_number' => 'Sapphire', 'price_per_night' => 180000, 'type_name' => 'Executive Room', 'desc' => 'Premium business amenities with lounge access', 'amenities' => 'WiFi, Mini Bar, TV, Lounge Access, Coffee Machine', 'max_guests' => 2, 'area' => 45, 'img' => 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400&h=280&fit=crop', 'status' => 'available'],
+                ['id' => 7, 'room_number' => 'Onyx', 'price_per_night' => 180000, 'type_name' => 'Executive Room', 'desc' => 'Refined furnishings with exclusive perks', 'amenities' => 'WiFi, Mini Bar, TV, Lounge Access, Coffee Machine', 'max_guests' => 2, 'area' => 45, 'img' => 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400&h=280&fit=crop', 'status' => 'available'],
+                ['id' => 8, 'room_number' => 'Opal', 'price_per_night' => 180000, 'type_name' => 'Executive Room', 'desc' => 'Perfect for business travelers', 'amenities' => 'WiFi, Mini Bar, TV, Lounge Access, Coffee Machine', 'max_guests' => 2, 'area' => 42, 'img' => 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400&h=280&fit=crop', 'status' => 'available'],
             ];
             foreach ($fallback as $room): ?>
             <div class="listing-card" data-animate>
@@ -146,7 +146,7 @@ $room_types = getRoomTypes();
                 </div>
                 <div class="listing-body">
                     <div class="listing-type"><?php echo htmlspecialchars($room['type_name']); ?></div>
-                    <h3 class="listing-title">Room <?php echo htmlspecialchars($room['room_number']); ?></h3>
+                    <h3 class="listing-title"><?php echo htmlspecialchars($room['room_number']); ?></h3>
                     <p class="listing-desc"><?php echo htmlspecialchars($room['desc']); ?></p>
                     <div class="listing-features">
                         <span><i class="bi bi-people"></i> <?php echo $room['max_guests']; ?> guests</span>
@@ -187,7 +187,7 @@ $room_types = getRoomTypes();
                 </div>
                 <div class="listing-body">
                     <div class="listing-type"><?php echo htmlspecialchars($room['type_name']); ?></div>
-                    <h3 class="listing-title">Room <?php echo htmlspecialchars($room['room_number']); ?></h3>
+                    <h3 class="listing-title"><?php echo htmlspecialchars($room['room_number']); ?></h3>
                     <p class="listing-desc"><?php echo htmlspecialchars(truncate($room['description'] ?? 'Experience luxury at its finest in our beautifully appointed accommodations.', 60)); ?></p>
                     <div class="listing-features">
                         <span><i class="bi bi-people"></i> <?php echo $room['max_guests']; ?> guests</span>

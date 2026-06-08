@@ -134,14 +134,12 @@ try {
         if ($user['role_slug'] === 'customer') {
             $userId = (int) $db->lastInsertId();
             $stmt = $db->prepare("
-                INSERT INTO customers (user_id, first_name, last_name, email, phone, branch_id, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, NOW())
+                INSERT INTO customers (user_id, full_name, email, phone, branch_id, created_at)
+                VALUES (?, ?, ?, ?, ?, NOW())
             ");
-            $nameParts = explode(' ', $user['full_name'], 2);
             $stmt->execute([
                 $userId,
-                $nameParts[0] ?? '',
-                $nameParts[1] ?? '',
+                $user['full_name'],
                 $user['email'],
                 $user['phone'],
                 $user['branch_id'],

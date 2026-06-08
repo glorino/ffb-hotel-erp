@@ -530,7 +530,7 @@ $cur = mb_chr(0x20A6, 'UTF-8');
                         data.rooms.forEach(function(room) {
                             html += '<option value="' + room.id + '" data-price="' + room.price_per_night + '"';
                             if (room.id == '<?php echo $selected_room_id; ?>') html += ' selected';
-                            html += '>Room ' + room.room_number + '</option>';
+                            html += '>' + room.room_number + '</option>';
                         });
                     } else if (branchId) {
                         html = '<option value="">No available rooms for this selection</option>';

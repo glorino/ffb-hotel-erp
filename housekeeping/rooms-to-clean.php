@@ -103,7 +103,7 @@ try {
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
-                            <h5 class="fw-bold mb-1">Room <?php echo htmlspecialchars($room['room_number']); ?></h5>
+                            <h5 class="fw-bold mb-1"><?php echo htmlspecialchars($room['room_number']); ?></h5>
                             <small class="text-muted">Floor <?php echo htmlspecialchars($room['floor'] ?? 'N/A'); ?> &middot; <?php echo htmlspecialchars($room['room_type_name'] ?? 'N/A'); ?></small>
                         </div>
                         <span class="badge <?php echo $priority_class; ?>"><?php echo ucfirst($priority); ?> Priority</span>

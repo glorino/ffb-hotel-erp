@@ -99,7 +99,7 @@ $priorities = ['low', 'medium', 'high', 'urgent'];
                             <select name="room_id" class="form-select" required>
                                 <option value="">-- Select Room --</option>
                                 <?php foreach ($rooms as $room): ?>
-                                <option value="<?php echo $room['id']; ?>">Room <?php echo htmlspecialchars($room['room_number']); ?> (Floor <?php echo htmlspecialchars($room['floor'] ?? 'N/A'); ?>)</option>
+                                <option value="<?php echo $room['id']; ?>"><?php echo htmlspecialchars($room['room_number']); ?> (Floor <?php echo htmlspecialchars($room['floor'] ?? 'N/A'); ?>)</option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

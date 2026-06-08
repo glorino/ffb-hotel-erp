@@ -145,7 +145,7 @@ if (empty($suites)) {
                 </div>
                 <div class="listing-body">
                     <div class="listing-type">&#9733; <?php echo htmlspecialchars($suite['type_name']); ?></div>
-                    <h3 class="listing-title">Room <?php echo htmlspecialchars($suite['room_number']); ?></h3>
+                    <h3 class="listing-title"><?php echo htmlspecialchars($suite['room_number']); ?></h3>
                     <p class="listing-desc"><?php echo htmlspecialchars(truncate($suite['description'] ?? $suite['type_description'] ?? 'Experience the height of luxury.', 60)); ?></p>
                     <div class="listing-features">
                         <span><i class="bi bi-people"></i> <?php echo $suite['max_guests']; ?> guests</span>
