@@ -6,8 +6,8 @@ $social_twitter = getSetting('social_twitter', '#');
 $social_whatsapp = getSetting('social_whatsapp', '#');
 $social_linkedin = getSetting('social_linkedin', '#');
 $contact_email = getSetting('contact_email', 'info@ffbhotel.com');
-$contact_phone = getSetting('contact_phone', '+1 234 567 8900');
-$contact_address = getSetting('contact_address', '123 Luxury Avenue, Beverly Hills, CA 90210');
+$contact_phone = getSetting('contact_phone', '+2349059980991');
+$contact_address = getSetting('contact_address', '14 Adeola Odeku Street, Victoria Island, Lagos, Nigeria');
 ?>
 </main>
 

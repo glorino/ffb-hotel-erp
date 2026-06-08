@@ -165,16 +165,75 @@ $statuses = ['available', 'reserved', 'occupied', 'cleaning', 'maintenance', 'ou
                 </div>
                 <?php endif; ?>
 
+                <!-- Room Availability Calendar -->
+                <div class="cal-container" id="roomCalendar">
+                    <div class="cal-header">
+                        <div class="cal-header-left">
+                            <div class="cal-icon"><i class="bi bi-calendar3"></i></div>
+                            <div>
+                                <h3 class="cal-title">Room Availability</h3>
+                                <p class="cal-subtitle">Real-time room status across all categories</p>
+                            </div>
+                        </div>
+                        <div class="cal-nav">
+                            <button type="button" class="cal-nav-btn" id="calPrev"><i class="bi bi-chevron-left"></i></button>
+                            <div class="cal-month-display">
+                                <span id="calMonthLabel" class="cal-month-text"></span>
+                                <button type="button" class="cal-today-btn" id="calToday">Today</button>
+                            </div>
+                            <button type="button" class="cal-nav-btn" id="calNext"><i class="bi bi-chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="cal-stats" id="calStats">
+                        <div class="cal-stat">
+                            <span class="cal-stat-dot" style="background:var(--success);"></span>
+                            <span class="cal-stat-label">Available</span>
+                            <span class="cal-stat-count" id="statAvailable">-</span>
+                        </div>
+                        <div class="cal-stat">
+                            <span class="cal-stat-dot" style="background:var(--warning);"></span>
+                            <span class="cal-stat-label">Reserved</span>
+                            <span class="cal-stat-count" id="statReserved">-</span>
+                        </div>
+                        <div class="cal-stat">
+                            <span class="cal-stat-dot" style="background:var(--danger);"></span>
+                            <span class="cal-stat-label">Occupied</span>
+                            <span class="cal-stat-count" id="statOccupied">-</span>
+                        </div>
+                        <div class="cal-stat">
+                            <span class="cal-stat-dot" style="background:var(--mid-gray, #6b7280);"></span>
+                            <span class="cal-stat-label">Unavailable</span>
+                            <span class="cal-stat-count" id="statUnavailable">-</span>
+                        </div>
+                        <div class="cal-stat cal-stat-total">
+                            <span class="cal-stat-label">Total Rooms</span>
+                            <span class="cal-stat-count" id="statTotal">-</span>
+                        </div>
+                    </div>
+
+                    <div class="cal-table-wrap">
+                        <table class="cal-table" id="calTable">
+                            <thead>
+                                <tr id="calHeader"></tr>
+                            </thead>
+                            <tbody id="calBody">
+                                <tr><td colspan="32" class="cal-loading"><div class="cal-spinner"></div><span>Loading availability...</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <?php if (!empty($rooms)): ?>
-                <?php $room_photos = ['1631049307264-da0ec9d70304', '1590490362-c33d57733427', '1611892440504-42a792e24d32', '1578683010236-d716f9a3f461', '1582719508461-905c673771fd', '1566665797739-1674de7a421a', '1595576508890-0ad5c879a061', '1618773928121-c32242e63f39']; ?>
+                <?php $room_photos = ['1631049307264-da0ec9d70304', '1596394516093-501ba68a0ba6', '1611892440504-42a792e24d32', '1578683010236-d716f9a3f461', '1582719508461-905c673771fd', '1566665797739-1674de7a421a', '1551882547-ff40c63fe5fa', '1618773928121-c32242e63f39']; ?>
                 <div class="listing-grid">
                     <?php foreach ($rooms as $room): ?>
                     <div class="listing-card">
                         <div class="listing-image">
-                            <?php if ($room['image']): ?>
-                            <img src="<?php echo BASE_URL; ?>assets/images/rooms/<?php echo htmlspecialchars($room['image']); ?>" alt="<?php echo htmlspecialchars($room['type_name']); ?>" loading="lazy">
+                            <?php if ($room['image'] && (strpos($room['image'], 'http') === 0 || file_exists(__DIR__ . '/assets/images/rooms/' . $room['image']))): ?>
+                            <img src="<?php echo strpos($room['image'], 'http') === 0 ? $room['image'] : BASE_URL . 'assets/images/rooms/' . htmlspecialchars($room['image']); ?>" alt="<?php echo htmlspecialchars($room['type_name']); ?>" loading="lazy">
                             <?php else: ?>
-                            <img src="https://images.unsplash.com/photo-<?php echo $room_photos[$room['id'] % 9]; ?>?w=400&h=280&fit=crop" alt="<?php echo htmlspecialchars($room['type_name']); ?>" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-<?php echo $room_photos[$room['id'] % count($room_photos)]; ?>?w=400&h=280&fit=crop" alt="<?php echo htmlspecialchars($room['type_name']); ?>" loading="lazy">
                             <?php endif; ?>
                             <button class="listing-wishlist" aria-label="Save to wishlist"><i class="bi bi-heart"></i></button>
                             <div class="listing-status" style="background: <?php echo $room['status'] === 'available' ? 'rgba(16,185,129,0.85)' : ($room['status'] === 'occupied' ? 'rgba(239,68,68,0.85)' : 'rgba(245,158,11,0.85)'); ?>"><?php echo htmlspecialchars(ucfirst($room['status'])); ?></div>
@@ -231,6 +290,152 @@ $statuses = ['available', 'reserved', 'occupied', 'cleaning', 'maintenance', 'ou
             }
         });
     }
+})();
+
+// Room Availability Calendar
+(function() {
+    var now = new Date();
+    var calYear = now.getFullYear();
+    var calMonth = now.getMonth() + 1;
+    var header = document.getElementById('calHeader');
+    var body = document.getElementById('calBody');
+    var label = document.getElementById('calMonthLabel');
+
+    var statusConfig = {
+        available:   { color: '#10b981', bg: 'rgba(16,185,129,0.08)', label: 'Available' },
+        reserved:    { color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', label: 'Reserved' },
+        occupied:    { color: '#ef4444', bg: 'rgba(239,68,68,0.08)',  label: 'Occupied' },
+        unavailable: { color: '#6b7280', bg: 'rgba(107,114,128,0.08)', label: 'Unavailable' },
+        cleaning:    { color: '#8b5cf6', bg: 'rgba(139,92,246,0.08)', label: 'Cleaning' },
+        past:        { color: '#d1d5db', bg: 'rgba(0,0,0,0.02)',      label: 'Past' }
+    };
+
+    var typeColors = {
+        'Deluxe Room': '#10b981',
+        'Executive Room': '#3b82f6',
+        'Luxury Suite': '#8b5cf6',
+        'Presidential Suite': '#f59e0b',
+        'Penthouse': '#ef4444'
+    };
+
+    function getCookie(name) {
+        var v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+        return v ? v.pop() : null;
+    }
+
+    function loadCalendar() {
+        label.textContent = calYear + '...';
+        body.innerHTML = '<tr><td colspan="32" class="cal-loading"><div class="cal-spinner"></div><span>Loading availability...</span></td></tr>';
+
+        fetch('/ajax/room-calendar.php?year=' + calYear + '&month=' + calMonth)
+
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (!data.success) {
+                    body.innerHTML = '<tr><td colspan="32" class="cal-empty"><i class="bi bi-exclamation-triangle" style="color:var(--danger);font-size:1.5rem;"></i><span>Failed to load calendar data</span></td></tr>';
+                    return;
+                }
+
+                label.textContent = data.month_name + ' ' + data.year;
+
+                var hdr = '<th class="cal-th-room">Room</th>';
+                var today = new Date();
+                var isCurrentMonth = (today.getFullYear() === data.year && today.getMonth() + 1 === data.month);
+                var dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+                for (var d = 1; d <= data.days; d++) {
+                    var dayDate = new Date(data.year, data.month - 1, d);
+                    var isToday = isCurrentMonth && d === today.getDate();
+                    var isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6;
+                    var cls = 'cal-th-day';
+                    if (isToday) cls += ' cal-today-col';
+                    if (isWeekend) cls += ' cal-weekend-col';
+                    hdr += '<th class="' + cls + '"><span class="cal-day-abbr">' + dayNames[dayDate.getDay()] + '</span><span class="cal-day-num">' + d + '</span></th>';
+                }
+                header.innerHTML = hdr;
+
+                var groups = {};
+                data.rooms.forEach(function(room) {
+                    var tn = room.type_name || 'Other';
+                    if (!groups[tn]) groups[tn] = [];
+                    groups[tn].push(room);
+                });
+
+                var rows = '';
+                var typeOrder = ['Deluxe Room', 'Executive Room', 'Luxury Suite', 'Presidential Suite', 'Penthouse'];
+                typeOrder.forEach(function(tn) {
+                    if (!groups[tn]) return;
+                    var rooms = groups[tn];
+                    var tc = typeColors[tn] || '#6b7280';
+                    rows += '<tr class="cal-type-row"><td class="cal-type-cell" colspan="' + (data.days + 1) + '"><span class="cal-type-badge" style="--tc:' + tc + ';">' + tn + '</span><span class="cal-type-count">' + rooms.length + ' room' + (rooms.length > 1 ? 's' : '') + '</span></td></tr>';
+
+                    rooms.forEach(function(room) {
+                        rows += '<tr class="cal-room-row">';
+                        rows += '<td class="cal-td-room"><span class="cal-room-num">' + room.room_number + '</span></td>';
+
+                        for (var d = 1; d <= data.days; d++) {
+                            var ds = room.days[d];
+                            var sc = statusConfig[ds] || statusConfig.past;
+                            var dayDate2 = new Date(data.year, data.month - 1, d);
+                            var isToday = isCurrentMonth && d === today.getDate();
+                            var isWeekend = dayDate2.getDay() === 0 || dayDate2.getDay() === 6;
+                            var cls = 'cal-td-day';
+                            if (isToday) cls += ' cal-today-col';
+                            if (isWeekend) cls += ' cal-weekend-col';
+                            if (isCurrentMonth && d < today.getDate() && ds === 'available') cls += ' cal-past-day';
+
+                            var dateStr = data.year + '-' + String(data.month).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+                            var title = room.room_number + ' \u2014 ' + sc.label + '\n' + dateStr + '\u2014' + room.type_name + ' \u2014 \u20A6' + Number(room.price).toLocaleString();
+                            var link = (ds === 'available' && !isCurrentMonth || (isCurrentMonth && d >= today.getDate())) ? '/booking.php?room_id=' + room.id + '&check_in=' + dateStr : '';
+
+                            rows += '<td class="' + cls + '" title="' + title.replace(/"/g, '&quot;') + '">';
+                            rows += '<span class="cal-pill" style="--pc:' + sc.color + ';--pb:' + sc.bg + ';">';
+                            if (link) rows += '<a href="' + link + '" class="cal-pill-link"></a>';
+                            rows += '</span>';
+                            rows += '</td>';
+                        }
+                        rows += '</tr>';
+                    });
+                });
+
+                if (!rows) {
+                    rows = '<tr><td colspan="32" class="cal-empty"><i class="bi bi-calendar-x" style="font-size:1.5rem;color:var(--text-light);"></i><span>No rooms found</span></td></tr>';
+                }
+                body.innerHTML = rows;
+
+                var s = data.summary || {};
+                document.getElementById('statAvailable').textContent = s.available || 0;
+                document.getElementById('statReserved').textContent = s.reserved || 0;
+                document.getElementById('statOccupied').textContent = s.occupied || 0;
+                document.getElementById('statUnavailable').textContent = s.unavailable || 0;
+                var total = (s.available || 0) + (s.reserved || 0) + (s.occupied || 0) + (s.unavailable || 0);
+                document.getElementById('statTotal').textContent = total;
+            })
+            .catch(function() {
+                body.innerHTML = '<tr><td colspan="32" class="cal-empty"><i class="bi bi-wifi-off" style="color:var(--danger);font-size:1.5rem;"></i><span>Connection error</span></td></tr>';
+            });
+    }
+
+    document.getElementById('calPrev').addEventListener('click', function() {
+        calMonth--;
+        if (calMonth < 1) { calMonth = 12; calYear--; }
+        loadCalendar();
+    });
+
+    document.getElementById('calNext').addEventListener('click', function() {
+        calMonth++;
+        if (calMonth > 12) { calMonth = 1; calYear++; }
+        loadCalendar();
+    });
+
+    document.getElementById('calToday').addEventListener('click', function() {
+        var n = new Date();
+        calYear = n.getFullYear();
+        calMonth = n.getMonth() + 1;
+        loadCalendar();
+    });
+
+    loadCalendar();
 })();
 </script>
 

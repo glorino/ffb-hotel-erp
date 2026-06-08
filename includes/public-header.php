@@ -23,7 +23,10 @@ $has_announcement = $show_announcement && $announcement;
     <meta name="description" content="<?php echo htmlspecialchars(APP_NAME); ?> – Where Luxury Meets Comfort. Experience world-class hospitality and premium accommodations.">
     <?php echo csrf_meta(); ?>
     <title><?php echo htmlspecialchars($page_title); ?></title>
-    <link rel="icon" type="image/x-icon" href="<?php echo BASE_URL; ?>favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="<?php echo BASE_URL; ?>favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo BASE_URL; ?>favicon.svg">
+    <link rel="apple-touch-icon" href="<?php echo BASE_URL; ?>logo.svg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,7 +68,6 @@ $has_announcement = $show_announcement && $announcement;
                 </a>
             <?php else: ?>
                 <a href="<?php echo BASE_URL; ?>login.php" class="btn-login">Login</a>
-                <a href="<?php echo BASE_URL; ?>register.php" class="btn-login">Register</a>
             <?php endif; ?>
             <a href="<?php echo BASE_URL; ?>booking.php" class="btn btn-gold btn-sm">Book Now</a>
         </div>
@@ -90,7 +92,6 @@ $has_announcement = $show_announcement && $announcement;
                 <a href="<?php echo BASE_URL; ?>dashboard/index.php" class="btn btn-outline-gold"><i class="bi bi-person"></i> Dashboard</a>
             <?php else: ?>
                 <a href="<?php echo BASE_URL; ?>login.php" class="btn btn-outline-gold">Login</a>
-                <a href="<?php echo BASE_URL; ?>register.php" class="btn btn-outline-gold">Register</a>
             <?php endif; ?>
             <a href="<?php echo BASE_URL; ?>booking.php" class="btn btn-gold">Book Now</a>
         </div>

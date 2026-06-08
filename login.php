@@ -67,10 +67,17 @@ if (isset($_SESSION['user_id'])) {
                     </button>
                 </form>
 
-                <p class="auth-footer-text">
-                    Don't have an account yet?
-                    <a href="register.php" class="auth-link">Create Account</a>
-                </p>
+                <div class="demo-credentials" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+                    <div style="font-size:0.78rem;font-weight:700;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;"><i class="bi bi-key me-1"></i> Demo Logins</div>
+                    <div style="font-size:0.78rem;color:rgba(255,255,255,0.7);line-height:1.7;">
+                        <div><strong style="color:rgba(255,255,255,0.9);">Password (all):</strong> demo1234</div>
+                        <div><strong style="color:rgba(255,255,255,0.9);">Owner:</strong> owner@ffbhotel.com</div>
+                        <div><strong style="color:rgba(255,255,255,0.9);">Admin:</strong> admin@ffbhotel.com</div>
+                        <div><strong style="color:rgba(255,255,255,0.9);">Manager:</strong> manager@ffbhotel.com</div>
+                        <div><strong style="color:rgba(255,255,255,0.9);">Reception:</strong> reception@ffbhotel.com</div>
+                        <div><strong style="color:rgba(255,255,255,0.9);">Customer:</strong> customer@ffbhotel.com</div>
+                    </div>
+                </div>
 
                 <div class="auth-divider">
                     <span>Secure Login</span>

@@ -32,7 +32,9 @@ function getSetting($key, $default = '') {
 }
 
 function formatMoney($amount) {
-    return CURRENCY_SYMBOL . number_format($amount, 2);
+    $symbol = mb_chr(0x20A6, 'UTF-8');
+    if (!$symbol) $symbol = 'NGN';
+    return $symbol . number_format($amount, 2);
 }
 
 function formatDate($date, $format = null) {

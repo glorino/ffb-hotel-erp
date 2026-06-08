@@ -204,7 +204,7 @@
   .lightbox-overlay .lightbox-close { top: 12px; right: 16px; font-size: 2rem; }
   .lightbox-overlay .lightbox-caption { font-size: 0.9rem; bottom: 16px; }
 
-  .back-to-top { bottom: 20px; right: 20px; width: 42px; height: 42px; font-size: 1rem; }
+  .back-to-top { bottom: 20px; left: 20px; width: 42px; height: 42px; font-size: 1rem; }
 
   .pagination .page-item { min-width: 36px; height: 36px; font-size: 11px; }
 

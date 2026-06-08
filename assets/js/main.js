@@ -31,7 +31,7 @@ const HotelApp = (function () {
       heroParticles: document.querySelector('.hero-particles'),
       testiCards: document.querySelectorAll('.testimonial-card'),
       testiDots: document.querySelectorAll('.testimonial-dot'),
-      statCounters: document.querySelectorAll('.stat-number'),
+      statCounters: document.querySelectorAll('.stat-number, .counter-number'),
       newsForm: document.querySelector('#footerNewsletterForm'),
       contactForm: document.querySelector('#contact-form'),
       lightbox: document.querySelector('.lightbox-overlay'),
@@ -576,14 +576,25 @@ const HotelApp = (function () {
   function initParallax() {
     var hero = document.querySelector('.hero');
     if (!hero) return;
+    var video = hero.querySelector('.hero-video');
+    var content = hero.querySelector('.hero-content');
+    var ticking = false;
     window.addEventListener('scroll', function () {
-      var scrollY = window.pageYOffset;
-      if (scrollY < window.innerHeight) {
-        var content = hero.querySelector('.hero-content');
-        if (content) {
-          content.style.transform = 'translateY(' + (scrollY * 0.15) + 'px)';
-          content.style.opacity = 1 - (scrollY / (window.innerHeight * 0.8));
-        }
+      if (!ticking) {
+        requestAnimationFrame(function () {
+          var scrollY = window.pageYOffset;
+          if (scrollY < window.innerHeight * 1.5) {
+            if (video) {
+              video.style.transform = 'translateY(' + (scrollY * 0.4) + 'px)';
+            }
+            if (content) {
+              content.style.transform = 'translateY(' + (scrollY * 0.2) + 'px)';
+              content.style.opacity = Math.max(0, 1 - (scrollY / (window.innerHeight * 0.7)));
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     }, { passive: true });
   }

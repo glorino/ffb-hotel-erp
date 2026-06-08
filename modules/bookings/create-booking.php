@@ -46,6 +46,29 @@ $db = getDB();
 try {
     $db->beginTransaction();
 
+    if ($room_id) {
+        $checkStmt = $db->prepare("
+            SELECT COUNT(*) FROM bookings
+            WHERE room_id = ?
+              AND booking_status NOT IN ('cancelled', 'checked_out', 'no_show')
+              AND check_in_date < ?
+              AND check_out_date > ?
+        ");
+        $checkStmt->execute([$room_id, $check_out_date, $check_in_date]);
+        if ((int) $checkStmt->fetchColumn() > 0) {
+            $db->rollBack();
+            jsonResponse(['success' => false, 'message' => 'This room is already booked for the selected dates. Please choose different dates or another room.'], 409);
+        }
+
+        $roomStmt = $db->prepare("SELECT status FROM rooms WHERE id = ?");
+        $roomStmt->execute([$room_id]);
+        $roomRow = $roomStmt->fetch();
+        if ($roomRow && !in_array($roomRow['status'], ['available', 'reserved'])) {
+            $db->rollBack();
+            jsonResponse(['success' => false, 'message' => 'This room is currently ' . ucfirst($roomRow['status']) . ' and cannot be booked.'], 409);
+        }
+    }
+
     $booking_reference = generateReference('BK');
 
     if (empty($booking_status)) {

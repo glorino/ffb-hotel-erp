@@ -1,12 +1,11 @@
 <?php
-require_once __DIR__ . '/../includes/auth-check.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../includes/functions.php';
 
 header('Content-Type: application/json');
 
-$code = $_GET['code'] ?? '';
+$code = $_POST['code'] ?? $_GET['code'] ?? '';
 
 if (empty($code)) {
     echo json_encode(['valid' => false, 'message' => 'Please enter a coupon code']);
@@ -15,7 +14,7 @@ if (empty($code)) {
 
 try {
     $db = getDB();
-    $stmt = $db->prepare("SELECT * FROM coupons WHERE code = ? AND status = 'active' AND valid_from <= NOW() AND valid_to >= NOW()");
+    $stmt = $db->prepare("SELECT * FROM coupons WHERE code = ? AND status = 'active' AND (valid_from IS NULL OR valid_from <= CURRENT_DATE) AND (valid_to IS NULL OR valid_to >= CURRENT_DATE)");
     $stmt->execute([$code]);
     $coupon = $stmt->fetch();
 
