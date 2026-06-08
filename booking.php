@@ -485,7 +485,7 @@ $cur = mb_chr(0x20A6, 'UTF-8');
     function loadRooms() {
         var branchId = branchSelect ? branchSelect.value : '';
         var typeId = roomTypeSelect ? roomTypeSelect.value : '';
-        if (!branchId || !typeId) {
+        if (!branchId) {
             if (roomSelect) roomSelect.innerHTML = '<option value="">Select branch and type first</option>';
             return;
         }
@@ -496,13 +496,44 @@ $cur = mb_chr(0x20A6, 'UTF-8');
             if (xhr.readyState === 4 && xhr.status === 200) {
                 try {
                     var data = JSON.parse(xhr.responseText);
+
+                    if (data.type_counts && data.type_counts.length) {
+                        for (var i = 1; i < roomTypeSelect.options.length; i++) {
+                            var opt = roomTypeSelect.options[i];
+                            if (!opt.value) continue;
+                            if (!opt.getAttribute('data-orig')) {
+                                opt.setAttribute('data-orig', opt.text);
+                            }
+                        }
+                        var foundType = false;
+                        data.type_counts.forEach(function(tc) {
+                            foundType = true;
+                            for (var i = 0; i < roomTypeSelect.options.length; i++) {
+                                var opt = roomTypeSelect.options[i];
+                                if (opt.value == tc.type_id) {
+                                    var base = opt.getAttribute('data-orig') || opt.text;
+                                    var clean = base.replace(/\s*\(.*$/, '').trim();
+                                    if (tc.available_count > 0) {
+                                        opt.innerHTML = clean + ' <span style="color:#10b981;font-weight:700;font-size:0.8em;">(' + tc.available_count + ' available)</span>';
+                                        opt.disabled = false;
+                                    } else {
+                                        opt.innerHTML = clean + ' <span style="color:#dc3545;font-weight:700;font-size:0.8em;">(Full)</span>';
+                                        opt.disabled = true;
+                                    }
+                                }
+                            }
+                        });
+                    }
+
                     var html = '<option value="">Select a room</option>';
                     if (data.rooms && data.rooms.length) {
                         data.rooms.forEach(function(room) {
                             html += '<option value="' + room.id + '" data-price="' + room.price_per_night + '"';
                             if (room.id == '<?php echo $selected_room_id; ?>') html += ' selected';
-                            html += '>Room ' + room.room_number + ' &mdash; ' + room.type_name + ' (' + room.status + ')</option>';
+                            html += '>Room ' + room.room_number + '</option>';
                         });
+                    } else if (branchId) {
+                        html = '<option value="">No available rooms for this selection</option>';
                     }
                     roomSelect.innerHTML = html;
                 } catch(e) {}
