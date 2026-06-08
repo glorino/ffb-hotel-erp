@@ -72,7 +72,7 @@ $cur = mb_chr(0x20A6, 'UTF-8');
                 <div class="booking-form-card">
                     <?php flash(); ?>
 
-                    <form action="<?php echo BASE_URL; ?>modules/booking/process.php" method="POST" id="bookingForm" novalidate>
+                    <form action="<?php echo BASE_URL; ?>modules/booking/process" method="POST" id="bookingForm" novalidate>
                         <?php echo csrf_field(); ?>
                         <input type="hidden" name="selected_services" id="selectedServicesInput" value="">
 
@@ -490,7 +490,7 @@ $cur = mb_chr(0x20A6, 'UTF-8');
             return;
         }
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '<?php echo BASE_URL; ?>modules/booking/get-rooms.php', true);
+        xhr.open('POST', '<?php echo BASE_URL; ?>modules/booking/get-rooms', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
@@ -526,7 +526,7 @@ $cur = mb_chr(0x20A6, 'UTF-8');
         servicesList.innerHTML = '';
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '<?php echo BASE_URL; ?>modules/booking/get-services.php', true);
+        xhr.open('POST', '<?php echo BASE_URL; ?>modules/booking/get-services', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
