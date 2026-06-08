@@ -268,9 +268,11 @@ try {
     exit;
 
 } catch (Exception $e) {
-    $db->rollBack();
-    error_log('Booking process error: ' . $e->getMessage());
-    set_flash('danger', 'An error occurred while processing your booking. Please try again.');
+    if (isset($db) && $db->inTransaction()) {
+        $db->rollBack();
+    }
+    error_log('Booking process error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+    set_flash('danger', 'An error occurred: ' . $e->getMessage());
     header('Location: /booking.php');
     exit;
 }
