@@ -148,7 +148,7 @@ $categories = $stmt_cat->fetchAll(PDO::FETCH_COLUMN);
             ?>
             <?php foreach ($db_images as $item): ?>
             <div class="gallery-item" data-category="<?php echo htmlspecialchars($item['category'] ?? 'other'); ?>">
-                <img src="<?php echo BASE_URL; ?>assets/images/gallery/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title'] ?? ''); ?>" loading="lazy">
+                <img src="<?php echo BASE_URL; ?>assets/images/gallery/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title'] ?? ''); ?>" loading="lazy" referrerpolicy="no-referrer" crossorigin="anonymous">
                 <div class="gallery-overlay">
                     <div>
                         <span class="gallery-category"><?php echo htmlspecialchars(ucfirst($item['category'] ?? 'Hotel')); ?></span>
@@ -160,7 +160,7 @@ $categories = $stmt_cat->fetchAll(PDO::FETCH_COLUMN);
             <?php endforeach; ?>
             <?php foreach ($all_photos as $g): ?>
             <div class="gallery-item" data-category="<?php echo $g['cat']; ?>">
-                <img src="<?php echo $g['src']; ?>" alt="<?php echo $g['title']; ?>" loading="lazy">
+                <img src="<?php echo $g['src']; ?>" alt="<?php echo $g['title']; ?>" loading="lazy" referrerpolicy="no-referrer" crossorigin="anonymous">
                 <div class="gallery-overlay">
                     <div>
                         <span class="gallery-category"><?php echo ucfirst($g['cat']); ?></span>
