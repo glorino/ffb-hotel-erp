@@ -468,7 +468,7 @@ $room_types = getRoomTypes();
                             <a href="tel:+2348009999999"><i class="bi bi-telephone"></i> +234 800 999 9999</a>
                             <a href="mailto:info@ffbhotel.com"><i class="bi bi-envelope"></i> info@ffbhotel.com</a>
                         </div>
-                        <a href="https://maps.google.com/?q=123+Hospitality+Avenue+Victoria+Island+Lagos" target="_blank" rel="noopener" class="branch-directions">
+                        <a href="https://maps.google.com/?q=14+Adeola+Odeku+Street+Victoria+Island+Lagos" target="_blank" rel="noopener" class="branch-directions">
                             <i class="bi bi-sign-turn-right"></i> Get Directions
                         </a>
                     </div>
@@ -486,7 +486,7 @@ $room_types = getRoomTypes();
                             <a href="tel:+2348098888888"><i class="bi bi-telephone"></i> +234 809 888 8888</a>
                             <a href="mailto:ikoyi@ffbhotel.com"><i class="bi bi-envelope"></i> ikoyi@ffbhotel.com</a>
                         </div>
-                        <a href="https://maps.google.com/?q=456+Luxury+Row+Ikoyi+Lagos" target="_blank" rel="noopener" class="branch-directions">
+                        <a href="https://maps.google.com/?q=14+Adeola+Odeku+Street+Victoria+Island+Lagos" target="_blank" rel="noopener" class="branch-directions">
                             <i class="bi bi-sign-turn-right"></i> Get Directions
                         </a>
                     </div>
@@ -504,7 +504,7 @@ $room_types = getRoomTypes();
                             <a href="tel:+2348077777777"><i class="bi bi-telephone"></i> +234 807 777 7777</a>
                             <a href="mailto:resort@ffbhotel.com"><i class="bi bi-envelope"></i> resort@ffbhotel.com</a>
                         </div>
-                        <a href="https://maps.google.com/?q=789+Beach+Road+Banana+Island+Lagos" target="_blank" rel="noopener" class="branch-directions">
+                        <a href="https://maps.google.com/?q=14+Adeola+Odeku+Street+Victoria+Island+Lagos" target="_blank" rel="noopener" class="branch-directions">
                             <i class="bi bi-sign-turn-right"></i> Get Directions
                         </a>
                     </div>
@@ -513,7 +513,7 @@ $room_types = getRoomTypes();
             </div>
             <div class="col-lg-7" data-animate data-delay="200">
                 <div class="branch-map">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127066.99098080968!2d3.2487773!3d6.5480699!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b8b4a8c1e2a5b%3A0x4a4e8b0c5e2a5b6c!2sLagos%2C%20Nigeria!5e0!3m2!1sen!2sng!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <iframe src="https://maps.google.com/maps?q=14+Adeola+Odeku+Street,+Victoria+Island,+Lagos,+Nigeria&t=&z=16&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
         </div>

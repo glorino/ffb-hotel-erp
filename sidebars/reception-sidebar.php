@@ -3,7 +3,7 @@ $current_page = $current_page ?? basename($_SERVER['PHP_SELF']);
 ?>
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-        <a href="../dashboard.php" class="sidebar-brand">
+        <a href="dashboard.php" class="sidebar-brand">
             <span class="brand-text">FFB HOTEL</span>
         </a>
         <button class="sidebar-toggle" id="sidebarToggle">&times;</button>

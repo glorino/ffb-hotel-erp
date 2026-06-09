@@ -207,7 +207,7 @@ $branches = getBranches();
             <div class="gold-divider"></div>
         </div>
         <div data-animate>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.549508164789!2d3.4213336740995493!3d6.445940823955386!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103bf4c5a8f3b9c1%3A0x8b1a5a5f5c5f5c5f!2sVictoria%20Island%2C%20Lagos!5e0!3m2!1sen!2sng!4v1700000000000"
+            <iframe src="https://maps.google.com/maps?q=14+Adeola+Odeku+Street,+Victoria+Island,+Lagos,+Nigeria&t=&z=16&ie=UTF8&iwloc=&output=embed"
                     allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                     title="FFB Hotel Location"
                     style="width:100%;height:420px;border:0;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);"></iframe>
