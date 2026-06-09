@@ -34,6 +34,7 @@ $file_map = [
     '/ajax/validate-coupon'                               => 'ajax/validate-coupon.php',
     '/ajax/room-calendar'                                 => 'ajax/room-calendar.php',
     '/ajax/seed-demo'                                      => 'ajax/seed-demo.php',
+    '/ajax/migrate-rooms'                                  => 'ajax/migrate-rooms.php',
     '/modules/bookings/check-availability'                => 'modules/bookings/check-availability.php',
     '/modules/bookings/create-booking'                    => 'modules/bookings/create-booking.php',
     '/modules/bookings/confirm-booking'                   => 'modules/bookings/confirm-booking.php',
