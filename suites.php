@@ -56,7 +56,7 @@ if (empty($suites)) {
                     </div>
                     <div class="listing-footer">
                         <div class="listing-price"><?php echo CURRENCY_SYMBOL; ?>950,000 <span>/night</span></div>
-                        <a href="<?php echo BASE_URL; ?>booking.php?room_type=5" class="listing-book">Book Now</a>
+                        <a href="<?php echo BASE_URL; ?>booking.php?branch_id=1&room_type_id=5" class="listing-book">Book Now</a>
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@ if (empty($suites)) {
                     </div>
                     <div class="listing-footer">
                         <div class="listing-price"><?php echo CURRENCY_SYMBOL; ?>600,000 <span>/night</span></div>
-                        <a href="<?php echo BASE_URL; ?>booking.php?room_type=4" class="listing-book">Book Now</a>
+                        <a href="<?php echo BASE_URL; ?>booking.php?branch_id=1&room_type_id=4" class="listing-book">Book Now</a>
                     </div>
                 </div>
             </div>
@@ -98,7 +98,7 @@ if (empty($suites)) {
                     </div>
                     <div class="listing-footer">
                         <div class="listing-price"><?php echo CURRENCY_SYMBOL; ?>350,000 <span>/night</span></div>
-                        <a href="<?php echo BASE_URL; ?>booking.php?room_type=3" class="listing-book">Book Now</a>
+                        <a href="<?php echo BASE_URL; ?>booking.php?branch_id=1&room_type_id=3" class="listing-book">Book Now</a>
                     </div>
                 </div>
             </div>
@@ -158,7 +158,7 @@ if (empty($suites)) {
                             <?php echo formatMoney($suite['price_per_night']); ?>
                             <span>/night</span>
                         </div>
-                        <a href="<?php echo BASE_URL; ?>booking.php?room_id=<?php echo $suite['id']; ?>" class="listing-book">Book Now</a>
+                        <a href="<?php echo BASE_URL; ?>booking.php?room_id=<?php echo $suite['id']; ?>&branch_id=<?php echo $suite['branch_id']; ?>&room_type_id=<?php echo $suite['room_type_id']; ?>" class="listing-book">Book Now</a>
                     </div>
                 </div>
             </div>

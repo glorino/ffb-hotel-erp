@@ -254,7 +254,7 @@ $statuses = ['available', 'reserved', 'occupied', 'cleaning', 'maintenance', 'ou
                                     <?php echo formatMoney($room['price_per_night']); ?>
                                     <span>/night</span>
                                 </div>
-                                <a href="<?php echo BASE_URL; ?>booking.php?room_id=<?php echo $room['id']; ?>" class="listing-book">Book Now</a>
+                                <a href="<?php echo BASE_URL; ?>booking.php?room_id=<?php echo $room['id']; ?>&branch_id=<?php echo $room['branch_id']; ?>&room_type_id=<?php echo $room['room_type_id']; ?>" class="listing-book">Book Now</a>
                             </div>
                         </div>
                     </div>

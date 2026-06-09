@@ -7,8 +7,9 @@ $db = getDB();
 $branches = getBranches();
 $room_types = getRoomTypes();
 
+$selected_branch = $_GET['branch_id'] ?? '';
+$selected_room_type = $_GET['room_type_id'] ?? '';
 $selected_room_id = $_GET['room_id'] ?? '';
-$selected_room_type = $_GET['room_type'] ?? '';
 
 $user_name = '';
 $user_email = '';
@@ -92,7 +93,7 @@ $cur = mb_chr(0x20A6, 'UTF-8');
                                         <select class="form-select" name="branch_id" id="branchSelect" required>
                                             <option value="">Select a branch</option>
                                             <?php foreach ($branches as $branch): ?>
-                                            <option value="<?php echo $branch['id']; ?>"><?php echo htmlspecialchars($branch['name']); ?></option>
+                                            <option value="<?php echo $branch['id']; ?>" <?php echo $selected_branch == $branch['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($branch['name']); ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -104,9 +105,7 @@ $cur = mb_chr(0x20A6, 'UTF-8');
                                         <select class="form-select" name="room_type_id" id="roomTypeSelect" required>
                                             <option value="">Select room type</option>
                                             <?php foreach ($room_types as $rt): ?>
-                                            <option value="<?php echo $rt['id']; ?>" <?php echo $selected_room_type == $rt['id'] ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($rt['name']); ?> &mdash; <?php echo formatMoney($rt['base_price']); ?>/night
-                                            </option>
+                                            <option value="<?php echo $rt['id']; ?>" <?php echo $selected_room_type == $rt['id'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($rt['name']); ?> &mdash; <?php echo formatMoney($rt['base_price']); ?>/night</option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -536,6 +535,7 @@ $cur = mb_chr(0x20A6, 'UTF-8');
                         html = '<option value="">No available rooms for this selection</option>';
                     }
                     roomSelect.innerHTML = html;
+                    updateSummary();
                 } catch(e) {}
             }
         };
@@ -631,7 +631,7 @@ $cur = mb_chr(0x20A6, 'UTF-8');
     if (branchSelect) branchSelect.addEventListener('change', function() { loadRooms(); loadServices(); });
     if (roomTypeSelect) roomTypeSelect.addEventListener('change', loadRooms);
 
-    <?php if ($selected_room_id || $selected_room_type): ?>
+    <?php if ($selected_room_id || $selected_room_type || $selected_branch): ?>
     if (branchSelect && branchSelect.value) { loadRooms(); loadServices(); }
     <?php endif; ?>
 
