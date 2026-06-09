@@ -7,7 +7,6 @@ $page_title = 'Revenue Analytics';
 $base_url = '../';
 
 require_once __DIR__ . '/../includes/dashboard-header.php';
-require_once __DIR__ . '/../sidebars/owner-sidebar.php';
 
 $db = getDB();
 $date_from = $_GET['date_from'] ?? date('Y-m-01');

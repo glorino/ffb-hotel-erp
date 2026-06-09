@@ -7,7 +7,6 @@ $page_title = 'Walk-in Booking';
 $base_url = '../';
 
 require_once __DIR__ . '/../includes/dashboard-header.php';
-require_once __DIR__ . '/../sidebars/reception-sidebar.php';
 
 $db = getDB();
 $branch_id = $_SESSION['branch_id'] ?? 0;

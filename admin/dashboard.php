@@ -7,7 +7,6 @@ $page_title = 'Admin Dashboard';
 $base_url = '../';
 
 require_once __DIR__ . '/../includes/dashboard-header.php';
-require_once __DIR__ . '/../sidebars/admin-sidebar.php';
 
 $db = getDB();
 ?>

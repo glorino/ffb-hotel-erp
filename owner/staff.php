@@ -7,7 +7,6 @@ $page_title = 'Staff Management';
 $base_url = '../';
 
 require_once __DIR__ . '/../includes/dashboard-header.php';
-require_once __DIR__ . '/../sidebars/owner-sidebar.php';
 
 $db = getDB();
 $role_filter = $_GET['role'] ?? '';

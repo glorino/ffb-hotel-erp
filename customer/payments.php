@@ -7,7 +7,6 @@ $page_title = 'My Payments';
 $base_url = '../';
 
 require_once __DIR__ . '/../includes/dashboard-header.php';
-require_once __DIR__ . '/../sidebars/customer-sidebar.php';
 
 $db = getDB();
 $customer_id = $_SESSION['customer_id'] ?? 0;

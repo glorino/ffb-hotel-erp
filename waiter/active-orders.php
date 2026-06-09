@@ -7,7 +7,6 @@ $page_title = 'My Active Orders';
 $base_url = '../';
 
 require_once __DIR__ . '/../includes/dashboard-header.php';
-require_once __DIR__ . '/../sidebars/waiter-sidebar.php';
 
 $db = getDB();
 $branch_id = $_SESSION['branch_id'] ?? 0;
