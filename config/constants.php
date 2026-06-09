@@ -27,7 +27,7 @@ define('PAYMENT_STATUSES', json_encode([
 ]));
 
 define('PAYMENT_METHODS', json_encode([
-    'paystack',
+    'flutterwave',
     'cash',
     'pos',
     'bank_transfer',

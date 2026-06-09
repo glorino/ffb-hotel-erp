@@ -86,7 +86,7 @@ $payments = $stmt->fetchAll();
                     <label class="form-label small">Method</label>
                     <select name="method" class="form-select form-select-sm">
                         <option value="">All</option>
-                        <option value="paystack" <?php echo $method === 'paystack' ? 'selected' : ''; ?>>Paystack</option>
+                        <option value="flutterwave" <?php echo $method === 'flutterwave' ? 'selected' : ''; ?>>Flutterwave</option>
                         <option value="cash" <?php echo $method === 'cash' ? 'selected' : ''; ?>>Cash</option>
                         <option value="pos" <?php echo $method === 'pos' ? 'selected' : ''; ?>>POS</option>
                         <option value="bank_transfer" <?php echo $method === 'bank_transfer' ? 'selected' : ''; ?>>Bank Transfer</option>

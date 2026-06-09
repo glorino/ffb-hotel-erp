@@ -264,9 +264,9 @@ $cur = mb_chr(0x20A6, 'UTF-8');
                                         <div class="payment-icon"><i class="bi bi-shield-lock"></i></div>
                                         <div class="payment-info">
                                             <div class="payment-name">Pay Online</div>
-                                            <div class="payment-desc">Pay securely via Paystack &mdash; card, bank, USSD</div>
+                                            <div class="payment-desc">Pay securely via Flutterwave &mdash; card, bank, USSD</div>
                                         </div>
-                                        <input type="radio" name="payment_method" value="paystack" checked hidden>
+                                        <input type="radio" name="payment_method" value="flutterwave" checked hidden>
                                     </label>
                                 </div>
                                 <div class="col-md-6">

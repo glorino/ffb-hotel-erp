@@ -36,7 +36,7 @@ $date_to = $_GET['date_to'] ?? '';
                 <div class="col-md-2">
                     <select name="method" class="form-select form-select-sm">
                         <option value="">All Methods</option>
-                        <option value="paystack" <?php echo $method === 'paystack' ? 'selected' : ''; ?>>Paystack</option>
+                        <option value="flutterwave" <?php echo $method === 'flutterwave' ? 'selected' : ''; ?>>Flutterwave</option>
                         <option value="cash" <?php echo $method === 'cash' ? 'selected' : ''; ?>>Cash</option>
                         <option value="pos" <?php echo $method === 'pos' ? 'selected' : ''; ?>>POS</option>
                         <option value="bank_transfer" <?php echo $method === 'bank_transfer' ? 'selected' : ''; ?>>Bank Transfer</option>

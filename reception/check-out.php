@@ -150,7 +150,7 @@ $booking_id = $_GET['booking_id'] ?? 0;
                         <option value="cash">Cash</option>
                         <option value="pos">POS Terminal</option>
                         <option value="bank_transfer">Bank Transfer</option>
-                        <option value="paystack">Paystack</option>
+                        <option value="flutterwave">Flutterwave</option>
                     </select>
                 </div>
                 <div class="col-md-3">

@@ -145,7 +145,7 @@ if (!validateDate($sale_date)) $sale_date = date('Y-m-d');
                             </thead>
                             <tbody>
                                 <?php
-                                $methods = ['cash' => 'Cash', 'pos' => 'POS', 'bank_transfer' => 'Bank Transfer', 'paystack' => 'Paystack', 'split_payment' => 'Split Payment'];
+                                $methods = ['cash' => 'Cash', 'pos' => 'POS', 'bank_transfer' => 'Bank Transfer', 'flutterwave' => 'Flutterwave', 'split_payment' => 'Split Payment'];
                                 foreach ($methods as $key => $label):
                                     $amount = $payment_methods[$key] ?? 0;
                                     $pct = $total_sales > 0 ? round(($amount / $total_sales) * 100, 1) : 0;

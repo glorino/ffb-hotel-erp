@@ -286,7 +286,7 @@ $has_items = !empty($food_items);
                                     <div class="payment-name">Paystack Online</div>
                                     <div class="payment-desc">Pay securely with card, bank transfer, or USSD</div>
                                 </div>
-                                <input type="radio" name="payment_method" value="paystack" checked hidden>
+                                <input type="radio" name="payment_method" value="flutterwave" checked hidden>
                             </div>
                         </div>
                     </div>

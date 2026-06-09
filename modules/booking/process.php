@@ -3,6 +3,7 @@ session_start();
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/app.php';
 require_once __DIR__ . '/../../config/paystack.php';
+require_once __DIR__ . '/../../config/flutterwave.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/flash.php';
 require_once __DIR__ . '/../../includes/csrf.php';
@@ -25,7 +26,7 @@ $full_name       = trim($_POST['full_name'] ?? '');
 $email           = trim($_POST['email'] ?? '');
 $phone           = trim($_POST['phone'] ?? '');
 $special_request = trim($_POST['special_request'] ?? '');
-$payment_method  = trim($_POST['payment_method'] ?? 'paystack');
+$payment_method  = trim($_POST['payment_method'] ?? 'flutterwave');
 $coupon_code     = trim($_POST['coupon_code'] ?? '');
 $selected_services = $_POST['selected_services'] ?? '[]';
 
@@ -214,26 +215,34 @@ try {
 
     $db->commit();
 
-    if ($payment_method === 'paystack') {
-        $pay_ref = generateReference('PAY');
+    if ($payment_method === 'flutterwave') {
+        $pay_ref = generateReference('FLW');
         $amount_kobo = (int) round($payable_amount * 100);
-        $callback = PAYSTACK_CALLBACK_URL . '?booking_id=' . $booking_id . '&reference=' . urlencode($pay_ref);
+        $callback = FLW_CALLBACK_URL . '?booking_id=' . $booking_id . '&tx_ref=' . urlencode($pay_ref);
 
         $post_data = json_encode([
-            'email'        => $email,
+            'tx_ref'       => $pay_ref,
             'amount'       => $amount_kobo,
-            'reference'    => $pay_ref,
-            'callback_url' => $callback,
-            'currency'     => PAYSTACK_CURRENCY,
-            'metadata'     => json_encode(['booking_id' => $booking_id]),
+            'currency'     => FLW_CURRENCY,
+            'redirect_url' => $callback,
+            'customer'     => [
+                'email'    => $email,
+                'name'     => $full_name,
+                'phonenumber' => $phone,
+            ],
+            'meta'         => ['booking_id' => $booking_id],
+            'customizations' => [
+                'title'       => 'FFB Hotel Booking',
+                'description' => 'Payment for room booking',
+            ],
         ]);
 
-        $ch = curl_init('https://api.paystack.co/transaction/initialize');
+        $ch = curl_init('https://api.flutterwave.com/v3/payments');
         curl_setopt_array($ch, [
             CURLOPT_POST           => true,
             CURLOPT_POSTFIELDS     => $post_data,
             CURLOPT_HTTPHEADER     => [
-                'Authorization: Bearer ' . PAYSTACK_SECRET_KEY,
+                'Authorization: Bearer ' . FLW_SECRET_KEY,
                 'Content-Type: application/json',
                 'Content-Length: ' . strlen($post_data),
             ],
@@ -246,14 +255,14 @@ try {
         $result = json_decode($response, true);
         curl_close($ch);
 
-        if (isset($result['status']) && $result['status'] && isset($result['data']['authorization_url'])) {
+        if (isset($result['status']) && $result['status'] === 'success' && isset($result['data']['link'])) {
             $stmt = $db->prepare("UPDATE bookings SET paystack_reference = ?, updated_at = NOW() WHERE id = ?");
             $stmt->execute([$pay_ref, $booking_id]);
 
-            $stmt = $db->prepare("INSERT INTO payments (booking_id, amount, method, status, reference, created_at) VALUES (?, ?, 'paystack', 'pending', ?, NOW())");
+            $stmt = $db->prepare("INSERT INTO payments (booking_id, amount, method, status, reference, created_at) VALUES (?, ?, 'flutterwave', 'pending', ?, NOW())");
             $stmt->execute([$booking_id, $payable_amount, $pay_ref]);
 
-            header('Location: ' . $result['data']['authorization_url']);
+            header('Location: ' . $result['data']['link']);
             exit;
         } else {
             $booking_status = 'pending';

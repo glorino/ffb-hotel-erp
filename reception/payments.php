@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['record_payment'])) {
                                 <option value="cash">Cash</option>
                                 <option value="pos">POS Terminal</option>
                                 <option value="bank_transfer">Bank Transfer</option>
-                                <option value="paystack">Paystack</option>
+                                <option value="flutterwave">Flutterwave</option>
                                 <option value="split_payment">Split Payment</option>
                             </select>
                         </div>
