@@ -135,37 +135,41 @@ $categories = $stmt_cat->fetchAll(PDO::FETCH_COLUMN);
         ];
         ?>
         <div class="gallery-grid" id="galleryGrid">
-            <?php if (!empty($gallery_items)): ?>
-                <?php foreach ($gallery_items as $item): ?>
-                <div class="gallery-item" data-category="<?php echo htmlspecialchars($item['category'] ?? 'other'); ?>">
-                    <?php if ($item['image'] && file_exists(__DIR__ . '/assets/images/gallery/' . $item['image'])): ?>
-                    <img src="<?php echo BASE_URL; ?>assets/images/gallery/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title'] ?? ''); ?>" loading="lazy">
-                    <?php else: ?>
-                    <img src="<?php echo $all_photos[array_search($item['category'] ?? 'other', array_column($all_photos, 'cat')) >= 0 ? array_search($item['category'] ?? 'other', array_column($all_photos, 'cat')) : 0]['src']; ?>" alt="<?php echo htmlspecialchars($item['title'] ?? 'Gallery'); ?>" loading="lazy">
-                    <?php endif; ?>
-                    <div class="gallery-overlay">
-                        <div>
-                            <span class="gallery-category"><?php echo htmlspecialchars(ucfirst($item['category'] ?? 'Hotel')); ?></span>
-                            <h4 class="gallery-title"><?php echo htmlspecialchars($item['title'] ?? ''); ?></h4>
-                        </div>
-                        <div class="gallery-view"><i class="bi bi-arrows-angle-expand"></i></div>
+            <?php
+            $db_images = [];
+            if (!empty($gallery_items)) {
+                foreach ($gallery_items as $item) {
+                    $img_path = __DIR__ . '/assets/images/gallery/' . ($item['image'] ?? '');
+                    if (!empty($item['image']) && file_exists($img_path)) {
+                        $db_images[] = $item;
+                    }
+                }
+            }
+            ?>
+            <?php foreach ($db_images as $item): ?>
+            <div class="gallery-item" data-category="<?php echo htmlspecialchars($item['category'] ?? 'other'); ?>">
+                <img src="<?php echo BASE_URL; ?>assets/images/gallery/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title'] ?? ''); ?>" loading="lazy">
+                <div class="gallery-overlay">
+                    <div>
+                        <span class="gallery-category"><?php echo htmlspecialchars(ucfirst($item['category'] ?? 'Hotel')); ?></span>
+                        <h4 class="gallery-title"><?php echo htmlspecialchars($item['title'] ?? ''); ?></h4>
                     </div>
+                    <div class="gallery-view"><i class="bi bi-arrows-angle-expand"></i></div>
                 </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <?php foreach ($all_photos as $g): ?>
-                <div class="gallery-item" data-category="<?php echo $g['cat']; ?>">
-                    <img src="<?php echo $g['src']; ?>" alt="<?php echo $g['title']; ?>" loading="lazy">
-                    <div class="gallery-overlay">
-                        <div>
-                            <span class="gallery-category"><?php echo ucfirst($g['cat']); ?></span>
-                            <h4 class="gallery-title"><?php echo $g['title']; ?></h4>
-                        </div>
-                        <div class="gallery-view"><i class="bi bi-arrows-angle-expand"></i></div>
+            </div>
+            <?php endforeach; ?>
+            <?php foreach ($all_photos as $g): ?>
+            <div class="gallery-item" data-category="<?php echo $g['cat']; ?>">
+                <img src="<?php echo $g['src']; ?>" alt="<?php echo $g['title']; ?>" loading="lazy">
+                <div class="gallery-overlay">
+                    <div>
+                        <span class="gallery-category"><?php echo ucfirst($g['cat']); ?></span>
+                        <h4 class="gallery-title"><?php echo $g['title']; ?></h4>
                     </div>
+                    <div class="gallery-view"><i class="bi bi-arrows-angle-expand"></i></div>
                 </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
