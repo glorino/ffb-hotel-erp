@@ -42,7 +42,7 @@ if ($email === '' || $password === '') {
 }
 
 try {
-    $pdo = Database::getInstance();
+    $pdo = getDB();
     $stmt = $pdo->prepare("
         SELECT u.id, u.password, u.full_name, u.email, u.role_id, u.branch_id, u.status,
                r.slug AS role_slug
