@@ -271,7 +271,7 @@ $revenue_change = ($stats['yesterday_revenue'] ?? 0) > 0 ? round((($stats['payme
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0 fw-semibold">Recent Bookings</h5>
-                    <a href="bookings.php" class="btn btn-sm btn-outline-primary">View All</a>
+                    <a href="online-bookings.php" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -305,7 +305,7 @@ $revenue_change = ($stats['yesterday_revenue'] ?? 0) > 0 ? round((($stats['payme
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0 fw-semibold">Recent Guests</h5>
-                    <a href="customers.php" class="btn btn-sm btn-outline-primary">View All</a>
+                    <a href="guest-records.php" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">

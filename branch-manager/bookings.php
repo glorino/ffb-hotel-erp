@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             <td><small class="text-muted"><?php echo formatDate($b['created_at']); ?></small></td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="booking-details.php?id=<?php echo $b['id']; ?>" class="btn btn-outline-info" title="View"><i class="bi bi-eye"></i></a>
+                                    <a href="bookings.php?view=<?php echo $b['id']; ?>" class="btn btn-outline-info" title="View"><i class="bi bi-eye"></i></a>
                                     <?php if ($b['booking_status'] === 'pending'): ?>
                                     <form method="POST" class="d-inline" onsubmit="return confirm('Confirm this booking?')">
                                         <?php echo csrf_field(); ?>

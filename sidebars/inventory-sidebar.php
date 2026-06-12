@@ -16,4 +16,11 @@
     <li><a href="kitchen-requests.php" class="sidebar-nav-item <?php echo $current_page == 'kitchen-requests.php' ? 'active' : ''; ?>"><span class="nav-icon"><i class="bi bi-fire"></i></span><span class="nav-label">Kitchen Requests</span></a></li>
     <li><a href="room-supplies.php" class="sidebar-nav-item <?php echo $current_page == 'room-supplies.php' ? 'active' : ''; ?>"><span class="nav-icon"><i class="bi bi-door-open"></i></span><span class="nav-label">Room Supplies</span></a></li>
     <li><a href="reports.php" class="sidebar-nav-item <?php echo $current_page == 'reports.php' ? 'active' : ''; ?>"><span class="nav-icon"><i class="bi bi-file-earmark-bar-graph"></i></span><span class="nav-label">Reports</span></a></li>
+    <li><a href="notifications.php" class="sidebar-nav-item <?php echo $current_page == 'notifications.php' ? 'active' : ''; ?>"><span class="nav-icon"><i class="bi bi-bell"></i></span><span class="nav-label">Notifications</span></a></li>
+    <li style="margin-top:auto; padding:12px 20px 16px; border-top:1px solid rgba(255,255,255,0.06);">
+        <a href="../logout.php" class="sidebar-nav-item" style="color:rgba(239,68,68,0.8);">
+            <span class="nav-icon"><i class="bi bi-box-arrow-right"></i></span>
+            <span class="nav-label">Sign Out</span>
+        </a>
+    </li>
 </ul>

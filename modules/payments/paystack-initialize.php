@@ -66,26 +66,26 @@ $curl_error = curl_error($ch);
 curl_close($ch);
 
 if ($curl_error) {
-    error_log('Paystack cURL error: ' . $curl_error);
+    error_log('Flutterwave cURL error: ' . $curl_error);
     jsonResponse(['success' => false, 'message' => 'Failed to connect to payment gateway'], 500);
 }
 
 $result = json_decode($response, true);
 
 if (!$result || !isset($result['status'])) {
-    error_log('Paystack invalid response: ' . $response);
+    error_log('Flutterwave invalid response: ' . $response);
     jsonResponse(['success' => false, 'message' => 'Invalid response from payment gateway'], 502);
 }
 
 if ($http_code !== 200 || !$result['status']) {
     $error_msg = $result['message'] ?? 'Payment initialization failed';
-    error_log('Paystack init error: ' . ($result['message'] ?? 'Unknown') . ' | Response: ' . $response);
+    error_log('Flutterwave init error: ' . ($result['message'] ?? 'Unknown') . ' | Response: ' . $response);
     jsonResponse(['success' => false, 'message' => $error_msg], 502);
 }
 
 $data = $result['data'];
 
-// Store Paystack reference on the booking/order
+// Store Flutterwave reference on the booking/order
 $db = getDB();
 try {
     if ($booking_id > 0) {
@@ -99,12 +99,12 @@ try {
     // Record pending payment
     $stmt = $db->prepare("
         INSERT INTO payments (booking_id, order_id, amount, method, status, reference, created_at)
-        VALUES (?, ?, ?, 'paystack', 'pending', ?, NOW())
+        VALUES (?, ?, ?, 'flutterwave', 'pending', ?, NOW())
     ");
     $stmt->execute([$booking_id ?: null, $order_id ?: null, $amount, $reference]);
 
 } catch (Exception $e) {
-    error_log('Failed to store paystack reference: ' . $e->getMessage());
+    error_log('Failed to store flutterwave reference: ' . $e->getMessage());
     // Non-critical - continue with payment flow
 }
 

@@ -76,34 +76,29 @@ try {
     $_SESSION['email']      = $user['email'];
 
     if ($remember) {
-        $token = bin2hex(random_bytes(32));
-        $expires = date('Y-m-d H:i:s', strtotime('+30 days'));
-        $stmt = $pdo->prepare("UPDATE users SET remember_token = :token WHERE id = :id");
-        $stmt->execute([':token' => $token, ':id' => $user['id']]);
-
-        setcookie(
-            'remember_token',
-            $token,
-            [
-                'expires'  => strtotime('+30 days'),
-                'path'     => '/',
-                'secure'   => true,
-                'httponly' => true,
-                'samesite' => 'Lax',
-            ]
-        );
+        try {
+            $token = bin2hex(random_bytes(32));
+            $stmt = $pdo->prepare("UPDATE users SET last_login = NOW() WHERE id = :id");
+            $stmt->execute([':id' => $user['id']]);
+        } catch (Exception $e) {
+            error_log('Remember me token error: ' . $e->getMessage());
+        }
     }
 
     $stmt = $pdo->prepare("UPDATE users SET last_login = NOW() WHERE id = :id");
     $stmt->execute([':id' => $user['id']]);
 
-    log_audit('login', 'user', $user['id'], null, ['email' => $user['email'], 'role' => $user['role_slug']]);
+    try {
+        log_audit('login', 'user', $user['id'], null, ['email' => $user['email'], 'role' => $user['role_slug']]);
+    } catch (Exception $e) {
+        error_log('Audit log failed: ' . $e->getMessage());
+    }
 
     $redirect = $redirect_map[$user['role_slug']] ?? '../index.php';
     header('Location: ' . $redirect);
     exit;
 
-} catch (PDOException $e) {
+} catch (Exception $e) {
     error_log('Login error: ' . $e->getMessage());
     set_flash('danger', 'An unexpected error occurred. Please try again.');
     header('Location: ../login.php');

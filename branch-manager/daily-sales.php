@@ -150,12 +150,12 @@ if (!validateDate($sale_date)) $sale_date = date('Y-m-d');
                                     $pct = $total_sales > 0 ? round(($amount / $total_sales) * 100, 1) : 0;
                                 ?>
                                 <tr>
-                                    <td><i class="bi bi-<?php echo $key === 'cash' ? 'cash' : ($key === 'pos' ? 'credit-card' : ($key === 'bank_transfer' ? 'bank' : ($key === 'paystack' ? 'globe' : 'arrows'))); ?> me-2"></i><?php echo $label; ?></td>
+                                    <td><i class="bi bi-<?php echo $key === 'cash' ? 'cash' : ($key === 'pos' ? 'credit-card' : ($key === 'bank_transfer' ? 'bank' : ($key === 'flutterwave' ? 'globe' : 'arrows'))); ?> me-2"></i><?php echo $label; ?></td>
                                     <td><?php echo formatMoney($amount); ?></td>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
                                             <div class="progress flex-grow-1" style="height:6px;">
-                                                <div class="progress-bar bg-<?php echo $key === 'cash' ? 'success' : ($key === 'pos' ? 'primary' : ($key === 'bank_transfer' ? 'info' : ($key === 'paystack' ? 'warning' : 'secondary'))); ?>" role="progressbar" style="width:<?php echo $pct; ?>%"></div>
+                                                <div class="progress-bar bg-<?php echo $key === 'cash' ? 'success' : ($key === 'pos' ? 'primary' : ($key === 'bank_transfer' ? 'info' : ($key === 'flutterwave' ? 'warning' : 'secondary'))); ?>" role="progressbar" style="width:<?php echo $pct; ?>%"></div>
                                             </div>
                                             <small class="text-muted"><?php echo $pct; ?>%</small>
                                         </div>

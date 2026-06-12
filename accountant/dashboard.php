@@ -81,7 +81,7 @@ $branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
                         <div>
                             <p class="stat-label text-muted mb-1">Online Payments</p>
                             <h3 class="stat-value mb-0 text-info"><?php echo formatMoney($stats['online_payments'] ?? 0); ?></h3>
-                            <small class="text-muted">Paystack & gateways</small>
+                            <small class="text-muted">Flutterwave & gateways</small>
                         </div>
                         <div class="stat-icon bg-info-subtle rounded-3 p-3"><i class="bi bi-globe text-info fs-4"></i></div>
                     </div>
@@ -237,7 +237,7 @@ $branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0 py-3 d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0 fw-semibold">Pending Reconciliations</h5>
-                    <a href="paystack-transactions.php" class="btn btn-sm btn-outline-warning">View All</a>
+                    <a href="flutterwave-transactions.php" class="btn btn-sm btn-outline-warning">View All</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">

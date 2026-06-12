@@ -168,7 +168,7 @@ switch ($period) {
                                 <tr><td colspan="4" class="text-center text-muted py-3">No data for this period.</td></tr>
                                 <?php } ?>
                                 <?php } catch (Exception $e) { ?>
-                                <tr><td colspan="4" class="text-danger"><?php echo htmlspecialchars($e->getMessage()); ?></td></tr>
+                                <tr><td colspan="4" class="text-center text-muted py-3">No data available.</td></tr>
                                 <?php } ?>
                             </tbody>
                         </table>

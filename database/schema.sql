@@ -489,7 +489,7 @@ CREATE TABLE payments (
     order_id          INTEGER,
     reservation_id    INTEGER,
     amount            NUMERIC(12,2) NOT NULL DEFAULT 0.00,
-    method            VARCHAR(20) NOT NULL DEFAULT 'cash' CHECK (method IN ('paystack','cash','pos','bank_transfer','split_payment')),
+    method            VARCHAR(20) NOT NULL DEFAULT 'cash' CHECK (method IN ('paystack','flutterwave','cash','pos','bank_transfer','split_payment')),
     payment_method    VARCHAR(20),
     payment_category  VARCHAR(50),
     status            VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','paid','partially_paid','failed','refunded')),

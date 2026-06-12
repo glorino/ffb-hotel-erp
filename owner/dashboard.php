@@ -65,7 +65,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
                             <h3 class="stat-value mb-0"><?php echo formatMoney($stats['total_revenue'] ?? 0); ?></h3>
                             <small class="text-success"><i class="bi bi-arrow-up"></i> Lifetime earnings</small>
                         </div>
-                        <div class="stat-icon bg-primary-subtle rounded-3 p-3">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 14px; padding: 12px;">
                             <i class="bi bi-currency-dollar text-primary fs-4"></i>
                         </div>
                     </div>
@@ -81,7 +81,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
                             <h3 class="stat-value mb-0"><?php echo formatMoney($stats['today_revenue'] ?? 0); ?></h3>
                             <small class="text-info"><i class="bi bi-calendar"></i> <?php echo date('M j, Y'); ?></small>
                         </div>
-                        <div class="stat-icon bg-info-subtle rounded-3 p-3">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #cffafe, #a5f3fc); border-radius: 14px; padding: 12px;">
                             <i class="bi bi-graph-up text-info fs-4"></i>
                         </div>
                     </div>
@@ -97,7 +97,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
                             <h3 class="stat-value mb-0"><?php echo number_format($stats['active_bookings'] ?? 0); ?></h3>
                             <small class="text-warning"><i class="bi bi-person"></i> Confirmed & checked-in</small>
                         </div>
-                        <div class="stat-icon bg-warning-subtle rounded-3 p-3">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 14px; padding: 12px;">
                             <i class="bi bi-calendar-check text-warning fs-4"></i>
                         </div>
                     </div>
@@ -113,7 +113,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
                             <h3 class="stat-value mb-0"><?php echo $stats['occupancy_rate']; ?>%</h3>
                             <small class="text-secondary"><i class="bi bi-building"></i> Current occupancy</small>
                         </div>
-                        <div class="stat-icon bg-success-subtle rounded-3 p-3">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 14px; padding: 12px;">
                             <i class="bi bi-door-open text-success fs-4"></i>
                         </div>
                     </div>
@@ -129,7 +129,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
                             <h3 class="stat-value mb-0"><?php echo number_format($stats['total_branches'] ?? 0); ?></h3>
                             <small class="text-primary"><i class="bi bi-geo-alt"></i> Active locations</small>
                         </div>
-                        <div class="stat-icon bg-secondary-subtle rounded-3 p-3">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border-radius: 14px; padding: 12px;">
                             <i class="bi bi-building text-secondary fs-4"></i>
                         </div>
                     </div>
@@ -145,7 +145,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
                             <h3 class="stat-value mb-0"><?php echo number_format($stats['total_customers'] ?? 0); ?></h3>
                             <small class="text-success"><i class="bi bi-people"></i> Registered guests</small>
                         </div>
-                        <div class="stat-icon bg-success-subtle rounded-3 p-3">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 14px; padding: 12px;">
                             <i class="bi bi-people text-success fs-4"></i>
                         </div>
                     </div>
@@ -161,7 +161,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
                             <h3 class="stat-value mb-0"><?php echo number_format($stats['pending_payments'] ?? 0); ?></h3>
                             <small class="text-danger"><i class="bi bi-exclamation-circle"></i> Awaiting payment</small>
                         </div>
-                        <div class="stat-icon bg-danger-subtle rounded-3 p-3">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #fee2e2, #fecaca); border-radius: 14px; padding: 12px;">
                             <i class="bi bi-credit-card text-danger fs-4"></i>
                         </div>
                     </div>
@@ -177,7 +177,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
                             <h3 class="stat-value mb-0"><?php echo number_format($stats['low_stock'] ?? 0); ?></h3>
                             <small class="text-warning"><i class="bi bi-box"></i> Items below reorder level</small>
                         </div>
-                        <div class="stat-icon bg-warning-subtle rounded-3 p-3">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 14px; padding: 12px;">
                             <i class="bi bi-exclamation-triangle text-warning fs-4"></i>
                         </div>
                     </div>
@@ -192,9 +192,9 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
                 <div class="card-header bg-white border-bottom-0 d-flex justify-content-between align-items-center py-3">
                     <h5 class="card-title mb-0 fw-semibold">Revenue Trends</h5>
                     <div class="btn-group btn-group-sm">
-                        <button type="button" class="btn btn-outline-primary active" data-period="7">7 Days</button>
-                        <button type="button" class="btn btn-outline-primary" data-period="30">30 Days</button>
-                        <button type="button" class="btn btn-outline-primary" data-period="90">90 Days</button>
+                        <button type="button" class="btn btn-outline-primary active" data-days="7">7 Days</button>
+                        <button type="button" class="btn btn-outline-primary" data-days="30">30 Days</button>
+                        <button type="button" class="btn btn-outline-primary" data-days="90">90 Days</button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -348,12 +348,14 @@ try {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    new Chart(document.getElementById('revenueChart'), {
+    const currencySymbol = '<?php echo CURRENCY_SYMBOL; ?>';
+    const revenueCtx = document.getElementById('revenueChart');
+    const revenueChart = new Chart(revenueCtx, {
         type: 'line',
         data: {
             labels: <?php echo json_encode($revenue_labels); ?>,
             datasets: [{
-                label: 'Revenue (<?php echo CURRENCY_SYMBOL; ?>)',
+                label: 'Revenue (' + currencySymbol + ')',
                 data: <?php echo json_encode($revenue_data); ?>,
                 borderColor: '#0d6efd',
                 backgroundColor: 'rgba(13,110,253,0.1)',
@@ -366,8 +368,25 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             responsive: true,
             plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, ticks: { callback: function(v) { return '<?php echo CURRENCY_SYMBOL; ?>' + v.toLocaleString(); } } } }
+            scales: { y: { beginAtZero: true, ticks: { callback: function(v) { return currencySymbol + v.toLocaleString(); } } } }
         }
+    });
+
+    document.querySelectorAll('[data-days]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var days = this.getAttribute('data-days');
+            document.querySelectorAll('[data-days]').forEach(function(b) { b.classList.remove('active'); });
+            this.classList.add('active');
+
+            fetch('<?php echo $base_url; ?>ajax/revenue-data.php?days=' + days)
+                .then(function(r) { return r.json(); })
+                .then(function(json) {
+                    revenueChart.data.labels = json.labels;
+                    revenueChart.data.datasets[0].data = json.data;
+                    revenueChart.update();
+                })
+                .catch(function(err) { console.error('Revenue fetch error:', err); });
+        });
     });
 
     new Chart(document.getElementById('bookingChart'), {

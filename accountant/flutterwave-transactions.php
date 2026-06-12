@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/auth-check.php';
 require_once __DIR__ . '/../includes/role-check.php';
 checkRole(['accountant']);
 
-$page_title = 'Paystack Transactions';
+$page_title = 'Flutterwave Transactions';
 $base_url = '../';
 
 require_once __DIR__ . '/../includes/dashboard-header.php';
@@ -19,12 +19,12 @@ if (isset($_GET['verify']) && (int)$_GET['verify']) {
         $stmt->execute([$txn_id]);
         $txn = $stmt->fetch();
         if ($txn && $txn['paystack_reference']) {
-            $secret_key = getSetting('paystack_secret_key', '');
+            $secret_key = getSetting('flutterwave_secret_key', '');
             if ($secret_key) {
-                $ch = curl_init("https://api.paystack.co/transaction/verify/" . $txn['paystack_reference']);
+                $ch = curl_init("https://api.flutterwave.com/v3/transactions/verify/" . $txn['paystack_reference']);
                 curl_setopt_array($ch, [
                     CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_HTTPHEADER => ["Authorization: Bearer $secret_key"],
+                    CURLOPT_HTTPHEADER => ["Authorization: Bearer $secret_key", "Content-Type: application/json"],
                     CURLOPT_TIMEOUT => 30
                 ]);
                 $response = curl_exec($ch);
@@ -32,9 +32,9 @@ if (isset($_GET['verify']) && (int)$_GET['verify']) {
                 curl_close($ch);
                 if ($http_code === 200) {
                     $result = json_decode($response, true);
-                    if ($result['status']) {
+                    if ($result['status'] === 'success') {
                         $data = $result['data'];
-                        $new_status = $data['status'] === 'success' ? 'paid' : ($data['status'] === 'failed' ? 'failed' : 'pending');
+                        $new_status = $data['status'] === 'successful' ? 'paid' : ($data['status'] === 'failed' ? 'failed' : 'pending');
                         $stmt = $db->prepare("UPDATE paystack_transactions SET status = ?, amount = ?, verified_at = NOW(), reconciliation_status = 'verified' WHERE id = ?");
                         $stmt->execute([$new_status, $data['amount'] / 100, $txn_id]);
                         if ($new_status === 'paid') {
@@ -43,19 +43,19 @@ if (isset($_GET['verify']) && (int)$_GET['verify']) {
                         }
                         set_flash('success', 'Transaction verified successfully. Status: ' . $new_status);
                     } else {
-                        set_flash('warning', 'Paystack verification returned: ' . ($result['message'] ?? 'Unknown'));
+                        set_flash('warning', 'Flutterwave verification returned: ' . ($result['message'] ?? 'Unknown'));
                     }
                 } else {
-                    set_flash('danger', 'Failed to connect to Paystack API');
+                    set_flash('danger', 'Failed to connect to Flutterwave API');
                 }
             } else {
-                set_flash('danger', 'Paystack secret key not configured');
+                set_flash('danger', 'Flutterwave secret key not configured');
             }
         }
     } catch (Exception $e) {
         set_flash('danger', 'Error: ' . $e->getMessage());
     }
-    header('Location: paystack-transactions.php'); exit;
+    header('Location: flutterwave-transactions.php'); exit;
 }
 
 if (isset($_GET['reconcile']) && (int)$_GET['reconcile']) {
@@ -66,7 +66,7 @@ if (isset($_GET['reconcile']) && (int)$_GET['reconcile']) {
     } catch (Exception $e) {
         set_flash('danger', 'Error: ' . $e->getMessage());
     }
-    header('Location: paystack-transactions.php'); exit;
+    header('Location: flutterwave-transactions.php'); exit;
 }
 
 $status_filter = $_GET['status'] ?? '';
@@ -79,7 +79,7 @@ if ($recon_filter) { $where .= " AND (pt.reconciliation_status = ? OR (pt.reconc
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="dashboard.php"><i class="bi bi-house-door"></i> Home</a></li>
-            <li class="breadcrumb-item active">Paystack Transactions</li>
+            <li class="breadcrumb-item active">Flutterwave Transactions</li>
         </ol>
     </nav>
 
@@ -106,7 +106,7 @@ if ($recon_filter) { $where .= " AND (pt.reconciliation_status = ? OR (pt.reconc
                 </div>
                 <div class="col-lg-3 col-md-4 d-flex gap-1">
                     <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-funnel"></i> Filter</button>
-                    <a href="paystack-transactions.php" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x-circle"></i></a>
+                    <a href="flutterwave-transactions.php" class="btn btn-outline-secondary btn-sm"><i class="bi bi-x-circle"></i></a>
                 </div>
             </form>
         </div>
@@ -114,13 +114,13 @@ if ($recon_filter) { $where .= " AND (pt.reconciliation_status = ? OR (pt.reconc
 
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3">
-            <h5 class="mb-0 fw-semibold">Paystack Transactions</h5>
+            <h5 class="mb-0 fw-semibold">Flutterwave Transactions</h5>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
-                        <tr><th>Reference</th><th>Paystack Ref</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th><th>Reconciliation</th><th>Actions</th></tr>
+                        <tr><th>Reference</th><th>Gateway Ref</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th><th>Reconciliation</th><th>Actions</th></tr>
                     </thead>
                     <tbody>
                         <?php
@@ -147,7 +147,7 @@ if ($recon_filter) { $where .= " AND (pt.reconciliation_status = ? OR (pt.reconc
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="?verify=<?php echo $t['id']; ?>" class="btn btn-outline-primary" title="Verify with Paystack"><i class="bi bi-arrow-repeat"></i></a>
+                                    <a href="?verify=<?php echo $t['id']; ?>" class="btn btn-outline-primary" title="Verify with Flutterwave"><i class="bi bi-arrow-repeat"></i></a>
                                     <?php if ($r_status !== 'reconciled'): ?>
                                     <a href="?reconcile=<?php echo $t['id']; ?>" class="btn btn-outline-success" title="Mark Reconciled" onclick="return confirm('Mark this transaction as reconciled?')"><i class="bi bi-check-lg"></i></a>
                                     <?php endif; ?>
@@ -155,7 +155,7 @@ if ($recon_filter) { $where .= " AND (pt.reconciliation_status = ? OR (pt.reconc
                             </td>
                         </tr>
                         <?php endforeach; if (empty($txns)): ?>
-                        <tr><td colspan="8" class="text-center py-4 text-muted">No Paystack transactions found</td></tr>
+                        <tr><td colspan="8" class="text-center py-4 text-muted">No Flutterwave transactions found</td></tr>
                         <?php } catch (Exception $e) {
                             echo '<tr><td colspan="8" class="text-center py-4 text-danger">Error: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
                         } ?>

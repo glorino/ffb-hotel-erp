@@ -9,8 +9,7 @@ $base_url = '../';
 require_once __DIR__ . '/../includes/dashboard-header.php';
 
 $db = getDB();
-$branch_id = $_SESSION['branch_id'] ?? 0;
-$branch_filter = $branch_id ? "AND i.branch_id = $branch_id" : "";
+$branch_id = (int)($_SESSION['branch_id'] ?? 0);
 ?>
 
 <div class="container-fluid">
@@ -24,22 +23,52 @@ $branch_filter = $branch_id ? "AND i.branch_id = $branch_id" : "";
     <?php
     $stats = [];
     try {
-        $stmt = $db->query("SELECT COUNT(*) FROM inventory_items WHERE status='active' $branch_filter");
+        if ($branch_id) {
+            $stmt = $db->prepare("SELECT COUNT(*) FROM inventory_items WHERE status='active' AND i.branch_id=?");
+            $stmt->execute([$branch_id]);
+        } else {
+            $stmt = $db->query("SELECT COUNT(*) FROM inventory_items WHERE status='active'");
+        }
         $stats['total_items'] = $stmt->fetchColumn();
 
-        $stmt = $db->query("SELECT COUNT(*) FROM inventory_items WHERE quantity <= reorder_level AND status='active' $branch_filter");
+        if ($branch_id) {
+            $stmt = $db->prepare("SELECT COUNT(*) FROM inventory_items WHERE quantity <= reorder_level AND status='active' AND branch_id=?");
+            $stmt->execute([$branch_id]);
+        } else {
+            $stmt = $db->query("SELECT COUNT(*) FROM inventory_items WHERE quantity <= reorder_level AND status='active'");
+        }
         $stats['low_stock'] = $stmt->fetchColumn();
 
-        $stmt = $db->query("SELECT COALESCE(SUM(quantity),0) FROM stock_movements WHERE type='in' AND DATE(created_at)=CURRENT_DATE" . ($branch_id ? " AND branch_id=$branch_id" : ""));
+        if ($branch_id) {
+            $stmt = $db->prepare("SELECT COALESCE(SUM(quantity),0) FROM stock_movements WHERE type='in' AND DATE(created_at)=CURRENT_DATE AND branch_id=?");
+            $stmt->execute([$branch_id]);
+        } else {
+            $stmt = $db->query("SELECT COALESCE(SUM(quantity),0) FROM stock_movements WHERE type='in' AND DATE(created_at)=CURRENT_DATE");
+        }
         $stats['stock_in_today'] = $stmt->fetchColumn();
 
-        $stmt = $db->query("SELECT COALESCE(SUM(quantity),0) FROM stock_movements WHERE type='out' AND DATE(created_at)=CURRENT_DATE" . ($branch_id ? " AND branch_id=$branch_id" : ""));
+        if ($branch_id) {
+            $stmt = $db->prepare("SELECT COALESCE(SUM(quantity),0) FROM stock_movements WHERE type='out' AND DATE(created_at)=CURRENT_DATE AND branch_id=?");
+            $stmt->execute([$branch_id]);
+        } else {
+            $stmt = $db->query("SELECT COALESCE(SUM(quantity),0) FROM stock_movements WHERE type='out' AND DATE(created_at)=CURRENT_DATE");
+        }
         $stats['stock_out_today'] = $stmt->fetchColumn();
 
-        $stmt = $db->query("SELECT COUNT(*) FROM suppliers WHERE status='active'" . ($branch_id ? " AND branch_id=$branch_id" : ""));
+        if ($branch_id) {
+            $stmt = $db->prepare("SELECT COUNT(*) FROM suppliers WHERE status='active' AND branch_id=?");
+            $stmt->execute([$branch_id]);
+        } else {
+            $stmt = $db->query("SELECT COUNT(*) FROM suppliers WHERE status='active'");
+        }
         $stats['suppliers'] = $stmt->fetchColumn();
 
-        $stmt = $db->query("SELECT COUNT(*) FROM kitchen_requests WHERE status='pending'" . ($branch_id ? " AND branch_id=$branch_id" : ""));
+        if ($branch_id) {
+            $stmt = $db->prepare("SELECT COUNT(*) FROM kitchen_requests WHERE status='pending' AND branch_id=?");
+            $stmt->execute([$branch_id]);
+        } else {
+            $stmt = $db->query("SELECT COUNT(*) FROM kitchen_requests WHERE status='pending'");
+        }
         $stats['pending_requests'] = $stmt->fetchColumn();
     } catch (Exception $e) {
         error_log('Inventory dashboard error: ' . $e->getMessage());
@@ -258,7 +287,12 @@ $branch_filter = $branch_id ? "AND i.branch_id = $branch_id" : "";
 <?php
 $cat_labels = []; $cat_data = [];
 try {
-    $stmt = $db->query("SELECT category, COUNT(*) as cnt FROM inventory_items WHERE category IS NOT NULL AND status='active' $branch_filter GROUP BY category ORDER BY cnt DESC");
+    if ($branch_id) {
+        $stmt = $db->prepare("SELECT category, COUNT(*) as cnt FROM inventory_items WHERE category IS NOT NULL AND status='active' AND branch_id=? GROUP BY category ORDER BY cnt DESC");
+        $stmt->execute([$branch_id]);
+    } else {
+        $stmt = $db->query("SELECT category, COUNT(*) as cnt FROM inventory_items WHERE category IS NOT NULL AND status='active' GROUP BY category ORDER BY cnt DESC");
+    }
     while ($r = $stmt->fetch()) { $cat_labels[] = $r['category']; $cat_data[] = (int)$r['cnt']; }
 } catch (Exception $e) {}
 

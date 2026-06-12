@@ -283,7 +283,7 @@ $has_items = !empty($food_items);
                             <div class="payment-option selected">
                                 <div class="payment-radio"></div>
                                 <div class="payment-info">
-                                    <div class="payment-name">Paystack Online</div>
+                                    <div class="payment-name">Flutterwave Online</div>
                                     <div class="payment-desc">Pay securely with card, bank transfer, or USSD</div>
                                 </div>
                                 <input type="radio" name="payment_method" value="flutterwave" checked hidden>

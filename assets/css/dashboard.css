@@ -155,6 +155,8 @@ img {
   flex: 1;
   overflow-y: auto;
   padding: 12px 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-menu::-webkit-scrollbar {
@@ -2027,4 +2029,33 @@ textarea.dashboard-form-control {
   .status-badge {
     border: 1px solid currentColor;
   }
+}
+
+/* ── Dashboard Card Enhancements ── */
+.stat-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 16px !important;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.1) !important;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.stat-icon {
+  border-radius: 14px !important;
 }

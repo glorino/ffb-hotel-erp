@@ -14,4 +14,11 @@
     <li><a href="coupons.php" class="sidebar-nav-item <?php echo $current_page == 'coupons.php' ? 'active' : ''; ?>"><span class="nav-icon"><i class="bi bi-tag"></i></span><span class="nav-label">Coupons</span></a></li>
     <li><a href="live-chat.php" class="sidebar-nav-item <?php echo $current_page == 'live-chat.php' ? 'active' : ''; ?>"><span class="nav-icon"><i class="bi bi-chat-dots"></i></span><span class="nav-label">Live Chat</span></a></li>
     <li><a href="profile.php" class="sidebar-nav-item <?php echo $current_page == 'profile.php' ? 'active' : ''; ?>"><span class="nav-icon"><i class="bi bi-person-gear"></i></span><span class="nav-label">My Profile</span></a></li>
+    <li><a href="notifications.php" class="sidebar-nav-item <?php echo $current_page == 'notifications.php' ? 'active' : ''; ?>"><span class="nav-icon"><i class="bi bi-bell"></i></span><span class="nav-label">Notifications</span></a></li>
+    <li style="margin-top:auto; padding:12px 20px 16px; border-top:1px solid rgba(255,255,255,0.06);">
+        <a href="../logout.php" class="sidebar-nav-item" style="color:rgba(239,68,68,0.8);">
+            <span class="nav-icon"><i class="bi bi-box-arrow-right"></i></span>
+            <span class="nav-label">Sign Out</span>
+        </a>
+    </li>
 </ul>

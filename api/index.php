@@ -33,9 +33,14 @@ $file_map = [
     '/auth/password-reset-confirm'                        => 'auth/password-reset-confirm.php',
     '/ajax/validate-coupon'                               => 'ajax/validate-coupon.php',
     '/ajax/room-calendar'                                 => 'ajax/room-calendar.php',
+    '/ajax/revenue-data'                                  => 'ajax/revenue-data.php',
     '/ajax/seed-demo'                                      => 'ajax/seed-demo.php',
     '/ajax/migrate-rooms'                                  => 'ajax/migrate-rooms.php',
     '/ajax/reset-demo-passwords'                           => 'ajax/reset-demo-passwords.php',
+    '/ajax/fix-payments-method'                             => 'ajax/fix-payments-method-constraint.php',
+    '/ajax/cancel-test-bookings'                            => 'ajax/cancel-test-bookings.php',
+    '/ajax/toggle-supplier-status'                          => 'ajax/toggle-supplier-status.php',
+    '/ajax/toggle-item-status'                              => 'ajax/toggle-item-status.php',
     '/modules/bookings/check-availability'                => 'modules/bookings/check-availability.php',
     '/modules/bookings/create-booking'                    => 'modules/bookings/create-booking.php',
     '/modules/bookings/confirm-booking'                   => 'modules/bookings/confirm-booking.php',
@@ -45,10 +50,6 @@ $file_map = [
     '/modules/booking/get-rooms'                          => 'modules/booking/get-rooms.php',
     '/modules/booking/get-services'                       => 'modules/booking/get-services.php',
     '/modules/booking/process'                            => 'modules/booking/process.php',
-    '/modules/payments/paystack-initialize'               => 'modules/payments/paystack-initialize.php',
-    '/modules/payments/paystack-callback'                 => 'modules/payments/paystack-callback.php',
-    '/modules/payments/paystack-verify'                   => 'modules/payments/paystack-verify.php',
-    '/modules/payments/paystack-webhook'                  => 'modules/payments/paystack-webhook.php',
     '/modules/payments/flutterwave-callback'              => 'modules/payments/flutterwave-callback.php',
     '/modules/payments/flutterwave-webhook'               => 'modules/payments/flutterwave-webhook.php',
     '/modules/payments/offline-payment-handler'           => 'modules/payments/offline-payment-handler.php',
@@ -157,7 +158,7 @@ $file_map['/housekeeping/reports']                     = 'housekeeping/reports.p
 $file_map['/accountant/payments']                      = 'accountant/payments.php';
 $file_map['/accountant/invoices']                      = 'accountant/invoices.php';
 $file_map['/accountant/expenses']                      = 'accountant/expenses.php';
-$file_map['/accountant/paystack-transactions']         = 'accountant/paystack-transactions.php';
+$file_map['/accountant/flutterwave-transactions']        = 'accountant/flutterwave-transactions.php';
 $file_map['/accountant/offline-payments']              = 'accountant/offline-payments.php';
 $file_map['/accountant/refunds']                       = 'accountant/refunds.php';
 $file_map['/accountant/reports']                       = 'accountant/reports.php';
@@ -169,6 +170,9 @@ $file_map['/customer/payments']                        = 'customer/payments.php'
 $file_map['/customer/profile']                         = 'customer/profile.php';
 $file_map['/customer/coupons']                         = 'customer/coupons.php';
 $file_map['/customer/live-chat']                       = 'customer/live-chat.php';
+foreach ($role_prefixes as $role) {
+    $file_map["/$role/notifications"]                       = "$role/notifications.php";
+}
 if (isset($file_map[$uri])) {
     $script_name = basename($file_map[$uri]);
     $current_page = $script_name;
@@ -179,6 +183,18 @@ if (isset($file_map[$uri])) {
 
     $file_path = __DIR__ . '/../' . $file_map[$uri];
     if (file_exists($file_path)) {
+        require $file_path;
+        exit;
+    }
+}
+
+$dynamic_role_pattern = '/^\/(owner|admin|branch-manager|reception|kitchen|waiter|inventory|housekeeping|accountant|customer)\/(.+)$/';
+if (preg_match($dynamic_role_pattern, $uri, $m)) {
+    $role = $m[1];
+    $page = $m[2];
+    $file_path = __DIR__ . '/../' . $role . '/' . $page . '.php';
+    if (file_exists($file_path)) {
+        $GLOBALS['current_page'] = basename($file_path);
         require $file_path;
         exit;
     }

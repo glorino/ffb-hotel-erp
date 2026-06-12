@@ -21,8 +21,9 @@ if (isset($_POST['save_settings']) && verify_csrf($_POST['csrf_token'] ?? '')) {
         'smtp_port' => $_POST['smtp_port'] ?? '',
         'smtp_username' => $_POST['smtp_username'] ?? '',
         'smtp_encryption' => $_POST['smtp_encryption'] ?? 'tls',
-        'paystack_public_key' => $_POST['paystack_public_key'] ?? '',
-        'paystack_secret_key' => $_POST['paystack_secret_key'] ?? '',
+        'flutterwave_public_key' => $_POST['flutterwave_public_key'] ?? '',
+        'flutterwave_secret_key' => $_POST['flutterwave_secret_key'] ?? '',
+        'flutterwave_encryption_key' => $_POST['flutterwave_encryption_key'] ?? '',
         'termii_api_key' => $_POST['termii_api_key'] ?? '',
         'termii_sender_id' => $_POST['termii_sender_id'] ?? '',
         'date_format' => $_POST['date_format'] ?? 'Y-m-d',
@@ -113,7 +114,13 @@ function setting_value($key, $default = '') {
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Date Format</label>
-                                <input type="text" name="date_format" class="form-control" value="<?php echo htmlspecialchars(setting_value('date_format', 'Y-m-d')); ?>">
+                                <select name="date_format" class="form-select">
+                                    <option value="d-m-Y" <?php echo setting_value('date_format', 'd-m-Y') === 'd-m-Y' ? 'selected' : ''; ?>>dd-mm-yyyy (d-m-Y)</option>
+                                    <option value="Y-m-d" <?php echo setting_value('date_format') === 'Y-m-d' ? 'selected' : ''; ?>>yyyy-mm-dd (Y-m-d)</option>
+                                    <option value="m/d/Y" <?php echo setting_value('date_format') === 'm/d/Y' ? 'selected' : ''; ?>>mm/dd/yyyy (m/d/Y)</option>
+                                    <option value="d/m/Y" <?php echo setting_value('date_format') === 'd/m/Y' ? 'selected' : ''; ?>>dd/mm/yyyy (d/m/Y)</option>
+                                    <option value="M d, Y" <?php echo setting_value('date_format') === 'M d, Y' ? 'selected' : ''; ?>>Mon dd, yyyy (M d, Y)</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -159,18 +166,22 @@ function setting_value($key, $default = '') {
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white py-3">
-                        <h5 class="card-title mb-0 fw-semibold"><i class="bi bi-credit-card"></i> Payment Gateway (Paystack)</h5>
+                        <h5 class="card-title mb-0 fw-semibold"><i class="bi bi-credit-card"></i> Payment Gateway (Flutterwave)</h5>
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Public Key</label>
-                                <input type="text" name="paystack_public_key" class="form-control" value="<?php echo htmlspecialchars(setting_value('paystack_public_key', '')); ?>" placeholder="pk_live_...">
+                            <div class="col-md-4">
+                                <label class="form-label">Flutterwave Public Key</label>
+                                <input type="text" name="flutterwave_public_key" class="form-control" value="<?php echo htmlspecialchars(setting_value('flutterwave_public_key', '')); ?>" placeholder="FLWPUBK-...">
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Secret Key</label>
-                                <input type="password" name="paystack_secret_key" class="form-control" value="<?php echo htmlspecialchars(setting_value('paystack_secret_key', '')); ?>" placeholder="sk_live_...">
+                            <div class="col-md-4">
+                                <label class="form-label">Flutterwave Secret Key</label>
+                                <input type="password" name="flutterwave_secret_key" class="form-control" value="<?php echo htmlspecialchars(setting_value('flutterwave_secret_key', '')); ?>" placeholder="FLWSECK-...">
                                 <small class="text-muted">Key is masked for security</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Flutterwave Encryption Key</label>
+                                <input type="password" name="flutterwave_encryption_key" class="form-control" value="<?php echo htmlspecialchars(setting_value('flutterwave_encryption_key', '')); ?>" placeholder="Encryption key">
                             </div>
                         </div>
                     </div>

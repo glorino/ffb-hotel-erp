@@ -50,7 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_checkout'])) {
         log_audit('check_out', 'booking', $booking_id, null, ['final_amount' => $total_due, 'extra_charges' => $extra_charges]);
         $db->commit();
 
-        set_flash('success', "Guest checked out successfully. Receipt: {$receipt_no}");
+        $guest_name = trim(($booking['first_name'] ?? '') . ' ' . ($booking['last_name'] ?? ''));
+        if (empty($guest_name)) $guest_name = 'valued guest';
+        set_flash('success', "Thank you for staying with us, {$guest_name}! It was a pleasure hosting you. We look forward to welcoming you back to FFB Hotel whenever you're in town. Safe travels!");
         header("Location: receipts.php?ref={$receipt_no}");
         exit;
     } catch (Exception $e) {

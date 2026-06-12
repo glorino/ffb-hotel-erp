@@ -107,7 +107,7 @@ if (!empty($_GET['view_items'])) {
                             <td><?php echo $s['status'] === 'active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'; ?></td>
                             <td class="text-end">
                                 <button class="btn btn-sm btn-outline-primary edit-supplier" data-id="<?php echo $s['id']; ?>" data-name="<?php echo htmlspecialchars($s['name']); ?>" data-contact="<?php echo htmlspecialchars($s['contact_person'] ?? ''); ?>" data-phone="<?php echo htmlspecialchars($s['phone'] ?? ''); ?>" data-email="<?php echo htmlspecialchars($s['email'] ?? ''); ?>" data-address="<?php echo htmlspecialchars($s['address'] ?? ''); ?>" data-status="<?php echo $s['status']; ?>" title="Edit"><i class="bi bi-pencil"></i></button>
-                                <a href="ajax/toggle-supplier-status.php?id=<?php echo $s['id']; ?>" class="btn btn-sm btn-outline-<?php echo $s['status'] === 'active' ? 'warning' : 'success'; ?> confirm-link" title="<?php echo $s['status'] === 'active' ? 'Deactivate' : 'Activate'; ?>"><i class="bi bi-<?php echo $s['status'] === 'active' ? 'pause' : 'play'; ?>"></i></a>
+                                <a href="../ajax/toggle-supplier-status.php?id=<?php echo $s['id']; ?>" class="btn btn-sm btn-outline-<?php echo $s['status'] === 'active' ? 'warning' : 'success'; ?> confirm-link" title="<?php echo $s['status'] === 'active' ? 'Deactivate' : 'Activate'; ?>"><i class="bi bi-<?php echo $s['status'] === 'active' ? 'pause' : 'play'; ?>"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

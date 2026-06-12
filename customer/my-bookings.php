@@ -86,7 +86,7 @@ $bookings = $stmt->fetchAll();
                         <div class="col-6"><span class="text-muted">Payment:</span> <?php echo $b['payment_status'] ? getPaymentStatusBadge($b['payment_status']) : '<span class="badge bg-secondary">—</span>'; ?></div>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
-                        <a href="<?php echo $base_url; ?>receipt.php?booking=<?php echo $b['id']; ?>" class="btn btn-sm btn-outline-info"><i class="bi bi-receipt"></i> Receipt</a>
+                        <a href="<?php echo $base_url; ?>modules/payments/receipt-generator.php?booking=<?php echo $b['id']; ?>" class="btn btn-sm btn-outline-info"><i class="bi bi-receipt"></i> Receipt</a>
                         <?php if (in_array($b['booking_status'], ['pending', 'confirmed'])): ?>
                         <a href="?cancel=<?php echo $b['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Cancel this booking?')"><i class="bi bi-x-circle"></i> Cancel</a>
                         <?php endif; ?>

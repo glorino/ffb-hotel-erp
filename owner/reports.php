@@ -163,8 +163,9 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
                                 <option value="orders">Food Orders</option>
                             </select>
                         </div>
-                        <div class="col-md-2 d-flex align-items-end">
+                        <div class="col-md-2 d-flex align-items-end gap-2">
                             <button type="submit" name="export" value="csv" class="btn btn-success w-100"><i class="bi bi-download"></i> Export CSV</button>
+                            <button type="button" onclick="exportPDF()" class="btn btn-danger w-100"><i class="bi bi-file-pdf"></i> Export PDF</button>
                         </div>
                     </form>
                 </div>
@@ -235,5 +236,41 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
         </div>
     </div>
 </div>
+
+<script>
+function exportPDF() {
+    var form = document.querySelector('form[method="POST"]');
+    if (!form) return;
+    var reportType = form.querySelector('[name="report_type"]').value;
+    if (!reportType) { alert('Please select a report type first.'); return; }
+    var dateFrom = form.querySelector('[name="date_from"]').value;
+    var dateTo = form.querySelector('[name="date_to"]').value;
+    var reportNames = {
+        bookings: 'Bookings Report',
+        payments: 'Payments Report',
+        revenue: 'Revenue Summary',
+        customers: 'Customers Report',
+        occupancy: 'Room Occupancy',
+        orders: 'Food Orders'
+    };
+    var win = window.open('', '_blank');
+    win.document.write('<html><head><title>' + (reportNames[reportType] || 'Report') + '</title>');
+    win.document.write('<style>body{font-family:Arial,sans-serif;padding:20px;}table{width:100%;border-collapse:collapse;margin-top:16px;}th,td{border:1px solid #ddd;padding:8px;text-align:left;font-size:12px;}th{background:#0a1628;color:#fff;}tr:nth-child(even){background:#f9f9f9;}h1{font-size:20px;margin-bottom:4px;}h2{font-size:14px;color:#666;margin-top:0;}</style>');
+    win.document.write('</head><body>');
+    win.document.write('<h1>FFB Hotel — ' + (reportNames[reportType] || 'Report') + '</h1>');
+    win.document.write('<h2>Date Range: ' + dateFrom + ' to ' + dateTo + '</h2>');
+    win.document.write('<p>Generated on: ' + new Date().toLocaleString() + '</p>');
+    win.document.write('<p><em>Note: This is a print-friendly view. Use Ctrl+P to save as PDF.</em></p>');
+    win.document.write('<hr>');
+    var table = document.querySelector('.table-responsive table');
+    if (table) {
+        win.document.write('<table>' + table.innerHTML + '</table>');
+    } else {
+        win.document.write('<p>No table data available for this report. Please generate the report first by selecting a type and clicking Export CSV, then try PDF export.</p>');
+    }
+    win.document.write('</body></html>');
+    win.document.close();
+}
+</script>
 
 <?php require_once __DIR__ . '/../includes/dashboard-footer.php'; ?>

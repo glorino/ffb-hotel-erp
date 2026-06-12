@@ -84,7 +84,7 @@ try {
     $hotel_tagline = getSetting('site_tagline', 'Luxury Redefined');
 
     $payment_method_labels = [
-        'paystack'      => 'Online Payment',
+        'flutterwave'   => 'Online Payment',
         'cash'          => 'Cash',
         'pos'           => 'POS Terminal',
         'bank_transfer' => 'Bank Transfer',

@@ -25,7 +25,7 @@ if (empty($paystack_signature)) {
 $expected_signature = hash_hmac('sha512', $input, PAYSTACK_SECRET_KEY);
 
 if (!hash_equals($expected_signature, $paystack_signature)) {
-    error_log('Paystack webhook: Invalid signature. Expected: ' . $expected_signature . ', Got: ' . $paystack_signature);
+    error_log('Flutterwave webhook: Invalid signature. Expected: ' . $expected_signature . ', Got: ' . $paystack_signature);
     http_response_code(401);
     exit('Invalid signature');
 }
@@ -33,7 +33,7 @@ if (!hash_equals($expected_signature, $paystack_signature)) {
 $event = json_decode($input, true);
 
 if (!$event || !isset($event['event']) || !isset($event['data'])) {
-    error_log('Paystack webhook: Invalid event structure');
+    error_log('Flutterwave webhook: Invalid event structure');
     http_response_code(400);
     exit('Invalid event');
 }
@@ -50,7 +50,7 @@ $log_data = [
     'timestamp'   => date('Y-m-d H:i:s'),
 ];
 
-error_log('Paystack webhook received: ' . json_encode($log_data));
+error_log('Flutterwave webhook received: ' . json_encode($log_data));
 
 $db = getDB();
 
@@ -66,22 +66,22 @@ try {
 
         case 'transfer.success':
             // Handle transfer success if applicable
-            error_log('Paystack webhook: Transfer successful - ' . ($event_data['reference'] ?? ''));
+            error_log('Flutterwave webhook: Transfer successful - ' . ($event_data['reference'] ?? ''));
             break;
 
         case 'transfer.failed':
-            error_log('Paystack webhook: Transfer failed - ' . ($event_data['reference'] ?? ''));
+            error_log('Flutterwave webhook: Transfer failed - ' . ($event_data['reference'] ?? ''));
             break;
 
         default:
-            error_log('Paystack webhook: Unhandled event type - ' . $event_type);
+            error_log('Flutterwave webhook: Unhandled event type - ' . $event_type);
     }
 
     http_response_code(200);
     echo 'OK';
 
 } catch (Exception $e) {
-    error_log('Paystack webhook processing error: ' . $e->getMessage());
+    error_log('Flutterwave webhook processing error: ' . $e->getMessage());
     http_response_code(500);
     exit('Processing error');
 }
@@ -97,7 +97,7 @@ function handleChargeSuccess(PDO $db, array $data): void
     $gateway_response = $data['gateway_response'] ?? '';
 
     if (empty($reference)) {
-        error_log('Paystack webhook: charge.success with empty reference');
+        error_log('Flutterwave webhook: charge.success with empty reference');
         return;
     }
 
@@ -145,7 +145,7 @@ function handleChargeSuccess(PDO $db, array $data): void
     } else {
         $stmt = $db->prepare("
             INSERT INTO payments (booking_id, order_id, amount, method, status, reference, gateway_response, receipt_number, created_at, verified_at)
-            VALUES (?, ?, ?, 'paystack', 'paid', ?, ?, ?, NOW(), NOW())
+            VALUES (?, ?, ?, 'flutterwave', 'paid', ?, ?, ?, NOW(), NOW())
         ");
         $stmt->execute([
             $booking_id ?: null,
@@ -207,7 +207,7 @@ function handleChargeSuccess(PDO $db, array $data): void
     }
 
     $db->commit();
-    error_log("Paystack webhook: Payment successful for reference {$reference}, amount {$amount}, booking {$booking_id}, order {$order_id}");
+    error_log("Flutterwave webhook: Payment successful for reference {$reference}, amount {$amount}, booking {$booking_id}, order {$order_id}");
 }
 
 function handleChargeFailed(PDO $db, array $data): void
@@ -259,7 +259,7 @@ function handleChargeFailed(PDO $db, array $data): void
         }
     }
 
-    error_log("Paystack webhook: Payment failed for reference {$reference}, reason: {$failure_message}");
+    error_log("Flutterwave webhook: Payment failed for reference {$reference}, reason: {$failure_message}");
 }
 
 function sendPaymentNotifications(array $booking, float $amount, string $reference): void
@@ -269,7 +269,7 @@ function sendPaymentNotifications(array $booking, float $amount, string $referen
     try {
         $subject = 'Payment Confirmed - ' . $booking['booking_reference'];
         $message = "Dear {$booking['customer_name']},\n\n"
-                 . "Your payment of " . formatMoney($amount) . " has been confirmed via Paystack.\n\n"
+                 . "Your payment of " . formatMoney($amount) . " has been confirmed via Flutterwave.\n\n"
                  . "Booking Reference: {$booking['booking_reference']}\n"
                  . "Branch: {$booking['branch_name']}\n"
                  . "Check-In: " . formatDate($booking['check_in_date']) . "\n"

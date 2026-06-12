@@ -137,7 +137,7 @@ function log_audit($action, $entity_type, $entity_id, $old_values = null, $new_v
     $db = getDB();
     $stmt = $db->prepare("INSERT INTO audit_logs (user_id, action, entity_type, entity_id, old_values, new_values, ip_address) VALUES (?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([
-        $_SESSION['user_id'] ?? 0,
+        $_SESSION['user_id'] ?? null,
         $action,
         $entity_type,
         $entity_id,

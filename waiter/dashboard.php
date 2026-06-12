@@ -140,6 +140,29 @@ $user_id = $_SESSION['user_id'] ?? 0;
     </div>
 
     <div class="row g-3 mb-4">
+        <div class="col-xl-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom-0 py-3">
+                    <h5 class="card-title mb-0 fw-semibold">Orders by Hour</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="ordersChart" height="260"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom-0 py-3">
+                    <h5 class="card-title mb-0 fw-semibold">Order Status</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="orderStatusChart" height="260"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
         <div class="col-12">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-bottom-0 py-3">
@@ -280,4 +303,68 @@ $user_id = $_SESSION['user_id'] ?? 0;
     </div>
 </div>
 
+<?php
+$hour_labels = [];
+$hour_data = [];
+try {
+    for ($h = 6; $h <= 22; $h++) {
+        $hour_labels[] = sprintf('%02d:00', $h);
+        $stmt = $db->prepare("SELECT COUNT(*) FROM food_orders WHERE branch_id = ? AND waiter_id = ? AND EXTRACT(HOUR FROM created_at) = ?");
+        $stmt->execute([$branch_id, $user_id, $h]);
+        $hour_data[] = (int) $stmt->fetchColumn();
+    }
+} catch (Exception $e) {
+    $hour_labels = array_map(function($h) { return sprintf('%02d:00', $h); }, range(6, 22));
+    $hour_data = array_fill(0, 17, 0);
+}
+
+$status_counts = ['pending' => 0, 'preparing' => 0, 'ready' => 0, 'completed' => 0, 'cancelled' => 0];
+try {
+    $stmt = $db->prepare("SELECT status, COUNT(*) as cnt FROM food_orders WHERE branch_id = ? AND waiter_id = ? AND DATE(created_at) = CURRENT_DATE GROUP BY status");
+    $stmt->execute([$branch_id, $user_id]);
+    while ($row = $stmt->fetch()) {
+        $status_counts[$row['status']] = (int) $row['cnt'];
+    }
+} catch (Exception $e) {}
+?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    new Chart(document.getElementById('ordersChart'), {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($hour_labels); ?>,
+            datasets: [{
+                label: 'Orders',
+                data: <?php echo json_encode($hour_data); ?>,
+                backgroundColor: 'rgba(13, 110, 253, 0.7)',
+                borderColor: '#0d6efd',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+    });
+
+    new Chart(document.getElementById('orderStatusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Pending', 'Preparing', 'Ready', 'Completed', 'Cancelled'],
+            datasets: [{
+                data: <?php echo json_encode(array_values($status_counts)); ?>,
+                backgroundColor: ['#ffc107', '#0dcaf0', '#198754', '#6c757d', '#dc3545'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } },
+            cutout: '65%'
+        }
+    });
+});
+</script>
 <?php require_once __DIR__ . '/../includes/dashboard-footer.php'; ?>

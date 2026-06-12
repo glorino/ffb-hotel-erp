@@ -45,9 +45,9 @@ if (!$result || !$result['status'] || $result['data']['status'] !== 'success') {
 }
 
 $data = $result['data'];
-$paystack_amount = $data['amount'] / 100;
-$paystack_currency = $data['currency'] ?? 'NGN';
-$paystack_reference = $data['reference'] ?? $reference;
+$flw_amount = $data['amount'] / 100;
+$flw_currency = $data['currency'] ?? 'NGN';
+$flw_reference = $data['reference'] ?? $reference;
 
 // If booking_id was not passed in URL, try to look it up from pending payment
 $db = getDB();
@@ -73,19 +73,19 @@ try {
             gateway_response = ?
         WHERE reference = ? AND status = 'pending'
     ");
-    $stmt->execute([json_encode($data), $paystack_reference]);
+    $stmt->execute([json_encode($data), $flw_reference]);
 
     // If no pending payment record found, insert one
     if ($stmt->rowCount() === 0) {
         $stmt = $db->prepare("
             INSERT INTO payments (booking_id, order_id, amount, method, status, reference, gateway_response, created_at, verified_at)
-            VALUES (?, ?, ?, 'paystack', 'paid', ?, ?, NOW(), NOW())
+            VALUES (?, ?, ?, 'flutterwave', 'paid', ?, ?, NOW(), NOW())
         ");
         $stmt->execute([
             $booking_id ?: null,
             $order_id ?: null,
-            $paystack_amount,
-            $paystack_reference,
+            $flw_amount,
+            $flw_reference,
             json_encode($data),
         ]);
     }
@@ -96,7 +96,7 @@ try {
     $stmt = $db->prepare("
         UPDATE payments SET receipt_number = ? WHERE reference = ? AND receipt_number IS NULL
     ");
-    $stmt->execute([$receipt_number, $paystack_reference]);
+    $stmt->execute([$receipt_number, $flw_reference]);
 
     if ($booking_id > 0) {
         // Update booking payment and status
@@ -108,7 +108,7 @@ try {
                 updated_at = NOW()
             WHERE id = ?
         ");
-        $stmt->execute([$paystack_reference, $booking_id]);
+        $stmt->execute([$flw_reference, $booking_id]);
 
         // Reserve the room
         $stmt = $db->prepare("SELECT room_id FROM bookings WHERE id = ?");
@@ -135,7 +135,7 @@ try {
             try {
                 $subject = 'Payment Confirmed - ' . $booking['booking_reference'];
                 $message = "Dear {$booking['customer_name']},\n\n"
-                         . "Your payment of " . formatMoney($paystack_amount) . " has been confirmed.\n\n"
+                         . "Your payment of " . formatMoney($flw_amount) . " has been confirmed.\n\n"
                          . "Booking Reference: {$booking['booking_reference']}\n"
                          . "Branch: {$booking['branch_name']}\n"
                          . "Check-In: " . formatDate($booking['check_in_date']) . "\n"
@@ -155,7 +155,7 @@ try {
 
             // Send SMS
             try {
-                $sms_text = "Payment confirmed for booking {$booking['booking_reference']}. Amount: " . formatMoney($paystack_amount) . ". Receipt: {$receipt_number}. Thank you for choosing " . APP_NAME . ".";
+                $sms_text = "Payment confirmed for booking {$booking['booking_reference']}. Amount: " . formatMoney($flw_amount) . ". Receipt: {$receipt_number}. Thank you for choosing " . APP_NAME . ".";
 
                 $sms_payload = json_encode([
                     'api_key' => TERMII_API_KEY,
@@ -182,18 +182,18 @@ try {
 
             log_audit('payment_success', 'booking', $booking_id,
                 ['payment_status' => 'pending'],
-                ['payment_status' => 'paid', 'amount' => $paystack_amount, 'reference' => $paystack_reference]
+                ['payment_status' => 'paid', 'amount' => $flw_amount, 'reference' => $flw_reference]
             );
         }
     }
 
     if ($order_id > 0) {
         $stmt = $db->prepare("UPDATE orders SET payment_status = 'paid', paystack_reference = ?, updated_at = NOW() WHERE id = ?");
-        $stmt->execute([$paystack_reference, $order_id]);
+        $stmt->execute([$flw_reference, $order_id]);
 
         log_audit('payment_success', 'order', $order_id,
             ['payment_status' => 'pending'],
-            ['payment_status' => 'paid', 'amount' => $paystack_amount, 'reference' => $paystack_reference]
+            ['payment_status' => 'paid', 'amount' => $flw_amount, 'reference' => $flw_reference]
         );
     }
 
@@ -202,7 +202,7 @@ try {
     // Redirect to success page
     $params = [
         'success'  => 'payment_successful',
-        'ref'      => $paystack_reference,
+        'ref'      => $flw_reference,
         'receipt'  => $receipt_number,
     ];
     if ($booking_id) {
@@ -220,7 +220,7 @@ try {
 
 } catch (Exception $e) {
     $db->rollBack();
-    error_log('Paystack callback error: ' . $e->getMessage());
+    error_log('Flutterwave callback error: ' . $e->getMessage());
     header('Location: ' . APP_URL . '/customer/my-bookings.php?error=callback_processing_failed');
     exit;
 }

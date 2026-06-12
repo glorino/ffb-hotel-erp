@@ -78,7 +78,7 @@ $payments = $stmt->fetchAll();
                             <td><?php echo getPaymentStatusBadge($p['status']); ?></td>
                             <td><small class="text-muted"><?php echo formatDate($p['created_at']); ?></small></td>
                             <td>
-                                <a href="<?php echo $base_url; ?>receipt.php?payment=<?php echo $p['id']; ?>" class="btn btn-sm btn-outline-info"><i class="bi bi-receipt"></i></a>
+                                <a href="<?php echo $base_url; ?>modules/payments/receipt-generator.php?payment=<?php echo $p['id']; ?>" class="btn btn-sm btn-outline-info"><i class="bi bi-receipt"></i></a>
                             </td>
                         </tr>
                         <?php endforeach; if (empty($payments)): ?>

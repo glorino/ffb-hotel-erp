@@ -349,6 +349,10 @@ $cur = mb_chr(0x20A6, 'UTF-8');
                         <span>Your booking is secure. Free cancellation within 24 hours.</span>
                     </div>
 
+                    <a href="<?php echo BASE_URL; ?>booking.php" class="summary-clear-btn" id="clearCartBtn">
+                        <i class="bi bi-x-circle me-1"></i> Clear Cart
+                    </a>
+
                     <div class="summary-help">
                         <i class="bi bi-headset"></i>
                         <span>Need help? Call us at <a href="tel:+2349059980991">+234 905 998 0991</a></span>
@@ -445,6 +449,8 @@ $cur = mb_chr(0x20A6, 'UTF-8');
 .summary-help i { color:var(--navy); font-size:1rem; flex-shrink:0; }
 .summary-help a { color:var(--gold); text-decoration:none; font-weight:700; }
 .summary-help a:hover { text-decoration:underline; }
+.summary-clear-btn { display:flex; align-items:center; justify-content:center; gap:6px; margin:0 28px 12px; padding:10px 16px; background:rgba(220,53,69,0.05); border:1px solid rgba(220,53,69,0.15); border-radius:10px; color:#dc3545; font-size:0.78rem; font-weight:600; text-decoration:none; text-align:center; transition:all 0.25s ease; }
+.summary-clear-btn:hover { background:#dc3545; border-color:#dc3545; color:#fff; }
 
 @media (max-width:768px) {
     .booking-steps-bar { padding:0; }
@@ -454,7 +460,7 @@ $cur = mb_chr(0x20A6, 'UTF-8');
     .step-line { min-width:16px; margin-bottom:18px; }
     .booking-section { padding:20px; }
     .booking-submit-btn { margin:0 20px 20px; width:calc(100% - 40px) !important; }
-    .summary-body, .summary-trust, .summary-help { margin-left:20px; margin-right:20px; }
+    .summary-body, .summary-trust, .summary-help, .summary-clear-btn { margin-left:20px; margin-right:20px; }
 }
 </style>
 

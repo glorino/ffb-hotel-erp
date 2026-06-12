@@ -7,7 +7,12 @@ require_once __DIR__ . '/flash.php';
 require_once __DIR__ . '/csrf.php';
 
 $page_title = $page_title ?? APP_NAME . ' Dashboard';
-$current_user = getUser();
+try {
+    $current_user = getUser();
+} catch (Exception $e) {
+    error_log('getUser failed: ' . $e->getMessage());
+    $current_user = ['full_name' => $_SESSION['full_name'] ?? 'User', 'role_slug' => $_SESSION['role_slug'] ?? '', 'role_name' => ''];
+}
 $base_url = $base_url ?? '../';
 
 $unread_count = 0;
@@ -69,6 +74,37 @@ try {
                 </div>
             </div>
             <div class="nav-controls">
+                <div class="notification-bell dropdown me-3">
+                    <button class="btn position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:var(--text-muted);">
+                        <i class="bi bi-bell" style="font-size:1.2rem;"></i>
+                        <?php if ($unread_count > 0): ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.6rem;">
+                            <?php echo $unread_count > 99 ? '99+' : $unread_count; ?>
+                        </span>
+                        <?php endif; ?>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" style="width:320px;max-height:400px;overflow-y:auto;">
+                        <li class="dropdown-header fw-bold">Notifications</li>
+                        <li><hr class="dropdown-divider"></li>
+                        <?php if (empty($notifications)): ?>
+                        <li><span class="dropdown-item text-muted text-center py-3">No notifications</span></li>
+                        <?php else: ?>
+                        <?php foreach (array_slice($notifications, 0, 5) as $n): ?>
+                        <li><a class="dropdown-item py-2" href="notifications.php?id=<?php echo $n['id']; ?>">
+                            <div class="d-flex align-items-start gap-2">
+                                <div class="flex-shrink-0 mt-1"><i class="bi bi-bell-fill text-primary" style="font-size:0.7rem;"></i></div>
+                                <div>
+                                    <div style="font-size:0.82rem;line-height:1.3;"><?php echo htmlspecialchars($n['message'] ?? $n['title'] ?? 'Notification'); ?></div>
+                                    <small class="text-muted"><?php echo htmlspecialchars($n['created_at'] ?? ''); ?></small>
+                                </div>
+                            </div>
+                        </a></li>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-center py-2 fw-semibold" href="notifications.php" style="font-size:0.82rem;">View All Notifications</a></li>
+                    </ul>
+                </div>
                 <div class="user-dropdown dropdown">
                     <button class="btn dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:var(--gold);color:var(--navy);font-size:14px;font-weight:600;">
@@ -79,9 +115,6 @@ try {
                             <span class="user-role d-block text-muted" style="font-size:0.72rem;"><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $current_user['role_slug'] ?? ''))); ?></span>
                         </div>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="<?php echo $base_url; ?>logout.php"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
-                    </ul>
                 </div>
             </div>
         </header>

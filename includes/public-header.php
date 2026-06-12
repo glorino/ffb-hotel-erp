@@ -62,8 +62,25 @@ $has_announcement = $show_announcement && $announcement;
         </nav>
 
         <div class="header-actions">
+            <a href="<?php echo BASE_URL; ?>booking.php" class="header-cart" aria-label="Book a room">
+                <i class="bi bi-bag-check"></i>
+            </a>
+            <?php
+            $role_dashboard_map = [
+                'business_owner' => 'owner/dashboard.php',
+                'admin'          => 'admin/dashboard.php',
+                'branch_manager' => 'branch-manager/dashboard.php',
+                'receptionist'   => 'reception/dashboard.php',
+                'kitchen_chef'   => 'kitchen/dashboard.php',
+                'waiter'         => 'waiter/dashboard.php',
+                'inventory_manager' => 'inventory/dashboard.php',
+                'housekeeping'   => 'housekeeping/dashboard.php',
+                'accountant'     => 'accountant/dashboard.php',
+                'customer'       => 'customer/dashboard.php',
+            ];
+            ?>
             <?php if (isset($_SESSION['user_id'])): ?>
-                <a href="<?php echo BASE_URL; ?>dashboard/index.php" class="btn-login">
+                <a href="<?php echo BASE_URL . ($role_dashboard_map[$_SESSION['role_slug']] ?? 'login.php'); ?>" class="btn-login">
                     <i class="bi bi-person"></i> Dashboard
                 </a>
             <?php else: ?>
@@ -88,12 +105,14 @@ $has_announcement = $show_announcement && $announcement;
         <a href="<?php echo BASE_URL; ?>gallery.php" class="mobile-nav-link <?php echo $current_page === 'gallery.php' ? 'active' : ''; ?>">Gallery</a>
         <a href="<?php echo BASE_URL; ?>contact.php" class="mobile-nav-link <?php echo $current_page === 'contact.php' ? 'active' : ''; ?>">Contact</a>
         <div class="mobile-actions">
+            <a href="<?php echo BASE_URL; ?>booking.php" class="header-cart-mobile" aria-label="Book a room">
+                <i class="bi bi-bag-check"></i> Book Now
+            </a>
             <?php if (isset($_SESSION['user_id'])): ?>
-                <a href="<?php echo BASE_URL; ?>dashboard/index.php" class="btn btn-outline-gold"><i class="bi bi-person"></i> Dashboard</a>
+                <a href="<?php echo BASE_URL . ($role_dashboard_map[$_SESSION['role_slug']] ?? 'login.php'); ?>" class="btn btn-outline-gold"><i class="bi bi-person"></i> Dashboard</a>
             <?php else: ?>
                 <a href="<?php echo BASE_URL; ?>login.php" class="btn btn-outline-gold">Login</a>
             <?php endif; ?>
-            <a href="<?php echo BASE_URL; ?>booking.php" class="btn btn-gold">Book Now</a>
         </div>
     </div>
 </header>

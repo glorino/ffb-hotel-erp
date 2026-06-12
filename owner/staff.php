@@ -94,6 +94,31 @@ $role_filter = $_GET['role'] ?? '';
     </div>
     <?php endif;
 
+    <?php
+    if (isset($_POST['toggle_status']) && verify_csrf($_POST['csrf_token'] ?? '')) {
+        $toggle_user_id = (int)($_POST['user_id'] ?? 0);
+        $current_owner_id = $_SESSION['user_id'] ?? 0;
+        if ($toggle_user_id === $current_owner_id) {
+            echo '<div class="alert alert-danger">You cannot deactivate your own account.</div>';
+        } else {
+            try {
+                $stmt = $db->prepare("SELECT id, status FROM users WHERE id = ?");
+                $stmt->execute([$toggle_user_id]);
+                $target = $stmt->fetch();
+                if ($target) {
+                    $new_status = $target['status'] === 'active' ? 'inactive' : 'active';
+                    $stmt = $db->prepare("UPDATE users SET status = ? WHERE id = ?");
+                    $stmt->execute([$new_status, $toggle_user_id]);
+                    log_audit('update', 'user', $toggle_user_id, ['status' => $target['status']], ['status' => $new_status]);
+                    echo '<div class="alert alert-success alert-dismissible fade show">Staff status updated to ' . ucfirst($new_status) . '.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+                }
+            } catch (Exception $e) {
+                echo '<div class="alert alert-danger">Error: ' . htmlspecialchars($e->getMessage()) . '</div>';
+            }
+        }
+    }
+    ?>
+
     if (isset($_POST['save_staff']) && verify_csrf($_POST['csrf_token'] ?? '')) {
         try {
             $stmt = $db->prepare("SELECT id FROM users WHERE email = ?");
@@ -129,6 +154,7 @@ $role_filter = $_GET['role'] ?? '';
                             <th>Status</th>
                             <th>Last Login</th>
                             <th>Created</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -153,7 +179,7 @@ $role_filter = $_GET['role'] ?? '';
 
                             if (empty($staff_list)):
                         ?>
-                        <tr><td colspan="7" class="text-center py-4 text-muted">No staff found.</td></tr>
+                        <tr><td colspan="8" class="text-center py-4 text-muted">No staff found.</td></tr>
                         <?php else: ?>
                         <?php foreach ($staff_list as $s): ?>
                         <tr>
@@ -179,11 +205,25 @@ $role_filter = $_GET['role'] ?? '';
                             </td>
                             <td><small class="text-muted"><?php echo $s['last_login'] ? formatDateTime($s['last_login']) : 'Never'; ?></small></td>
                             <td><small class="text-muted"><?php echo formatDate($s['created_at']); ?></small></td>
+                            <td>
+                                <?php if ($s['id'] != ($_SESSION['user_id'] ?? 0)): ?>
+                                <form method="POST" style="display:inline;" onsubmit="return confirm('<?php echo $s['status'] === 'active' ? 'Are you sure you want to deactivate this staff member?' : 'Are you sure you want to activate this staff member?'; ?>')">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="user_id" value="<?php echo $s['id']; ?>">
+                                    <button type="submit" name="toggle_status" class="btn btn-sm <?php echo $s['status'] === 'active' ? 'btn-outline-danger' : 'btn-outline-success'; ?>">
+                                        <i class="bi bi-<?php echo $s['status'] === 'active' ? 'person-dash' : 'person-check'; ?>"></i>
+                                        <?php echo $s['status'] === 'active' ? 'Deactivate' : 'Activate'; ?>
+                                    </button>
+                                </form>
+                                <?php else: ?>
+                                <span class="text-muted small">—</span>
+                                <?php endif; ?>
+                            </td>
                         </tr>
                         <?php endforeach; ?>
                         <?php endif; ?>
                         <?php } catch (Exception $e) { ?>
-                        <tr><td colspan="7" class="text-danger"><?php echo htmlspecialchars($e->getMessage()); ?></td></tr>
+                        <tr><td colspan="8" class="text-danger"><?php echo htmlspecialchars($e->getMessage()); ?></td></tr>
                         <?php } ?>
                     </tbody>
                 </table>

@@ -378,6 +378,50 @@ body:not(.has-announcement) .site-header { top: 0; }
 }
 .header-actions .btn-login:hover { color: var(--gold); }
 
+.header-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.8);
+  font-size: 18px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.header-cart:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy);
+  transform: scale(1.05);
+}
+.header-cart-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold);
+  font-family: var(--font-accent);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: var(--transition);
+  margin-bottom: 10px;
+}
+.header-cart-mobile:hover {
+  background: var(--gold);
+  color: var(--navy);
+}
+
 .hamburger {
   display: none;
   flex-direction: column;

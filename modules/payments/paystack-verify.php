@@ -30,7 +30,7 @@ $curl_error = curl_error($ch);
 curl_close($ch);
 
 if ($curl_error) {
-    error_log('Paystack verify cURL error: ' . $curl_error);
+    error_log('Flutterwave verify cURL error: ' . $curl_error);
     jsonResponse([
         'verified' => false,
         'success'  => false,
@@ -39,11 +39,11 @@ if ($curl_error) {
 }
 
 if ($http_code !== 200) {
-    $error_msg = 'Paystack verification failed with HTTP ' . $http_code;
+    $error_msg = 'Flutterwave verification failed with HTTP ' . $http_code;
     if ($http_code === 404) {
         $error_msg = 'Transaction reference not found';
     }
-    error_log('Paystack verify HTTP error: ' . $http_code . ' | Ref: ' . $reference);
+    error_log('Flutterwave verify HTTP error: ' . $http_code . ' | Ref: ' . $reference);
     jsonResponse([
         'verified' => false,
         'success'  => false,
@@ -54,7 +54,7 @@ if ($http_code !== 200) {
 $result = json_decode($response, true);
 
 if (!$result || !isset($result['status'])) {
-    error_log('Paystack verify invalid response: ' . $response);
+    error_log('Flutterwave verify invalid response: ' . $response);
     jsonResponse([
         'verified' => false,
         'success'  => false,
