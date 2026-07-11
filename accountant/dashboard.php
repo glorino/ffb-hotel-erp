@@ -251,7 +251,7 @@ $branch_filter_expenses = $branch_id ? "AND e.branch_id = " . (int)$branch_id : 
                             <tbody>
                                 <?php
                                 try {
-                                    $stmt = $db->query("SELECT * FROM paystack_transactions WHERE reconciliation_status != 'reconciled' OR reconciliation_status IS NULL ORDER BY created_at DESC LIMIT 10");
+                                    $stmt = $db->query("SELECT * FROM flutterwave_transactions WHERE reconciliation_status != 'reconciled' OR reconciliation_status IS NULL ORDER BY created_at DESC LIMIT 10");
                                     $recs = $stmt->fetchAll();
                                     foreach ($recs as $r):
                                 ?>

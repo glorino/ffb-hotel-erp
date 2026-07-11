@@ -36,7 +36,7 @@ const BookingApp = (function () {
     tax: 0,
     serviceCharge: 0,
     total: 0,
-    paymentMethod: 'paystack',
+    paymentMethod: 'flutterwave',
     currentStep: 1,
     totalSteps: 1
   };
@@ -65,7 +65,7 @@ const BookingApp = (function () {
       couponMessage: document.querySelector('[data-coupon-message]'),
       couponRow: document.querySelector('[data-coupon-row]'),
       paymentMethods: document.querySelectorAll('[name="payment_method"]'),
-      paystackSection: document.querySelector('[data-paystack-section]'),
+      flutterwaveSection: document.querySelector('[data-flutterwave-section]'),
       submitBtn: document.querySelector('[type="submit"]'),
       stepIndicators: document.querySelectorAll('.step-indicator'),
       stepContents: document.querySelectorAll('.step-content'),
@@ -377,8 +377,8 @@ const BookingApp = (function () {
     els.paymentMethods.forEach(function (method) {
       method.addEventListener('change', function () {
         state.paymentMethod = this.value;
-        if (els.paystackSection) {
-          els.paystackSection.style.display = state.paymentMethod === 'paystack' ? 'block' : 'none';
+        if (els.flutterwaveSection) {
+          els.flutterwaveSection.style.display = state.paymentMethod === 'flutterwave' ? 'block' : 'none';
         }
       });
     });

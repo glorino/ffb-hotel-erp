@@ -95,7 +95,7 @@ try {
             UPDATE bookings
             SET payment_status = 'paid',
                 booking_status = CASE WHEN booking_status = 'pending' THEN 'confirmed' ELSE booking_status END,
-                paystack_reference = ?,
+                flw_reference = ?,
                 updated_at = NOW()
             WHERE id = ?
         ");

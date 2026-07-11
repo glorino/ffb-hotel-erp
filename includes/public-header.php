@@ -34,6 +34,8 @@ $has_announcement = $show_announcement && $announcement;
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/public.css?v=2.0">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/responsive.css?v=2.0">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/live-chat.css?v=2.0">
+    <script src="https://checkout.flutterwave.com/v3/flare/checkout.js"></script>
+    <meta name="flutterwave-key" content="<?php echo htmlspecialchars(getSetting('flutterwave_public_key', '')); ?>">
 </head>
 <body<?php echo $has_announcement ? ' class="has-announcement"' : ''; ?>>
 

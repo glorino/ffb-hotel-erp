@@ -2,7 +2,6 @@
 session_start();
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../config/app.php';
-require_once __DIR__ . '/../../config/paystack.php';
 require_once __DIR__ . '/../../config/flutterwave.php';
 require_once __DIR__ . '/../../includes/functions.php';
 require_once __DIR__ . '/../../includes/flash.php';
@@ -278,7 +277,7 @@ try {
 
         if (isset($result['status']) && $result['status'] === 'success' && isset($result['data']['link'])) {
             try {
-                $stmt = $db->prepare("UPDATE bookings SET paystack_reference = ?, updated_at = NOW() WHERE id = ?");
+                $stmt = $db->prepare("UPDATE bookings SET flw_reference = ?, updated_at = NOW() WHERE id = ?");
                 $stmt->execute([$pay_ref, $booking_id]);
             } catch (Exception $e) {
                 error_log('Booking flutterwave_reference update failed: ' . $e->getMessage());

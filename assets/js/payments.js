@@ -1,6 +1,6 @@
 /**
  * PAYMENTS.JS — Luxury Hospitality ERP | Payment Processing
- * Handles Paystack integration, payment form validation, and receipts.
+ * Handles Flutterwave integration, payment form validation, and receipts.
  */
 
 'use strict';
@@ -10,7 +10,7 @@ const PaymentApp = (function () {
   const CONFIG = {
     csrfToken: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
     baseUrl: document.querySelector('base')?.getAttribute('href') || '/',
-    paystackPublicKey: document.querySelector('meta[name="paystack-key"]')?.getAttribute('content') || '',
+    flutterwavePublicKey: document.querySelector('meta[name="flutterwave-key"]')?.getAttribute('content') || '',
     endpoints: {
       verifyTransaction: 'ajax/verify-transaction.php',
       checkStatus: 'ajax/check-payment-status.php'
@@ -40,7 +40,7 @@ const PaymentApp = (function () {
       receiptContainer: document.querySelector('[data-receipt]'),
       printReceiptBtn: document.querySelector('[data-print-receipt]'),
       paymentMethods: document.querySelectorAll('[name="payment_method"]'),
-      paystackSection: document.querySelector('[data-paystack-section]'),
+      flutterwaveSection: document.querySelector('[data-flutterwave-section]'),
       splitPaymentInputs: document.querySelectorAll('[data-split-payment]'),
       splitTotalDisplay: document.querySelector('[data-split-total]')
     };
@@ -51,7 +51,7 @@ const PaymentApp = (function () {
     cacheElements();
     if (!els.paymentForm && !els.payBtn) return;
 
-    initPaystackButton();
+    initFlutterwaveButton();
     initPaymentForm();
     initPaymentMethodToggle();
     initPrintReceipt();
@@ -59,8 +59,8 @@ const PaymentApp = (function () {
     initStatusCheck();
   }
 
-  // ── Paystack Inline Popup ──
-  function initPaystackButton () {
+  // ── Flutterwave Inline Popup ──
+  function initFlutterwaveButton () {
     if (!els.payBtn) return;
 
     els.payBtn.addEventListener('click', function (e) {
@@ -70,6 +70,8 @@ const PaymentApp = (function () {
 
       const amount = parseFloat(this.dataset.amount || els.amountDisplay?.dataset.amount || 0);
       const email = els.emailInput?.value?.trim() || this.dataset.email || '';
+      const name = this.dataset.name || '';
+      const phone = this.dataset.phone || '';
 
       if (!email) {
         showError('Please provide a valid email address');
@@ -81,39 +83,50 @@ const PaymentApp = (function () {
         return;
       }
 
-      if (!CONFIG.paystackPublicKey) {
+      if (!CONFIG.flutterwavePublicKey) {
         showError('Payment system not configured. Please contact support.');
         return;
       }
 
       state.amount = amount;
       state.email = email;
-      state.reference = 'REF-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      state.reference = 'FFB-' + Date.now() + '-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-      // Set reference in form
       if (els.referenceInput) els.referenceInput.value = state.reference;
 
       state.isProcessing = true;
       this.disabled = true;
       this.textContent = 'Processing...';
 
-      const handler = PaystackPop.setup({
-        key: CONFIG.paystackPublicKey,
-        email: email,
-        amount: Math.round(amount * 100), // Convert to kobo
-        ref: state.reference,
+      FlutterwaveCheckout({
+        public_key: CONFIG.flutterwavePublicKey,
+        tx_ref: state.reference,
+        amount: amount,
         currency: 'NGN',
-        metadata: state.metadata,
+        payment_options: 'card,banktransfer,ussd',
+        customer: {
+          email: email,
+          phone_number: phone || '',
+          name: name || ''
+        },
+        customizations: {
+          title: 'FFB Hotel',
+          description: 'Payment for booking/order',
+          logo: ''
+        },
         callback: function (response) {
           state.isProcessing = false;
           if (els.payBtn) {
             els.payBtn.disabled = false;
             els.payBtn.textContent = 'Pay Now';
           }
-          // Verify transaction
-          verifyTransaction(response.reference);
+          if (response.status === 'successful') {
+            verifyTransaction(response.tx_ref, response.transaction_id);
+          } else {
+            showError('Payment was not successful');
+          }
         },
-        onClose: function () {
+        onclose: function () {
           state.isProcessing = false;
           if (els.payBtn) {
             els.payBtn.disabled = false;
@@ -122,17 +135,18 @@ const PaymentApp = (function () {
           showError('Payment cancelled');
         }
       });
-
-      handler.openIframe();
     });
   }
 
   // ── Verify Transaction ──
-  function verifyTransaction (reference) {
+  function verifyTransaction (tx_ref, transaction_id) {
     if (els.statusDisplay) {
       els.statusDisplay.textContent = 'Verifying payment...';
       els.statusDisplay.className = 'payment-status info';
     }
+
+    const body = 'reference=' + encodeURIComponent(tx_ref);
+    const extra = transaction_id ? '&transaction_id=' + encodeURIComponent(transaction_id) : '';
 
     fetch(CONFIG.baseUrl + CONFIG.endpoints.verifyTransaction, {
       method: 'POST',
@@ -141,7 +155,7 @@ const PaymentApp = (function () {
         'X-Requested-With': 'XMLHttpRequest',
         'X-CSRF-Token': CONFIG.csrfToken
       },
-      body: 'reference=' + encodeURIComponent(reference)
+      body: body + extra
     })
       .then(function (res) { return res.json(); })
       .then(function (data) {
@@ -150,17 +164,15 @@ const PaymentApp = (function () {
             els.statusDisplay.textContent = 'Payment successful!';
             els.statusDisplay.className = 'payment-status success';
           }
-          // Redirect to success page or show receipt
           if (data.redirect_url) {
             window.location.href = data.redirect_url;
           } else if (els.receiptContainer) {
             showReceipt(data);
           } else {
-            // Trigger form submission
             const form = els.paymentForm;
             if (form) {
               const refInput = form.querySelector('[name="transaction_reference"]');
-              if (refInput) refInput.value = reference;
+              if (refInput) refInput.value = tx_ref;
               form.submit();
             }
           }
@@ -184,7 +196,6 @@ const PaymentApp = (function () {
     if (!els.paymentForm) return;
 
     els.paymentForm.addEventListener('submit', function (e) {
-      // Make sure reference is set if Paystack was used
       if (!els.referenceInput?.value && els.payBtn) {
         e.preventDefault();
         els.payBtn.click();
@@ -196,11 +207,11 @@ const PaymentApp = (function () {
   function initPaymentMethodToggle () {
     els.paymentMethods.forEach(function (method) {
       method.addEventListener('change', function () {
-        if (els.paystackSection) {
-          els.paystackSection.style.display = this.value === 'paystack' ? 'block' : 'none';
+        if (els.flutterwaveSection) {
+          els.flutterwaveSection.style.display = this.value === 'flutterwave' ? 'block' : 'none';
         }
         if (els.payBtn) {
-          els.payBtn.style.display = this.value === 'paystack' ? 'inline-flex' : 'none';
+          els.payBtn.style.display = this.value === 'flutterwave' ? 'inline-flex' : 'none';
         }
       });
     });
@@ -218,7 +229,7 @@ const PaymentApp = (function () {
       document.body.innerHTML = receipt.outerHTML;
       window.print();
       document.body.innerHTML = originalContents;
-      init(); // Re-init after print
+      init();
     });
   }
 
@@ -274,7 +285,6 @@ const PaymentApp = (function () {
             statusContainer.innerHTML =
               '<div class="payment-status error">Payment failed. Please try again.</div>';
           } else {
-            // Still pending, poll again
             setTimeout(poll, 5000);
           }
         })
@@ -308,7 +318,6 @@ const PaymentApp = (function () {
         '</div>' +
       '</div>';
 
-    // Re-bind print button
     const newPrintBtn = els.receiptContainer.querySelector('[data-print-receipt]');
     if (newPrintBtn) {
       newPrintBtn.addEventListener('click', function () {
@@ -341,5 +350,5 @@ const PaymentApp = (function () {
   };
 })();
 
-// ── Bootstrap ──
+// ── Bootstrap
 document.addEventListener('DOMContentLoaded', PaymentApp.init);

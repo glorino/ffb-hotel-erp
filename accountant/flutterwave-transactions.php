@@ -15,13 +15,13 @@ $branch_filter = "";
 if (isset($_GET['verify']) && (int)$_GET['verify']) {
     $txn_id = (int)$_GET['verify'];
     try {
-        $stmt = $db->prepare("SELECT * FROM paystack_transactions WHERE id = ?");
+        $stmt = $db->prepare("SELECT * FROM flutterwave_transactions WHERE id = ?");
         $stmt->execute([$txn_id]);
         $txn = $stmt->fetch();
         if ($txn && $txn['reference']) {
             $secret_key = getSetting('flutterwave_secret_key', '');
             if ($secret_key) {
-                $ch = curl_init("https://api.flutterwave.com/v3/transactions/verify/" . $txn['paystack_reference']);
+                $ch = curl_init("https://api.flutterwave.com/v3/transactions/verify/" . $txn['flw_reference']);
                 curl_setopt_array($ch, [
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_HTTPHEADER => ["Authorization: Bearer $secret_key", "Content-Type: application/json"],
@@ -35,11 +35,11 @@ if (isset($_GET['verify']) && (int)$_GET['verify']) {
                     if ($result['status'] === 'success') {
                         $data = $result['data'];
                         $new_status = $data['status'] === 'successful' ? 'paid' : ($data['status'] === 'failed' ? 'failed' : 'pending');
-                        $stmt = $db->prepare("UPDATE paystack_transactions SET status = ?, amount = ?, verified_at = NOW(), reconciliation_status = 'verified' WHERE id = ?");
+                        $stmt = $db->prepare("UPDATE flutterwave_transactions SET status = ?, amount = ?, verified_at = NOW(), reconciliation_status = 'verified' WHERE id = ?");
                         $stmt->execute([$new_status, $data['amount'] / 100, $txn_id]);
                         if ($new_status === 'paid') {
-                            $stmt = $db->prepare("UPDATE payments SET status = 'paid', paystack_reference = ? WHERE reference = ?");
-                            $stmt->execute([$txn['paystack_reference'], $txn['reference']]);
+                            $stmt = $db->prepare("UPDATE payments SET status = 'paid', flw_reference = ? WHERE reference = ?");
+                            $stmt->execute([$txn['flw_reference'], $txn['reference']]);
                         }
                         set_flash('success', 'Transaction verified successfully. Status: ' . $new_status);
                     } else {
@@ -60,7 +60,7 @@ if (isset($_GET['verify']) && (int)$_GET['verify']) {
 
 if (isset($_GET['reconcile']) && (int)$_GET['reconcile']) {
     try {
-        $stmt = $db->prepare("UPDATE paystack_transactions SET reconciliation_status = 'reconciled', reconciled_at = NOW(), reconciled_by = ? WHERE id = ?");
+        $stmt = $db->prepare("UPDATE flutterwave_transactions SET reconciliation_status = 'reconciled', reconciled_at = NOW(), reconciled_by = ? WHERE id = ?");
         $stmt->execute([$_SESSION['user_id'], (int)$_GET['reconcile']]);
         set_flash('success', 'Transaction reconciled');
     } catch (Exception $e) {
@@ -125,14 +125,14 @@ if ($recon_filter) { $where .= " AND (pt.reconciliation_status = ? OR (pt.reconc
                     <tbody>
                         <?php
                         try {
-                            $st = $db->prepare("SELECT pt.*, c.full_name FROM paystack_transactions pt LEFT JOIN payments pm ON pt.reference = pm.reference LEFT JOIN customers c ON pm.customer_id = c.id WHERE $where $branch_filter ORDER BY pt.created_at DESC");
+                            $st = $db->prepare("SELECT pt.*, c.full_name FROM flutterwave_transactions pt LEFT JOIN payments pm ON pt.reference = pm.reference LEFT JOIN customers c ON pm.customer_id = c.id WHERE $where $branch_filter ORDER BY pt.created_at DESC");
                             $st->execute($params);
                             $txns = $st->fetchAll();
                             foreach ($txns as $t):
                         ?>
                         <tr>
                             <td><small class="fw-medium"><?php echo htmlspecialchars($t['reference'] ?? '—'); ?></small></td>
-                            <td><small class="text-muted"><?php echo htmlspecialchars($t['paystack_reference'] ?? '—'); ?></small></td>
+                            <td><small class="text-muted"><?php echo htmlspecialchars($t['flw_reference'] ?? '—'); ?></small></td>
                             <td><?php echo htmlspecialchars($t['full_name'] ?? '—'); ?></td>
                             <td><strong><?php echo formatMoney($t['amount']); ?></strong></td>
                             <td><?php echo getPaymentStatusBadge($t['status']); ?></td>

@@ -46,10 +46,7 @@ $file_map = [
     '/inventory/ajax/save-supplier'                         => 'inventory/ajax/save-supplier.php',
     '/inventory/ajax/update-supplier'                       => 'inventory/ajax/update-supplier.php',
     '/ajax/clear-gallery'                                  => 'ajax/clear-gallery.php',
-    '/modules/payments/paystack-callback'                  => 'modules/payments/paystack-callback.php',
-    '/modules/payments/paystack-initialize'                => 'modules/payments/paystack-initialize.php',
-    '/modules/payments/paystack-verify'                    => 'modules/payments/paystack-verify.php',
-    '/modules/payments/paystack-webhook'                   => 'modules/payments/paystack-webhook.php',
+
     '/modules/bookings/check-availability'                => 'modules/bookings/check-availability.php',
     '/modules/bookings/create-booking'                    => 'modules/bookings/create-booking.php',
     '/modules/bookings/confirm-booking'                   => 'modules/bookings/confirm-booking.php',

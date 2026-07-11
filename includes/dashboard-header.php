@@ -47,6 +47,8 @@ $first_name = explode(' ', $current_user['full_name'] ?? 'User')[0];
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo $base_url; ?>assets/css/dashboard.css">
+    <script src="https://checkout.flutterwave.com/v3/flare/checkout.js"></script>
+    <meta name="flutterwave-key" content="<?php echo htmlspecialchars(getSetting('flutterwave_public_key', '')); ?>">
 </head>
 <body>
 
