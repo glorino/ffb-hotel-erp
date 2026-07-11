@@ -111,7 +111,7 @@ $status_filter = $_GET['status'] ?? '';
                             foreach ($bookings as $b):
                         ?>
                         <tr>
-                            <td><strong><?php echo htmlspecialchars($b['reference']); ?></strong></td>
+                            <td><strong><?php echo htmlspecialchars($b['booking_reference']); ?></strong></td>
                             <td>
                                 <strong><?php echo htmlspecialchars($b['full_name'] ?? ''); ?></strong>
                                 <br><small class="text-muted"><?php echo htmlspecialchars($b['email'] ?? ''); ?></small>

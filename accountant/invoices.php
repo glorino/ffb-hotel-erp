@@ -10,7 +10,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
 
 $db = getDB();
 $branch_id = $_SESSION['branch_id'] ?? 0;
-$branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
+$branch_filter = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['generate_invoice'])) {
@@ -19,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $due_date = $_POST['due_date'] ?? '';
         $invoice_number = 'INV-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5));
         try {
-            $stmt = $db->prepare("INSERT INTO invoices (branch_id, customer_id, invoice_number, total_amount, paid_amount, status, due_date, created_at) VALUES (?, ?, ?, ?, 0, 'unpaid', ?, NOW())");
-            $stmt->execute([$branch_id ?: null, $customer_id ?: null, $invoice_number, $amount, $due_date]);
+            $stmt = $db->prepare("INSERT INTO invoices (customer_id, invoice_number, total_amount, paid_amount, status, due_date, created_at) VALUES (?, ?, ?, 0, 'unpaid', ?, NOW())");
+            $stmt->execute([$customer_id ?: null, $invoice_number, $amount, $due_date]);
             set_flash('success', "Invoice $invoice_number generated successfully");
         } catch (Exception $e) {
             set_flash('danger', 'Error: ' . $e->getMessage());

@@ -143,7 +143,7 @@ $status_filter = $_GET['status'] ?? 'pending';
                                 <td><?php echo $i + 1; ?></td>
                                 <td><strong><?php echo htmlspecialchars($req['table_number'] ?? 'N/A'); ?></strong></td>
                                 <td><span class="badge bg-secondary"><?php echo htmlspecialchars($rt); ?></span></td>
-                                <td><small><?php echo htmlspecialchars(truncate($req['notes'] ?? '-', 80)); ?></small></td>
+                                <td><small><?php echo htmlspecialchars(truncate($req['description'] ?? '-', 80)); ?></small></td>
                                 <td><small class="text-muted"><?php echo timeAgo($req['created_at']); ?></small></td>
                                 <td><span class="badge bg-<?php echo $sb; ?>"><?php echo $req['status']; ?></span></td>
                                 <td>

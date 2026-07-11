@@ -85,8 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_booking'])) {
 
         if ($payment_method && $payment_amount > 0) {
             $pay_ref = generateReference('PAY');
-            $stmt = $db->prepare("INSERT INTO payments (branch_id, booking_id, customer_id, payment_reference, amount, payment_method, payment_category, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'room', 'paid', NOW())");
-            $stmt->execute([$branch_id, $booking_id, $customer_id, $pay_ref, $payment_amount, $payment_method]);
+            $stmt = $db->prepare("INSERT INTO payments (booking_id, customer_id, payment_reference, amount, method, payment_category, status, created_at) VALUES (?, ?, ?, ?, ?, 'room', 'paid', NOW())");
+            $stmt->execute([$booking_id, $customer_id, $pay_ref, $payment_amount, $payment_method]);
         }
 
         $receipt_no = generateReceiptNumber();

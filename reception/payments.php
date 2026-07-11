@@ -19,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['record_payment'])) {
     $payment_category = $_POST['payment_category'] ?? 'room';
     $reference = generateReference('PAY');
     try {
-        $stmt = $db->prepare("INSERT INTO payments (branch_id, booking_id, customer_id, reference, amount, payment_method, payment_category, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'paid', NOW())");
-        $stmt->execute([$branch_id, $booking_id ?: null, $customer_id ?: null, $reference, $amount, $payment_method, $payment_category]);
+        $stmt = $db->prepare("INSERT INTO payments (booking_id, customer_id, reference, amount, method, payment_category, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'paid', NOW())");
+        $stmt->execute([$booking_id ?: null, $customer_id ?: null, $reference, $amount, $payment_method, $payment_category]);
         log_audit('record_payment', 'payment', $db->lastInsertId());
         set_flash('success', "Payment of {$amount} recorded. Reference: {$reference}");
     } catch (Exception $e) {

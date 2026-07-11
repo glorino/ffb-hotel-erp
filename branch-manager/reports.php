@@ -58,7 +58,7 @@ if (!validateDate($date_to)) $date_to = date('Y-m-d');
         <?php
         $total_revenue = 0; $total_bookings = 0; $avg_per_booking = 0;
         try {
-            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) BETWEEN ? AND ?");
+            $stmt = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) BETWEEN ? AND ?");
             $stmt->execute([$branch_id, $date_from, $date_to]);
             $total_revenue = $stmt->fetchColumn();
 
@@ -86,11 +86,11 @@ if (!validateDate($date_to)) $date_to = date('Y-m-d');
                             $date = $d->format('Y-m-d');
                             $room = 0; $food = 0; $service = 0;
                             try {
-                                $s = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) = ? AND payment_category = 'room'");
+                                $s = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ? AND p.payment_category = 'room'");
                                 $s->execute([$branch_id, $date]); $room = $s->fetchColumn();
-                                $s = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) = ? AND payment_category = 'food'");
+                                $s = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ? AND p.payment_category = 'food'");
                                 $s->execute([$branch_id, $date]); $food = $s->fetchColumn();
-                                $s = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) = ? AND payment_category = 'service'");
+                                $s = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ? AND p.payment_category = 'service'");
                                 $s->execute([$branch_id, $date]); $service = $s->fetchColumn();
                             } catch (Exception $e) {}
                         ?>
@@ -116,7 +116,7 @@ if (!validateDate($date_to)) $date_to = date('Y-m-d');
                             $stmt->execute([$branch_id, $date_from, $date_to]);
                             while ($b = $stmt->fetch()):
                         ?>
-                        <tr><td><?php echo htmlspecialchars($b['reference']); ?></td><td><?php echo htmlspecialchars($b['full_name'] ?? ''); ?></td><td><?php echo htmlspecialchars($b['room_number'] ?? 'N/A'); ?></td><td><?php echo formatDate($b['check_in_date']); ?></td><td><?php echo formatDate($b['check_out_date']); ?></td><td><?php echo formatMoney($b['total_amount'] ?? 0); ?></td><td><?php echo getBookingStatusBadge($b['booking_status']); ?></td><td><small><?php echo formatDate($b['created_at']); ?></small></td></tr>
+                        <tr><td><?php echo htmlspecialchars($b['booking_reference']); ?></td><td><?php echo htmlspecialchars($b['full_name'] ?? ''); ?></td><td><?php echo htmlspecialchars($b['room_number'] ?? 'N/A'); ?></td><td><?php echo formatDate($b['check_in_date']); ?></td><td><?php echo formatDate($b['check_out_date']); ?></td><td><?php echo formatMoney($b['total_amount'] ?? 0); ?></td><td><?php echo getBookingStatusBadge($b['booking_status']); ?></td><td><small><?php echo formatDate($b['created_at']); ?></small></td></tr>
                         <?php
                             endwhile;
                         } catch (Exception $e) { echo '<tr><td colspan="8" class="text-center py-4 text-danger">Error</td></tr>'; }

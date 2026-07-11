@@ -35,7 +35,7 @@ $branch_id = $_SESSION['branch_id'] ?? 0;
         $stmt->execute([$branch_id]);
         $stats['today_bookings'] = $stmt->fetchColumn();
 
-        $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) = CURRENT_DATE");
+        $stmt = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = CURRENT_DATE");
         $stmt->execute([$branch_id]);
         $stats['today_revenue'] = $stmt->fetchColumn();
 
@@ -243,7 +243,7 @@ for ($i = 6; $i >= 0; $i--) {
     $day = date('Y-m-d', strtotime("-$i days"));
     $rev_labels[] = date('D', strtotime($day));
     try {
-        $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) = ?");
+        $stmt = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ?");
         $stmt->execute([$branch_id, $day]);
         $rev_data[] = (float) $stmt->fetchColumn();
     } catch (Exception $e) { $rev_data[] = 0; }

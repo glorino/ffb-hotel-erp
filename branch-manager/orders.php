@@ -79,11 +79,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                     <tbody>
                         <?php
                         try {
-                            $sql = "SELECT fo.*, c.full_name, rm.room_number
+                            $sql = "SELECT fo.*, c.full_name
                                     FROM food_orders fo
                                     LEFT JOIN customers c ON fo.customer_id = c.id
-                                    LEFT JOIN bookings b ON fo.booking_id = b.id
-                                    LEFT JOIN rooms rm ON b.room_id = rm.id
                                     WHERE fo.branch_id = ?";
                             $params = [$branch_id];
                             if ($status_filter) {

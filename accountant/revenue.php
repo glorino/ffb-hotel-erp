@@ -10,21 +10,21 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
 
 $db = getDB();
 $branch_id = $_SESSION['branch_id'] ?? 0;
-$branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
+$branch_filter = $branch_id ? "AND b.branch_id = " . (int)$branch_id : "";
 
 $period = $_GET['period'] ?? 'monthly';
 $year = $_GET['year'] ?? date('Y');
 
 $revenue_by_source = [];
 try {
-    $stmt = $db->prepare("SELECT COALESCE(payment_category, 'other') as source, COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'paid' AND EXTRACT(YEAR FROM created_at) = ? $branch_filter GROUP BY payment_category");
+    $stmt = $db->prepare("SELECT COALESCE(p.payment_category, 'other') as source, COALESCE(SUM(p.amount), 0) as total FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND EXTRACT(YEAR FROM p.created_at) = ? $branch_filter GROUP BY p.payment_category");
     $stmt->execute([$year]);
     $revenue_by_source = $stmt->fetchAll();
 } catch (Exception $e) {}
 
 $revenue_by_method = [];
 try {
-    $stmt = $db->prepare("SELECT COALESCE(payment_method, 'unknown') as method, COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'paid' AND EXTRACT(YEAR FROM created_at) = ? $branch_filter GROUP BY payment_method");
+    $stmt = $db->prepare("SELECT COALESCE(p.method, p.payment_method, 'unknown') as method, COALESCE(SUM(p.amount), 0) as total FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND EXTRACT(YEAR FROM p.created_at) = ? $branch_filter GROUP BY COALESCE(p.method, p.payment_method, 'unknown')");
     $stmt->execute([$year]);
     $revenue_by_method = $stmt->fetchAll();
 } catch (Exception $e) {}
@@ -32,11 +32,11 @@ try {
 $comparison = [];
 try {
     if ($period === 'monthly') {
-        $stmt = $db->prepare("SELECT TO_CHAR(created_at, 'YYYY-MM') as label, COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'paid' AND EXTRACT(YEAR FROM created_at) = ? $branch_filter GROUP BY TO_CHAR(created_at, 'YYYY-MM') ORDER BY label");
+        $stmt = $db->prepare("SELECT TO_CHAR(p.created_at, 'YYYY-MM') as label, COALESCE(SUM(p.amount), 0) as total FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND EXTRACT(YEAR FROM p.created_at) = ? $branch_filter GROUP BY TO_CHAR(p.created_at, 'YYYY-MM') ORDER BY label");
     } elseif ($period === 'quarterly') {
-        $stmt = $db->prepare("SELECT CONCAT(EXTRACT(YEAR FROM created_at)::text, '-Q', EXTRACT(QUARTER FROM created_at)::text) as label, COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'paid' AND EXTRACT(YEAR FROM created_at) = ? $branch_filter GROUP BY CONCAT(EXTRACT(YEAR FROM created_at)::text, '-Q', EXTRACT(QUARTER FROM created_at)::text) ORDER BY label");
+        $stmt = $db->prepare("SELECT CONCAT(EXTRACT(YEAR FROM p.created_at)::text, '-Q', EXTRACT(QUARTER FROM p.created_at)::text) as label, COALESCE(SUM(p.amount), 0) as total FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND EXTRACT(YEAR FROM p.created_at) = ? $branch_filter GROUP BY CONCAT(EXTRACT(YEAR FROM p.created_at)::text, '-Q', EXTRACT(QUARTER FROM p.created_at)::text) ORDER BY label");
     } else {
-        $stmt = $db->prepare("SELECT TO_CHAR(created_at, 'YYYY') as label, COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'paid' $branch_filter GROUP BY TO_CHAR(created_at, 'YYYY') ORDER BY label");
+        $stmt = $db->prepare("SELECT TO_CHAR(p.created_at, 'YYYY') as label, COALESCE(SUM(p.amount), 0) as total FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' $branch_filter GROUP BY TO_CHAR(p.created_at, 'YYYY') ORDER BY label");
     }
     $stmt->execute([$year]);
     $comparison = $stmt->fetchAll();

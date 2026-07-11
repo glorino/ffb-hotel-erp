@@ -10,7 +10,9 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
 
 $db = getDB();
 $branch_id = $_SESSION['branch_id'] ?? 0;
-$branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
+$branch_filter = $branch_id ? "AND b.branch_id = " . (int)$branch_id : "";
+$branch_filter_refunds = $branch_id ? "AND r.branch_id = " . (int)$branch_id : "";
+$branch_filter_expenses = $branch_id ? "AND e.branch_id = " . (int)$branch_id : "";
 
 $report_type = $_GET['report'] ?? 'profit_loss';
 $date_from = $_GET['date_from'] ?? date('Y-m-01');
@@ -25,32 +27,32 @@ if (isset($_GET['export_csv'])) {
     switch ($report_type) {
         case 'profit_loss':
             fputcsv($output, ['Category', 'Amount']);
-            $rev = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'paid' AND $date_where $branch_filter");
+            $rev = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND $date_where $branch_filter");
             $rev->execute([$date_from, $date_to]); $r = $rev->fetchColumn();
             fputcsv($output, ['Total Revenue', $r]);
-            $exp = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE $date_where $branch_filter");
+            $exp = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE $date_where $branch_filter_expenses");
             $exp->execute([$date_from, $date_to]); $e = $exp->fetchColumn();
             fputcsv($output, ['Total Expenses', $e]);
-            $ref = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM refunds WHERE status = 'completed' AND $date_where $branch_filter");
+            $ref = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM refunds WHERE status = 'completed' AND $date_where $branch_filter_refunds");
             $ref->execute([$date_from, $date_to]); $rf = $ref->fetchColumn();
             fputcsv($output, ['Refunds', $rf]);
             fputcsv($output, ['Net Profit/Loss', $r - $e - $rf]);
             break;
         case 'revenue':
             fputcsv($output, ['Date', 'Amount', 'Method', 'Category', 'Reference']);
-            $st = $db->prepare("SELECT created_at, amount, payment_method, payment_category, reference FROM payments WHERE status = 'paid' AND $date_where $branch_filter ORDER BY created_at");
+            $st = $db->prepare("SELECT p.created_at, p.amount, p.payment_method, p.payment_category, p.reference FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND $date_where $branch_filter ORDER BY p.created_at");
             $st->execute([$date_from, $date_to]);
             while ($row = $st->fetch()) { fputcsv($output, $row); }
             break;
         case 'expense':
             fputcsv($output, ['Title', 'Category', 'Amount', 'Date', 'Description']);
-            $st = $db->prepare("SELECT title, category, amount, created_at, description FROM expenses WHERE $date_where $branch_filter ORDER BY created_at");
+            $st = $db->prepare("SELECT title, category, amount, created_at, description FROM expenses WHERE $date_where $branch_filter_expenses ORDER BY created_at");
             $st->execute([$date_from, $date_to]);
             while ($row = $st->fetch()) { fputcsv($output, $row); }
             break;
         case 'tax':
             fputcsv($output, ['Category', 'Revenue', 'Estimated Tax (7.5%)']);
-            $st = $db->prepare("SELECT COALESCE(payment_category, 'other') as cat, COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'paid' AND $date_where $branch_filter GROUP BY payment_category");
+            $st = $db->prepare("SELECT COALESCE(p.payment_category, 'other') as cat, COALESCE(SUM(p.amount), 0) as total FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND $date_where $branch_filter GROUP BY p.payment_category");
             $st->execute([$date_from, $date_to]);
             while ($row = $st->fetch()) { fputcsv($output, [$row['cat'], $row['total'], $row['total'] * 0.075]); }
             break;
@@ -62,48 +64,48 @@ $data = [];
 try {
     switch ($report_type) {
         case 'profit_loss':
-            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'paid' AND $date_where $branch_filter");
+            $stmt = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND $date_where $branch_filter");
             $stmt->execute([$date_from, $date_to]); $data['revenue'] = $stmt->fetchColumn();
-            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE $date_where $branch_filter");
+            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE $date_where $branch_filter_expenses");
             $stmt->execute([$date_from, $date_to]); $data['expenses'] = $stmt->fetchColumn();
-            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM refunds WHERE status = 'completed' AND $date_where $branch_filter");
+            $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM refunds WHERE status = 'completed' AND $date_where $branch_filter_refunds");
             $stmt->execute([$date_from, $date_to]); $data['refunds'] = $stmt->fetchColumn();
             $data['net_profit'] = $data['revenue'] - $data['expenses'] - $data['refunds'];
 
-            $stmt = $db->prepare("SELECT COALESCE(payment_category, 'other') as cat, COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'paid' AND $date_where $branch_filter GROUP BY payment_category ORDER BY total DESC");
+            $stmt = $db->prepare("SELECT COALESCE(p.payment_category, 'other') as cat, COALESCE(SUM(p.amount), 0) as total FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND $date_where $branch_filter GROUP BY p.payment_category ORDER BY total DESC");
             $stmt->execute([$date_from, $date_to]);
             $data['revenue_by_source'] = $stmt->fetchAll();
             break;
 
         case 'balance_sheet':
-            $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'paid' $branch_filter");
+            $stmt = $db->query("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' $branch_filter");
             $data['total_receivables'] = $stmt->fetchColumn();
-            $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'pending' $branch_filter");
+            $stmt = $db->query("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'pending' $branch_filter");
             $data['pending_receivables'] = $stmt->fetchColumn();
-            $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM expenses $branch_filter");
+            $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM expenses $branch_filter_expenses");
             $data['total_liabilities'] = $stmt->fetchColumn();
-            $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM invoices WHERE status IN ('unpaid','overdue') $branch_filter");
+            $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM invoices WHERE status IN ('unpaid','overdue')");
             $data['outstanding_invoices'] = $stmt->fetchColumn();
             $data['equity'] = $data['total_receivables'] - $data['total_liabilities'];
             break;
 
         case 'revenue':
-            $stmt = $db->prepare("SELECT DATE(created_at) as dt, COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'paid' AND $date_where $branch_filter GROUP BY DATE(created_at) ORDER BY dt");
+            $stmt = $db->prepare("SELECT DATE(p.created_at) as dt, COALESCE(SUM(p.amount), 0) as total FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND $date_where $branch_filter GROUP BY DATE(p.created_at) ORDER BY dt");
             $stmt->execute([$date_from, $date_to]);
             $data['daily'] = $stmt->fetchAll();
-            $stmt = $db->prepare("SELECT COALESCE(payment_method, 'unknown') as method, COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'paid' AND $date_where $branch_filter GROUP BY payment_method");
+            $stmt = $db->prepare("SELECT COALESCE(p.payment_method, 'unknown') as method, COALESCE(SUM(p.amount), 0) as total FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND $date_where $branch_filter GROUP BY p.payment_method");
             $stmt->execute([$date_from, $date_to]);
             $data['by_method'] = $stmt->fetchAll();
             break;
 
         case 'expense':
-            $stmt = $db->prepare("SELECT category, COALESCE(SUM(amount), 0) as total, COUNT(*) as cnt FROM expenses WHERE $date_where $branch_filter GROUP BY category ORDER BY total DESC");
+            $stmt = $db->prepare("SELECT category, COALESCE(SUM(amount), 0) as total, COUNT(*) as cnt FROM expenses WHERE $date_where $branch_filter_expenses GROUP BY category ORDER BY total DESC");
             $stmt->execute([$date_from, $date_to]);
             $data['by_category'] = $stmt->fetchAll();
             break;
 
         case 'tax':
-            $stmt = $db->prepare("SELECT COALESCE(payment_category, 'other') as cat, COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'paid' AND $date_where $branch_filter GROUP BY payment_category");
+            $stmt = $db->prepare("SELECT COALESCE(p.payment_category, 'other') as cat, COALESCE(SUM(p.amount), 0) as total FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND $date_where $branch_filter GROUP BY p.payment_category");
             $stmt->execute([$date_from, $date_to]);
             $data['by_source'] = $stmt->fetchAll();
             $data['vat_rate'] = 0.075;

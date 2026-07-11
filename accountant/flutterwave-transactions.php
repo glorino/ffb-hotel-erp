@@ -10,7 +10,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
 
 $db = getDB();
 $branch_id = $_SESSION['branch_id'] ?? 0;
-$branch_filter = $branch_id ? "AND pt.branch_id = " . (int)$branch_id : "";
+$branch_filter = "";
 
 if (isset($_GET['verify']) && (int)$_GET['verify']) {
     $txn_id = (int)$_GET['verify'];
@@ -18,7 +18,7 @@ if (isset($_GET['verify']) && (int)$_GET['verify']) {
         $stmt = $db->prepare("SELECT * FROM paystack_transactions WHERE id = ?");
         $stmt->execute([$txn_id]);
         $txn = $stmt->fetch();
-        if ($txn && $txn['paystack_reference']) {
+        if ($txn && $txn['reference']) {
             $secret_key = getSetting('flutterwave_secret_key', '');
             if ($secret_key) {
                 $ch = curl_init("https://api.flutterwave.com/v3/transactions/verify/" . $txn['paystack_reference']);
@@ -125,7 +125,7 @@ if ($recon_filter) { $where .= " AND (pt.reconciliation_status = ? OR (pt.reconc
                     <tbody>
                         <?php
                         try {
-                            $st = $db->prepare("SELECT pt.*, c.full_name FROM paystack_transactions pt LEFT JOIN customers c ON pt.customer_id = c.id WHERE $where $branch_filter ORDER BY pt.created_at DESC");
+                            $st = $db->prepare("SELECT pt.*, c.full_name FROM paystack_transactions pt LEFT JOIN payments pm ON pt.reference = pm.reference LEFT JOIN customers c ON pm.customer_id = c.id WHERE $where $branch_filter ORDER BY pt.created_at DESC");
                             $st->execute($params);
                             $txns = $st->fetchAll();
                             foreach ($txns as $t):

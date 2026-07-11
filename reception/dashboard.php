@@ -43,16 +43,16 @@ try {
     $stmt->execute([$branch_id, $today]);
     $stats['checkouts_today'] = $stmt->fetchColumn();
 
-    $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) = ?");
+    $stmt = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ?");
     $stmt->execute([$branch_id, $today]);
     $stats['payments_today'] = $stmt->fetchColumn();
 
-    $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) = DATE(?) - INTERVAL '1 day'");
+    $stmt = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = DATE(?) - INTERVAL '1 day'");
     $stmt->execute([$branch_id, $today]);
     $stats['yesterday_revenue'] = $stmt->fetchColumn();
 
-    $stmt = $db->prepare("SELECT COUNT(*) FROM chat_sessions WHERE branch_id = ? AND status = 'active'");
-    $stmt->execute([$branch_id]);
+    $stmt = $db->prepare("SELECT COUNT(*) FROM chat_sessions WHERE status = 'active'");
+    $stmt->execute([]);
     $stats['active_chats'] = $stmt->fetchColumn();
 
     $stmt = $db->prepare("SELECT COUNT(*) FROM rooms WHERE branch_id = ? AND status IN ('cleaning', 'maintenance', 'out_of_service')");
@@ -341,7 +341,7 @@ for ($i = 6; $i >= 0; $i--) {
     $day = date('Y-m-d', strtotime("-$i days"));
     $rev_labels[] = date('D M j', strtotime($day));
     try {
-        $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) = ?");
+        $stmt = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ?");
         $stmt->execute([$branch_id, $day]);
         $rev_data[] = (float) $stmt->fetchColumn();
     } catch (Exception $e) { $rev_data[] = 0; }

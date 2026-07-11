@@ -10,7 +10,9 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
 
 $db = getDB();
 $branch_id = $_SESSION['branch_id'] ?? 0;
-$branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
+$branch_filter = $branch_id ? "AND b.branch_id = " . (int)$branch_id : "";
+$branch_filter_refunds = $branch_id ? "AND r.branch_id = " . (int)$branch_id : "";
+$branch_filter_expenses = $branch_id ? "AND e.branch_id = " . (int)$branch_id : "";
 ?>
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
@@ -22,21 +24,21 @@ $branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
     <?php
     $stats = [];
     try {
-        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'paid' AND DATE(created_at) = CURRENT_DATE $branch_filter");
+        $stmt = $db->query("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND DATE(p.created_at) = CURRENT_DATE $branch_filter");
         $stats['payments_today'] = $stmt->fetchColumn();
-        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'paid' AND EXTRACT(MONTH FROM created_at) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE) $branch_filter");
+        $stmt = $db->query("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' AND EXTRACT(MONTH FROM p.created_at) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM p.created_at) = EXTRACT(YEAR FROM CURRENT_DATE) $branch_filter");
         $stats['payments_month'] = $stmt->fetchColumn();
-        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'paid' $branch_filter");
+        $stmt = $db->query("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'paid' $branch_filter");
         $stats['payments_all'] = $stmt->fetchColumn();
-        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE channel = 'online' AND status = 'paid' $branch_filter");
+        $stmt = $db->query("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.channel = 'online' AND p.status = 'paid' $branch_filter");
         $stats['online_payments'] = $stmt->fetchColumn();
-        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE (channel = 'offline' OR channel IS NULL) AND status = 'paid' $branch_filter");
+        $stmt = $db->query("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE (p.channel = 'offline' OR p.channel IS NULL) AND p.status = 'paid' $branch_filter");
         $stats['offline_payments'] = $stmt->fetchColumn();
-        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'pending' $branch_filter");
+        $stmt = $db->query("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.status = 'pending' $branch_filter");
         $stats['pending_payments'] = $stmt->fetchColumn();
-        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM refunds WHERE status = 'completed' $branch_filter");
+        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM refunds WHERE status = 'completed' $branch_filter_refunds");
         $stats['refunds_issued'] = $stmt->fetchColumn();
-        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM expenses $branch_filter");
+        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM expenses $branch_filter_expenses");
         $stats['total_expenses'] = $stmt->fetchColumn();
         $stats['net_revenue'] = ($stats['payments_all'] ?? 0) - ($stats['refunds_issued'] ?? 0) - ($stats['total_expenses'] ?? 0);
     } catch (Exception $e) {
@@ -209,7 +211,7 @@ $branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
                             <tbody>
                                 <?php
                                 try {
-                                    $stmt = $db->query("SELECT p.*, c.full_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id WHERE 1=1 $branch_filter ORDER BY p.created_at DESC LIMIT 15");
+                                    $stmt = $db->query("SELECT p.*, c.full_name FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id LEFT JOIN customers c ON p.customer_id = c.id WHERE 1=1 $branch_filter ORDER BY p.created_at DESC LIMIT 15");
                                     $txns = $stmt->fetchAll();
                                     foreach ($txns as $t):
                                 ?>

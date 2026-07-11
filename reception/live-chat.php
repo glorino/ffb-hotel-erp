@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_message'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['close_session'])) {
     $session_id = (int)($_POST['session_id'] ?? 0);
     try {
-        $stmt = $db->prepare("UPDATE chat_sessions SET status = 'closed', updated_at = NOW() WHERE id = ? AND branch_id = ?");
-        $stmt->execute([$session_id, $branch_id]);
+        $stmt = $db->prepare("UPDATE chat_sessions SET status = 'closed', updated_at = NOW() WHERE id = ?");
+        $stmt->execute([$session_id]);
         set_flash('success', 'Chat session closed');
     } catch (Exception $e) {
         set_flash('danger', 'Error: ' . $e->getMessage());
@@ -45,8 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['close_session'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['assign_self'])) {
     $session_id = (int)($_POST['session_id'] ?? 0);
     try {
-        $stmt = $db->prepare("UPDATE chat_sessions SET assigned_to = ?, updated_at = NOW() WHERE id = ? AND branch_id = ?");
-        $stmt->execute([$user_id, $session_id, $branch_id]);
+        $stmt = $db->prepare("UPDATE chat_sessions SET assigned_to = ?, updated_at = NOW() WHERE id = ?");
+        $stmt->execute([$user_id, $session_id]);
         set_flash('success', 'Session assigned to you');
     } catch (Exception $e) {
         set_flash('danger', 'Error: ' . $e->getMessage());
@@ -65,7 +65,7 @@ try {
                (SELECT COUNT(*) FROM chat_messages WHERE chat_session_id = cs.id AND sender_type = 'customer' AND is_read = 0) as unread_count
         FROM chat_sessions cs
         LEFT JOIN customers c ON cs.customer_id = c.id
-        WHERE cs.branch_id = ? AND cs.status = 'active'
+        WHERE cs.status = 'active'
         ORDER BY unread_count DESC, last_message_time DESC
     ");
     $stmt->execute([$branch_id]);
@@ -85,9 +85,9 @@ if ($session_id) {
             FROM chat_sessions cs
             LEFT JOIN customers c ON cs.customer_id = c.id
             LEFT JOIN users u ON cs.assigned_to = u.id
-            WHERE cs.id = ? AND cs.branch_id = ?
+            WHERE cs.id = ?
         ");
-        $stmt->execute([$session_id, $branch_id]);
+        $stmt->execute([$session_id]);
         $selected_session = $stmt->fetch();
 
         if ($selected_session) {

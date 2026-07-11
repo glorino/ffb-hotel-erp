@@ -39,8 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_checkout'])) {
 
         if ($amount_paid > 0 && $payment_method) {
             $pay_ref = generateReference('CO');
-            $stmt = $db->prepare("INSERT INTO payments (branch_id, booking_id, customer_id, payment_reference, amount, payment_method, payment_category, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'room', 'paid', NOW())");
-            $stmt->execute([$branch_id, $booking_id, $booking['customer_id'], $pay_ref, $amount_paid, $payment_method]);
+            $stmt = $db->prepare("INSERT INTO payments (booking_id, customer_id, payment_reference, amount, method, payment_category, status, created_at) VALUES (?, ?, ?, ?, ?, 'room', 'paid', NOW())");
+            $stmt->execute([$booking_id, $booking['customer_id'], $pay_ref, $amount_paid, $payment_method]);
         }
 
         $receipt_no = generateReceiptNumber();
