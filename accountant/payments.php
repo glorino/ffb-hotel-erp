@@ -10,7 +10,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
 
 $db = getDB();
 $branch_id = $_SESSION['branch_id'] ?? 0;
-$branch_filter = $branch_id ? "AND p.branch_id = " . (int)$branch_id : "";
+$branch_filter = $branch_id ? "AND b.branch_id = " . (int)$branch_id : "";
 
 $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
@@ -31,7 +31,7 @@ if (isset($_GET['export_csv'])) {
     header('Content-Disposition: attachment; filename=payments_export_' . date('Ymd') . '.csv');
     $output = fopen('php://output', 'w');
     fputcsv($output, ['Reference', 'Customer', 'Amount', 'Method', 'Category', 'Status', 'Date', 'Recorded By']);
-    $q = $db->prepare("SELECT p.*, c.full_name, u.full_name as staff_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id LEFT JOIN users u ON p.recorded_by = u.id WHERE $where $branch_filter ORDER BY p.created_at DESC");
+    $q = $db->prepare("SELECT p.*, c.full_name, u.full_name as staff_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id LEFT JOIN users u ON p.recorded_by = u.id LEFT JOIN bookings b ON p.booking_id = b.id WHERE $where $branch_filter ORDER BY p.created_at DESC");
     $q->execute($params);
     while ($row = $q->fetch()) {
         fputcsv($output, [
@@ -53,12 +53,12 @@ $per_page = 25;
 $page = max(1, (int)($_GET['p'] ?? 1));
 $offset = ($page - 1) * $per_page;
 
-$count_q = $db->prepare("SELECT COUNT(*) FROM payments p LEFT JOIN customers c ON p.customer_id = c.id WHERE $where $branch_filter");
+$count_q = $db->prepare("SELECT COUNT(*) FROM payments p LEFT JOIN customers c ON p.customer_id = c.id LEFT JOIN bookings b ON p.booking_id = b.id WHERE $where $branch_filter");
 $count_q->execute($params);
 $total_records = $count_q->fetchColumn();
 $total_pages = ceil($total_records / $per_page);
 
-$stmt = $db->prepare("SELECT p.*, c.full_name, c.email as cust_email, u.full_name as staff_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id LEFT JOIN users u ON p.recorded_by = u.id WHERE $where $branch_filter ORDER BY p.created_at DESC LIMIT $per_page OFFSET $offset");
+$stmt = $db->prepare("SELECT p.*, c.full_name, c.email as cust_email, u.full_name as staff_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id LEFT JOIN users u ON p.recorded_by = u.id LEFT JOIN bookings b ON p.booking_id = b.id WHERE $where $branch_filter ORDER BY p.created_at DESC LIMIT $per_page OFFSET $offset");
 $stmt->execute($params);
 $payments = $stmt->fetchAll();
 ?>

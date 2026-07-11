@@ -101,7 +101,7 @@ $guest_id = $_GET['view'] ?? 0;
                     </thead>
                     <tbody>
                         <?php
-                        $stmt = $db->prepare("SELECT p.*, b.booking_reference as booking_ref FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.customer_id = ? AND p.branch_id = ? ORDER BY p.created_at DESC LIMIT 20");
+                        $stmt = $db->prepare("SELECT p.*, b.booking_reference as booking_ref FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.customer_id = ? AND b.branch_id = ? ORDER BY p.created_at DESC LIMIT 20");
                         $stmt->execute([$guest_id, $branch_id]);
                         while ($p = $stmt->fetch()):
                         ?>

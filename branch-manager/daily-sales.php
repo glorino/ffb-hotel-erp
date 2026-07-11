@@ -41,40 +41,43 @@ if (!validateDate($sale_date)) $sale_date = date('Y-m-d');
     $payment_methods = [];
     $total_sales = 0;
     try {
-        $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) = ?");
+        $stmt = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ?");
         $stmt->execute([$branch_id, $sale_date]);
         $total_sales = $stmt->fetchColumn();
 
         $stmt = $db->prepare("
             SELECT COALESCE(SUM(amount), 0) FROM payments p
             JOIN bookings b ON p.booking_id = b.id
-            WHERE p.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ? AND p.payment_category = 'room'
+            WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ? AND p.payment_category = 'room'
         ");
         $stmt->execute([$branch_id, $sale_date]);
         $breakdown['room_revenue'] = $stmt->fetchColumn();
 
         $stmt = $db->prepare("
-            SELECT COALESCE(SUM(amount), 0) FROM payments p
-            WHERE p.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ? AND p.payment_category = 'food'
+            SELECT COALESCE(SUM(p.amount), 0) FROM payments p
+            LEFT JOIN bookings b ON p.booking_id = b.id
+            WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ? AND p.payment_category = 'food'
         ");
         $stmt->execute([$branch_id, $sale_date]);
         $breakdown['food_revenue'] = $stmt->fetchColumn();
 
         $stmt = $db->prepare("
-            SELECT COALESCE(SUM(amount), 0) FROM payments p
-            WHERE p.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ? AND p.payment_category = 'service'
+            SELECT COALESCE(SUM(p.amount), 0) FROM payments p
+            LEFT JOIN bookings b ON p.booking_id = b.id
+            WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ? AND p.payment_category = 'service'
         ");
         $stmt->execute([$branch_id, $sale_date]);
         $breakdown['service_revenue'] = $stmt->fetchColumn();
 
         $stmt = $db->prepare("
-            SELECT payment_method, COALESCE(SUM(amount), 0) as total FROM payments
-            WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) = ?
-            GROUP BY payment_method
+            SELECT COALESCE(p.method, p.payment_method, 'unknown') as pay_method, COALESCE(SUM(p.amount), 0) as total FROM payments p
+            LEFT JOIN bookings b ON p.booking_id = b.id
+            WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = ?
+            GROUP BY pay_method
         ");
         $stmt->execute([$branch_id, $sale_date]);
         while ($row = $stmt->fetch()) {
-            $payment_methods[$row['payment_method']] = $row['total'];
+            $payment_methods[$row['pay_method']] = $row['total'];
         }
     } catch (Exception $e) {
         error_log('Daily sales error: ' . $e->getMessage());
@@ -196,7 +199,7 @@ if (!validateDate($sale_date)) $sale_date = date('Y-m-d');
                                         SELECT p.*, b.booking_reference as booking_ref
                                         FROM payments p
                                         LEFT JOIN bookings b ON p.booking_id = b.id
-                                        WHERE p.branch_id = ? AND DATE(p.created_at) = ?
+                                        WHERE b.branch_id = ? AND DATE(p.created_at) = ?
                                         ORDER BY p.created_at DESC LIMIT 50
                                     ");
                                     $stmt->execute([$branch_id, $sale_date]);

@@ -10,7 +10,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
 
 $db = getDB();
 $branch_id = $_SESSION['branch_id'] ?? 0;
-$branch_filter = $branch_id ? "AND p.branch_id = " . (int)$branch_id : "";
+$branch_filter = $branch_id ? "AND b.branch_id = " . (int)$branch_id : "";
 
 if (isset($_GET['confirm']) && (int)$_GET['confirm']) {
     try {
@@ -82,7 +82,7 @@ if ($status_filter) { $where .= " AND p.status = ?"; $params[] = $status_filter;
                     <tbody>
                         <?php
                         try {
-                            $st = $db->prepare("SELECT p.*, c.full_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id WHERE $where $branch_filter ORDER BY p.created_at DESC");
+                            $st = $db->prepare("SELECT p.*, c.full_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id LEFT JOIN bookings b ON p.booking_id = b.id WHERE $where $branch_filter ORDER BY p.created_at DESC");
                             $st->execute($params);
                             $payments = $st->fetchAll();
                             foreach ($payments as $p):

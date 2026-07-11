@@ -236,7 +236,7 @@ if ($search) { $where .= " AND (i.invoice_number LIKE ? OR c.full_name LIKE ?)";
                         <select name="customer_id" class="form-select" required>
                             <option value="">Select customer</option>
                             <?php
-                            $custs = $db->query("SELECT id, full_name, email FROM customers WHERE status = 'active' OR status IS NULL ORDER BY full_name");
+                            $custs = $db->query("SELECT id, full_name, email FROM customers ORDER BY full_name");
                             while ($c = $custs->fetch()):
                             ?>
                             <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['full_name'] . ' (' . ($c['email'] ?? '') . ')'); ?></option>

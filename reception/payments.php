@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['record_payment'])) {
     <?php
     $today_payments = 0;
     try {
-        $stmt = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE branch_id = ? AND status = 'paid' AND DATE(created_at) = CURRENT_DATE");
+        $stmt = $db->prepare("SELECT COALESCE(SUM(p.amount), 0) FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE b.branch_id = ? AND p.status = 'paid' AND DATE(p.created_at) = CURRENT_DATE");
         $stmt->execute([$branch_id]); $today_payments = $stmt->fetchColumn();
     } catch (Exception $e) {}
     ?>
@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['record_payment'])) {
                                         FROM payments p
                                         LEFT JOIN customers c ON p.customer_id = c.id
                                         LEFT JOIN bookings b ON p.booking_id = b.id
-                                        WHERE p.branch_id = ?
+                                        WHERE b.branch_id = ?
                                         ORDER BY p.created_at DESC LIMIT 50
                                     ");
                                     $stmt->execute([$branch_id]);
