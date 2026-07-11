@@ -101,7 +101,7 @@ $status_filter = $_GET['status'] ?? '';
                                     FROM bookings b
                                     LEFT JOIN customers c ON b.customer_id = c.id
                                     LEFT JOIN rooms rm ON b.room_id = rm.id
-                                    WHERE b.branch_id = ? AND b.booking_source = 'online'";
+                                    WHERE b.branch_id = ? AND b.source = 'online'";
                             $params = [$branch_id];
                             if ($status_filter) { $sql .= " AND b.booking_status = ?"; $params[] = $status_filter; }
                             $sql .= " ORDER BY b.created_at DESC";
