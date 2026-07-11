@@ -58,11 +58,24 @@ $first_name = explode(' ', $current_user['full_name'] ?? 'User')[0];
         </button>
         <?php
         $role_slug = $_SESSION['role_slug'] ?? 'guest';
-        $sidebar_file = __DIR__ . "/../sidebars/{$role_slug}-sidebar.php";
+        $sidebar_map = [
+            'business_owner'    => 'owner',
+            'admin'             => 'admin',
+            'branch_manager'    => 'branch-manager',
+            'receptionist'      => 'reception',
+            'kitchen_chef'      => 'kitchen',
+            'waiter'            => 'waiter',
+            'inventory_manager' => 'inventory',
+            'housekeeping'      => 'housekeeping',
+            'accountant'        => 'accountant',
+            'customer'          => 'customer',
+        ];
+        $sidebar_key = $sidebar_map[$role_slug] ?? $role_slug;
+        $sidebar_file = __DIR__ . "/../sidebars/{$sidebar_key}-sidebar.php";
         if (file_exists($sidebar_file)) {
             include $sidebar_file;
         } else {
-            include __DIR__ . '/../sidebars/owner-sidebar.php';
+            include __DIR__ . '/../sidebars/customer-sidebar.php';
         }
         ?>
     </aside>
