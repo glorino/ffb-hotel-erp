@@ -2035,6 +2035,30 @@ textarea.dashboard-form-control {
 .stat-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border-radius: 16px !important;
+  overflow: hidden;
+}
+
+.stat-card .card-body {
+  overflow: hidden;
+}
+
+.stat-card .stat-value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat-card .stat-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat-card small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 
 .stat-card:hover {

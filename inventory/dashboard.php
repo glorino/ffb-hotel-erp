@@ -75,7 +75,7 @@ $branch_id = (int)($_SESSION['branch_id'] ?? 0);
     ?>
 
     <div class="row g-3 mb-4">
-        <div class="col-xl-2 col-md-4 col-6">
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
             <div class="card border-0 shadow-sm stat-card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
@@ -90,7 +90,7 @@ $branch_id = (int)($_SESSION['branch_id'] ?? 0);
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-md-4 col-6">
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
             <div class="card border-0 shadow-sm stat-card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
@@ -105,7 +105,7 @@ $branch_id = (int)($_SESSION['branch_id'] ?? 0);
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-md-4 col-6">
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
             <div class="card border-0 shadow-sm stat-card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
@@ -120,7 +120,7 @@ $branch_id = (int)($_SESSION['branch_id'] ?? 0);
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-md-4 col-6">
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
             <div class="card border-0 shadow-sm stat-card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
@@ -135,7 +135,7 @@ $branch_id = (int)($_SESSION['branch_id'] ?? 0);
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-md-4 col-6">
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
             <div class="card border-0 shadow-sm stat-card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
@@ -150,7 +150,7 @@ $branch_id = (int)($_SESSION['branch_id'] ?? 0);
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-md-4 col-6">
+        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-6">
             <div class="card border-0 shadow-sm stat-card h-100">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
