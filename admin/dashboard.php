@@ -11,7 +11,6 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
 $db = getDB();
 ?>
 
-<div class="container-fluid">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="dashboard.php"><i class="bi bi-house-door"></i> Home</a></li>
@@ -237,7 +236,7 @@ $db = getDB();
                         <?php endforeach; ?>
                         <?php if (empty($activities)): ?>
                         <div class="text-center py-4 text-muted">No recent activity.</div>
-                        <?php } ?>
+                        <?php endif; ?>
                         <?php } catch (Exception $e) { ?>
                         <div class="text-center py-4 text-danger">Error loading activity.</div>
                         <?php } ?>
@@ -263,7 +262,6 @@ $db = getDB();
             </div>
         </div>
     </div>
-</div>
 
 <?php
 $rev_labels = []; $rev_data = [];
@@ -289,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(document.getElementById('revenueChart'), {
         type: 'line', data: {
             labels: <?php echo json_encode($rev_labels); ?>,
-            datasets: [{ label: 'Revenue', data: <?php echo json_encode($rev_data); ?>, borderColor: '#0d6efd', backgroundColor: 'rgba(13,110,253,0.1)', fill: true, tension: 0.4, pointRadius: 4 }]
+            datasets: [{ label: 'Revenue', data: <?php echo json_encode($rev_data); ?>, borderColor: '#d4af37', backgroundColor: 'rgba(212,175,55,0.08)', fill: true, tension: 0.4, pointRadius: 4 }]
         },
         options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '<?php echo CURRENCY_SYMBOL; ?>' + v.toLocaleString() } } } }
     });
@@ -297,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(document.getElementById('bookingPieChart'), {
         type: 'doughnut', data: {
             labels: ['Pending','Confirmed','Checked In','Checked Out','Cancelled'],
-            datasets: [{ data: <?php echo json_encode(array_values($bk_counts)); ?>, backgroundColor: ['#ffc107','#0dcaf0','#198754','#6c757d','#dc3545'], borderWidth: 2 }]
+            datasets: [{ data: <?php echo json_encode(array_values($bk_counts)); ?>, backgroundColor: ['#f59e0b', '#3b82f6', '#10b981', '#6b7280', '#ef4444'], borderWidth: 2 }]
         },
         options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } }, cutout: '65%' }
     });

@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                     <tbody>
                         <?php
                         try {
-                            $sql = "SELECT fo.*, c.first_name, c.last_name, rm.room_number
+                            $sql = "SELECT fo.*, c.full_name, rm.room_number
                                     FROM food_orders fo
                                     LEFT JOIN customers c ON fo.customer_id = c.id
                                     LEFT JOIN bookings b ON fo.booking_id = b.id
@@ -95,20 +95,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                             $stmt->execute($params);
                             $orders = $stmt->fetchAll();
                             foreach ($orders as $o):
-                                $items_stmt = $db->prepare("SELECT oi.*, mi.name FROM order_items oi LEFT JOIN menu_items mi ON oi.menu_item_id = mi.id WHERE oi.order_id = ?");
+                                $items_stmt = $db->prepare("SELECT foi.*, fi.name FROM food_order_items foi JOIN food_items fi ON foi.food_item_id = fi.id WHERE foi.food_order_id = ?");
                                 $items_stmt->execute([$o['id']]);
                                 $items = $items_stmt->fetchAll();
                         ?>
                         <tr>
                             <td><?php echo $o['id']; ?></td>
-                            <td><?php echo htmlspecialchars(($o['first_name'] ?? '') . ' ' . ($o['last_name'] ?? 'Guest')); ?></td>
+                            <td><?php echo htmlspecialchars($o['full_name'] ?? 'Guest'); ?></td>
                             <td><?php echo htmlspecialchars($o['room_number'] ?? 'N/A'); ?></td>
                             <td>
                                 <button type="button" class="btn btn-sm btn-link p-0" data-bs-toggle="popover" data-bs-placement="left" data-bs-html="true" title="Order Items" data-bs-content="
                                     <?php
                                     $item_list = '';
                                     foreach ($items as $it) {
-                                        $item_list .= htmlspecialchars($it['name'] ?? 'Item') . ' x' . $it['quantity'] . ' - ' . formatMoney($it['price'] * $it['quantity']) . '<br>';
+                                        $item_list .= htmlspecialchars($it['name'] ?? 'Item') . ' x' . $it['quantity'] . ' - ' . formatMoney($it['total_price'] * $it['quantity']) . '<br>';
                                     }
                                     echo $item_list ?: 'No items';
                                     ?>

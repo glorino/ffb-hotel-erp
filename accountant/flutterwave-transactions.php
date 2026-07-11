@@ -125,7 +125,7 @@ if ($recon_filter) { $where .= " AND (pt.reconciliation_status = ? OR (pt.reconc
                     <tbody>
                         <?php
                         try {
-                            $st = $db->prepare("SELECT pt.*, c.first_name, c.last_name FROM paystack_transactions pt LEFT JOIN customers c ON pt.customer_id = c.id WHERE $where $branch_filter ORDER BY pt.created_at DESC");
+                            $st = $db->prepare("SELECT pt.*, c.full_name FROM paystack_transactions pt LEFT JOIN customers c ON pt.customer_id = c.id WHERE $where $branch_filter ORDER BY pt.created_at DESC");
                             $st->execute($params);
                             $txns = $st->fetchAll();
                             foreach ($txns as $t):
@@ -133,7 +133,7 @@ if ($recon_filter) { $where .= " AND (pt.reconciliation_status = ? OR (pt.reconc
                         <tr>
                             <td><small class="fw-medium"><?php echo htmlspecialchars($t['reference'] ?? '—'); ?></small></td>
                             <td><small class="text-muted"><?php echo htmlspecialchars($t['paystack_reference'] ?? '—'); ?></small></td>
-                            <td><?php echo htmlspecialchars(($t['first_name'] ?? '') . ' ' . ($t['last_name'] ?? '—')); ?></td>
+                            <td><?php echo htmlspecialchars($t['full_name'] ?? '—'); ?></td>
                             <td><strong><?php echo formatMoney($t['amount']); ?></strong></td>
                             <td><?php echo getPaymentStatusBadge($t['status']); ?></td>
                             <td><small class="text-muted"><?php echo timeAgo($t['created_at']); ?></small></td>
@@ -154,8 +154,10 @@ if ($recon_filter) { $where .= " AND (pt.reconciliation_status = ? OR (pt.reconc
                                 </div>
                             </td>
                         </tr>
-                        <?php endforeach; if (empty($txns)): ?>
+                        <?php endforeach; ?>
+                        <?php if (empty($txns)): ?>
                         <tr><td colspan="8" class="text-center py-4 text-muted">No Flutterwave transactions found</td></tr>
+                        <?php endif; ?>
                         <?php } catch (Exception $e) {
                             echo '<tr><td colspan="8" class="text-center py-4 text-danger">Error: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
                         } ?>

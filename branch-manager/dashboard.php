@@ -12,7 +12,6 @@ $db = getDB();
 $branch_id = $_SESSION['branch_id'] ?? 0;
 ?>
 
-<div class="container-fluid">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="dashboard.php"><i class="bi bi-house-door"></i> Home</a></li>
@@ -203,7 +202,7 @@ $branch_id = $_SESSION['branch_id'] ?? 0;
                                 <?php
                                 try {
                                     $stmt = $db->prepare("
-                                        SELECT al.*, u.first_name, u.last_name
+                                        SELECT al.*, u.full_name
                                         FROM audit_logs al
                                         LEFT JOIN users u ON al.user_id = u.id
                                         WHERE al.branch_id = ? AND DATE(al.created_at) = CURRENT_DATE
@@ -216,7 +215,7 @@ $branch_id = $_SESSION['branch_id'] ?? 0;
                                 <tr>
                                     <td><small class="text-muted"><?php echo date('h:i A', strtotime($act['created_at'])); ?></small></td>
                                     <td><?php echo htmlspecialchars(ucfirst($act['action']) . ' ' . $act['entity_type']); ?></td>
-                                    <td><?php echo htmlspecialchars(($act['first_name'] ?? '') . ' ' . ($act['last_name'] ?? 'System')); ?></td>
+                                    <td><?php echo htmlspecialchars($act['full_name'] ?? 'System'); ?></td>
                                     <td><small class="text-muted"><?php echo htmlspecialchars($act['entity_id'] ?? ''); ?></small></td>
                                 </tr>
                                 <?php
@@ -237,7 +236,6 @@ $branch_id = $_SESSION['branch_id'] ?? 0;
             </div>
         </div>
     </div>
-</div>
 
 <?php
 $rev_labels = []; $rev_data = [];
@@ -271,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(document.getElementById('revenueChart'), {
         type: 'line', data: {
             labels: <?php echo json_encode($rev_labels); ?>,
-            datasets: [{ label: 'Revenue', data: <?php echo json_encode($rev_data); ?>, borderColor: '#0d6efd', backgroundColor: 'rgba(13,110,253,0.1)', fill: true, tension: 0.4, pointRadius: 4 }]
+            datasets: [{ label: 'Revenue', data: <?php echo json_encode($rev_data); ?>, borderColor: '#d4af37', backgroundColor: 'rgba(212,175,55,0.08)', fill: true, tension: 0.4, pointRadius: 4 }]
         },
         options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '<?php echo CURRENCY_SYMBOL; ?>' + v.toLocaleString() } } } }
     });

@@ -12,7 +12,6 @@ $db = getDB();
 $branch_id = $_SESSION['branch_id'] ?? 0;
 $branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
 ?>
-<div class="container-fluid">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="dashboard.php"><i class="bi bi-house-door"></i> Home</a></li>
@@ -210,20 +209,22 @@ $branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
                             <tbody>
                                 <?php
                                 try {
-                                    $stmt = $db->query("SELECT p.*, c.first_name, c.last_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id WHERE 1=1 $branch_filter ORDER BY p.created_at DESC LIMIT 15");
+                                    $stmt = $db->query("SELECT p.*, c.full_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id WHERE 1=1 $branch_filter ORDER BY p.created_at DESC LIMIT 15");
                                     $txns = $stmt->fetchAll();
                                     foreach ($txns as $t):
                                 ?>
                                 <tr>
                                     <td><small class="fw-medium"><?php echo htmlspecialchars($t['reference'] ?? 'PAY-' . $t['id']); ?></small></td>
-                                    <td><?php echo htmlspecialchars(($t['first_name'] ?? '') . ' ' . ($t['last_name'] ?? '—')); ?></td>
+                                    <td><?php echo htmlspecialchars($t['full_name'] ?? '—'); ?></td>
                                     <td><strong><?php echo formatMoney($t['amount']); ?></strong></td>
                                     <td><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $t['payment_method'] ?? '—'))); ?></td>
                                     <td><?php echo getPaymentStatusBadge($t['status']); ?></td>
                                     <td><small class="text-muted"><?php echo timeAgo($t['created_at']); ?></small></td>
                                 </tr>
-                                <?php endforeach; if (empty($txns)): ?>
+                                <?php endforeach; ?>
+                                <?php if (empty($txns)): ?>
                                 <tr><td colspan="6" class="text-center py-4 text-muted">No transactions found</td></tr>
+                                <?php endif; ?>
                                 <?php } catch (Exception $e) {
                                     echo '<tr><td colspan="6" class="text-center py-4 text-danger">Error loading data</td></tr>';
                                 } ?>
@@ -258,8 +259,10 @@ $branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
                                     <td><small class="text-muted"><?php echo timeAgo($r['created_at']); ?></small></td>
                                     <td><span class="badge bg-warning"><?php echo htmlspecialchars(ucfirst($r['reconciliation_status'] ?? 'pending')); ?></span></td>
                                 </tr>
-                                <?php endforeach; if (empty($recs)): ?>
+                                <?php endforeach; ?>
+                                <?php if (empty($recs)): ?>
                                 <tr><td colspan="4" class="text-center py-4 text-muted">All reconciled</td></tr>
+                                <?php endif; ?>
                                 <?php } catch (Exception $e) {
                                     echo '<tr><td colspan="4" class="text-center py-4 text-danger">Error loading data</td></tr>';
                                 } ?>
@@ -270,7 +273,6 @@ $branch_filter = $branch_id ? "AND branch_id = " . (int)$branch_id : "";
             </div>
         </div>
     </div>
-</div>
 
 <?php
 $rev_months = []; $exp_months = []; $month_labels = [];

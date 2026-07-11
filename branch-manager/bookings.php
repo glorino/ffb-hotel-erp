@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     $count_sql = "SELECT COUNT(*) FROM bookings WHERE branch_id = ?";
                     $params = [$branch_id];
                     if ($status_filter) { $count_sql .= " AND booking_status = ?"; $params[] = $status_filter; }
-                    if ($search) { $count_sql .= " AND (reference LIKE ? OR id IN (SELECT booking_id FROM guests WHERE full_name LIKE ?))"; $params[] = "%$search%"; $params[] = "%$search%"; }
+                    if ($search) { $count_sql .= " AND (booking_reference LIKE ? OR id IN (SELECT booking_id FROM guests WHERE full_name LIKE ?))"; $params[] = "%$search%"; $params[] = "%$search%"; }
                     if ($date_from) { $count_sql .= " AND check_in_date >= ?"; $params[] = $date_from; }
                     if ($date_to) { $count_sql .= " AND check_out_date <= ?"; $params[] = $date_to; }
                     $stmt = $db->prepare($count_sql);
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                         <?php
                         try {
                             $sql = "
-                                SELECT b.*, c.first_name, c.last_name, c.email, rm.room_number, rt.name as room_type_name
+                                SELECT b.*, c.full_name, c.email, rm.room_number, rt.name as room_type_name
                                 FROM bookings b
                                 LEFT JOIN customers c ON b.customer_id = c.id
                                 LEFT JOIN rooms rm ON b.room_id = rm.id
@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             ";
                             $params = [$branch_id];
                             if ($status_filter) { $sql .= " AND b.booking_status = ?"; $params[] = $status_filter; }
-                            if ($search) { $sql .= " AND (b.reference LIKE ? OR c.first_name LIKE ? OR c.last_name LIKE ? OR c.email LIKE ?)"; $params[] = "%$search%"; $params[] = "%$search%"; $params[] = "%$search%"; $params[] = "%$search%"; }
+                            if ($search) { $sql .= " AND (b.booking_reference LIKE ? OR c.full_name LIKE ? OR c.email LIKE ?)"; $params[] = "%$search%"; $params[] = "%$search%"; $params[] = "%$search%"; }
                             if ($date_from) { $sql .= " AND b.check_in_date >= ?"; $params[] = $date_from; }
                             if ($date_to) { $sql .= " AND b.check_out_date <= ?"; $params[] = $date_to; }
                             $sql .= " ORDER BY b.created_at DESC";
@@ -138,8 +138,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                             foreach ($bookings as $b):
                         ?>
                         <tr>
-                            <td><strong><?php echo htmlspecialchars($b['reference']); ?></strong></td>
-                            <td><?php echo htmlspecialchars(($b['first_name'] ?? '') . ' ' . ($b['last_name'] ?? 'Walk-in')); ?></td>
+                            <td><strong><?php echo htmlspecialchars($b['booking_reference']); ?></strong></td>
+                            <td><?php echo htmlspecialchars($b['full_name'] ?? 'Walk-in'); ?></td>
                             <td><?php echo htmlspecialchars($b['room_number'] ?? 'N/A'); ?><br><small class="text-muted"><?php echo htmlspecialchars($b['room_type_name'] ?? ''); ?></small></td>
                             <td><?php echo formatDate($b['check_in_date']); ?></td>
                             <td><?php echo formatDate($b['check_out_date']); ?></td>

@@ -91,9 +91,6 @@ try {
     if ($booking_id > 0) {
         $stmt = $db->prepare("UPDATE bookings SET paystack_reference = ?, updated_at = NOW() WHERE id = ?");
         $stmt->execute([$reference, $booking_id]);
-    } elseif ($order_id > 0) {
-        $stmt = $db->prepare("UPDATE orders SET paystack_reference = ?, updated_at = NOW() WHERE id = ?");
-        $stmt->execute([$reference, $order_id]);
     }
 
     // Record pending payment

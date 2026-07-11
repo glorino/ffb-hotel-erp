@@ -53,7 +53,7 @@ $orders = $stmt->fetchAll();
         <?php foreach ($orders as $o):
             $items = [];
             try {
-                $st = $db->prepare("SELECT item_name, quantity, price FROM order_items WHERE food_order_id = ?");
+                $st = $db->prepare("SELECT foi.*, fi.name as item_name FROM food_order_items foi JOIN food_items fi ON foi.food_item_id = fi.id WHERE foi.food_order_id = ?");
                 $st->execute([$o['id']]);
                 $items = $st->fetchAll();
             } catch (Exception $e) {}
@@ -75,7 +75,7 @@ $orders = $stmt->fetchAll();
                         <?php if ($items): ?>
                         <ul class="list-unstyled mb-0 small">
                             <?php foreach ($items as $item): ?>
-                            <li><?php echo htmlspecialchars($item['item_name']); ?> x<?php echo $item['quantity']; ?> — <?php echo formatMoney($item['price'] * $item['quantity']); ?></li>
+                            <li><?php echo htmlspecialchars($item['item_name']); ?> x<?php echo $item['quantity']; ?> — <?php echo formatMoney($item['total_price'] * $item['quantity']); ?></li>
                             <?php endforeach; ?>
                         </ul>
                         <?php else: ?>

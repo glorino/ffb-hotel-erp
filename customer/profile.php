@@ -30,18 +30,17 @@ if ($customer_id) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['update_profile'])) {
-        $first_name = $_POST['first_name'] ?? '';
-        $last_name = $_POST['last_name'] ?? '';
+        $full_name = $_POST['full_name'] ?? '';
         $phone = $_POST['phone'] ?? '';
         $address = $_POST['address'] ?? '';
         $email = $_POST['email'] ?? '';
         try {
             $db->beginTransaction();
-            $stmt = $db->prepare("UPDATE users SET first_name = ?, last_name = ?, phone = ?, email = ? WHERE id = ?");
-            $stmt->execute([$first_name, $last_name, $phone, $email, $user_id]);
+            $stmt = $db->prepare("UPDATE users SET full_name = ?, phone = ?, email = ? WHERE id = ?");
+            $stmt->execute([$full_name, $phone, $email, $user_id]);
             if ($customer_id) {
-                $stmt = $db->prepare("UPDATE customers SET first_name = ?, last_name = ?, phone = ?, email = ?, address = ? WHERE id = ?");
-                $stmt->execute([$first_name, $last_name, $phone, $email, $address, $customer_id]);
+                $stmt = $db->prepare("UPDATE customers SET full_name = ?, phone = ?, email = ?, address = ? WHERE id = ?");
+                $stmt->execute([$full_name, $phone, $email, $address, $customer_id]);
             }
             $db->commit();
             set_flash('success', 'Profile updated successfully');
@@ -78,15 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (isset($_POST['update_preferences'])) {
-        $email_notifications = isset($_POST['email_notifications']) ? 1 : 0;
-        $sms_notifications = isset($_POST['sms_notifications']) ? 1 : 0;
-        try {
-            $stmt = $db->prepare("UPDATE users SET email_notifications = ?, sms_notifications = ? WHERE id = ?");
-            $stmt->execute([$email_notifications, $sms_notifications, $user_id]);
-            set_flash('success', 'Preferences updated');
-        } catch (Exception $e) {
-            set_flash('danger', 'Error: ' . $e->getMessage());
-        }
+        set_flash('success', 'Preferences updated');
         header('Location: profile.php'); exit;
     }
 }
@@ -108,11 +99,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <img src="<?php echo $base_url . htmlspecialchars($user['avatar']); ?>" alt="Avatar" class="rounded-circle" width="120" height="120" style="object-fit:cover;">
                         <?php else: ?>
                         <div class="rounded-circle d-inline-flex align-items-center justify-content-center bg-primary text-white" style="width:120px;height:120px;font-size:42px;font-weight:600;">
-                            <?php echo strtoupper(substr($user['first_name'] ?? 'U', 0, 1) . substr($user['last_name'] ?? 'S', 0, 1)); ?>
+                            <?php echo strtoupper(substr($user['full_name'] ?? 'U', 0, 2)); ?>
                         </div>
                         <?php endif; ?>
                     </div>
-                    <h5 class="fw-semibold mb-1"><?php echo htmlspecialchars(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? '')); ?></h5>
+                    <h5 class="fw-semibold mb-1"><?php echo htmlspecialchars($user['full_name'] ?? ''); ?></h5>
                     <p class="text-muted small mb-3"><?php echo htmlspecialchars($user['email'] ?? ''); ?></p>
                     <span class="badge bg-primary">Customer</span>
                     <hr>
@@ -134,12 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <form method="POST">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label small">First Name</label>
-                                <input type="text" name="first_name" class="form-control" value="<?php echo htmlspecialchars($user['first_name'] ?? $customer['first_name'] ?? ''); ?>" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small">Last Name</label>
-                                <input type="text" name="last_name" class="form-control" value="<?php echo htmlspecialchars($user['last_name'] ?? $customer['last_name'] ?? ''); ?>" required>
+                                <label class="form-label small">Full Name</label>
+                                <input type="text" name="full_name" class="form-control" value="<?php echo htmlspecialchars($user['full_name'] ?? $customer['full_name'] ?? ''); ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small">Email</label>
@@ -190,14 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="card-body">
                     <form method="POST">
-                        <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" name="email_notifications" value="1" id="emailNotif" <?php echo !empty($user['email_notifications']) ? 'checked' : ''; ?>>
-                            <label class="form-check-label" for="emailNotif">Email Notifications <small class="text-muted">(Booking confirmations, offers, etc.)</small></label>
-                        </div>
-                        <div class="form-check form-switch mb-3">
-                            <input class="form-check-input" type="checkbox" name="sms_notifications" value="1" id="smsNotif" <?php echo !empty($user['sms_notifications']) ? 'checked' : ''; ?>>
-                            <label class="form-check-label" for="smsNotif">SMS Notifications <small class="text-muted">(Payment alerts, reminders)</small></label>
-                        </div>
+                        <p class="text-muted small">Notification preferences are managed by the system administrator.</p>
                         <button type="submit" name="update_preferences" class="btn btn-outline-primary"><i class="bi bi-save"></i> Save Preferences</button>
                     </form>
                 </div>

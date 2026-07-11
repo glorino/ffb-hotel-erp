@@ -76,7 +76,7 @@ if ($check_out <= $check_in) $check_out = date('Y-m-d', strtotime($check_in . '+
     } catch (Exception $e) {}
 
     try {
-        $sql = "SELECT r.*, rt.name as type_name, rt.base_price, rt.capacity FROM rooms r JOIN room_types rt ON r.room_type_id = rt.id WHERE r.branch_id = ?";
+        $sql = "SELECT r.*, rt.name as type_name, rt.base_price, rt.max_guests FROM rooms r JOIN room_types rt ON r.room_type_id = rt.id WHERE r.branch_id = ?";
         $params = [$branch_id];
         if ($room_type) { $sql .= " AND r.room_type_id = ?"; $params[] = $room_type; }
         $sql .= " ORDER BY r.floor, r.room_number";
@@ -137,7 +137,7 @@ if ($check_out <= $check_in) $check_out = date('Y-m-d', strtotime($check_in . '+
                     if ($show_available && $status !== 'available') continue;
                 ?>
                 <div class="col-lg-2 col-md-3 col-4">
-                    <div class="card <?php echo $bg; ?> text-white border-0 room-card" style="cursor:pointer;" data-room-id="<?php echo $r['id']; ?>" data-room-number="<?php echo htmlspecialchars($r['room_number']); ?>" data-type="<?php echo htmlspecialchars($r['type_name']); ?>" data-price="<?php echo $r['base_price']; ?>" data-capacity="<?php echo $r['capacity']; ?>" data-status="<?php echo $status; ?>" onclick="selectRoom(this)">
+                    <div class="card <?php echo $bg; ?> text-white border-0 room-card" style="cursor:pointer;" data-room-id="<?php echo $r['id']; ?>" data-room-number="<?php echo htmlspecialchars($r['room_number']); ?>" data-type="<?php echo htmlspecialchars($r['type_name']); ?>" data-price="<?php echo $r['base_price']; ?>"                     data-capacity="<?php echo $r['max_guests']; ?>" data-status="<?php echo $status; ?>" onclick="selectRoom(this)">
                         <div class="card-body text-center py-3">
                             <h5 class="mb-0"><?php echo htmlspecialchars($r['room_number']); ?></h5>
                             <small><?php echo htmlspecialchars($r['type_name']); ?></small>

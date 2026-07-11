@@ -123,14 +123,14 @@ try {
                     <tbody>
                         <?php
                         try {
-                            $st = $db->prepare("SELECT r.*, p.reference as pay_ref, c.first_name, c.last_name, u.first_name as uf, u.last_name as ul FROM refunds r LEFT JOIN payments p ON r.payment_id = p.id LEFT JOIN customers c ON r.customer_id = c.id LEFT JOIN users u ON r.processed_by = u.id WHERE $where $branch_filter ORDER BY r.created_at DESC");
+                            $st = $db->prepare("SELECT r.*, p.reference as pay_ref, c.full_name, u.full_name as staff_name FROM refunds r LEFT JOIN payments p ON r.payment_id = p.id LEFT JOIN customers c ON r.customer_id = c.id LEFT JOIN users u ON r.processed_by = u.id WHERE $where $branch_filter ORDER BY r.created_at DESC");
                             $st->execute($params);
                             $refunds = $st->fetchAll();
                             foreach ($refunds as $r):
                         ?>
                         <tr>
                             <td><small><?php echo htmlspecialchars($r['pay_ref'] ?? '—'); ?></small></td>
-                            <td><?php echo htmlspecialchars(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? '—')); ?></td>
+                            <td><?php echo htmlspecialchars($r['full_name'] ?? '—'); ?></td>
                             <td class="text-danger fw-semibold">-<?php echo formatMoney($r['amount']); ?></td>
                             <td><small><?php echo htmlspecialchars(truncate($r['reason'] ?? '—', 50)); ?></small></td>
                             <td>
@@ -140,11 +140,13 @@ try {
                                 echo "<span class='badge bg-{$rc}'>" . htmlspecialchars(ucfirst($r['status'])) . "</span>";
                                 ?>
                             </td>
-                            <td><small><?php echo htmlspecialchars(($r['uf'] ?? '') . ' ' . ($r['ul'] ?? '—')); ?></small></td>
+                            <td><small><?php echo htmlspecialchars($r['staff_name'] ?? '—'); ?></small></td>
                             <td><small class="text-muted"><?php echo formatDateTime($r['created_at']); ?></small></td>
                         </tr>
-                        <?php endforeach; if (empty($refunds)): ?>
+                        <?php endforeach; ?>
+                        <?php if (empty($refunds)): ?>
                         <tr><td colspan="7" class="text-center py-4 text-muted">No refunds processed</td></tr>
+                        <?php endif; ?>
                         <?php } catch (Exception $e) {
                             echo '<tr><td colspan="7" class="text-center py-4 text-danger">Error: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
                         } ?>
@@ -166,11 +168,11 @@ try {
                         <select name="payment_id" class="form-select" required>
                             <option value="">Select paid payment</option>
                             <?php
-                            $pays = $db->prepare("SELECT p.id, p.reference, p.amount, c.first_name, c.last_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id WHERE p.status = 'paid' ORDER BY p.created_at DESC LIMIT 100");
+                            $pays = $db->prepare("SELECT p.id, p.reference, p.amount, c.full_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id WHERE p.status = 'paid' ORDER BY p.created_at DESC LIMIT 100");
                             $pays->execute();
                             while ($p = $pays->fetch()):
                             ?>
-                            <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars(($p['reference'] ?? 'PAY-' . $p['id']) . ' - ' . formatMoney($p['amount']) . ' - ' . ($p['first_name'] ?? '') . ' ' . ($p['last_name'] ?? '')); ?></option>
+                            <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars(($p['reference'] ?? 'PAY-' . $p['id']) . ' - ' . formatMoney($p['amount']) . ' - ' . ($p['full_name'] ?? '')); ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>

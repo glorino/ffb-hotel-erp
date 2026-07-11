@@ -6,10 +6,20 @@ class Database {
 
     private function __construct() {
         $db_url = getenv('DATABASE_URL');
+        if (!$db_url) {
+            error_log('DATABASE_URL environment variable is not set.');
+            http_response_code(500);
+            die('Database configuration error. Please try again later.');
+        }
 
         try {
             $url = parse_url($db_url);
-            $host = $url['host'] ?? 'localhost';
+            if (!$url || empty($url['host'])) {
+                error_log('DATABASE_URL is malformed: ' . $db_url);
+                http_response_code(500);
+                die('Database configuration error. Please try again later.');
+            }
+            $host = $url['host'];
             $port = $url['port'] ?? '5432';
             $user = $url['user'] ?? '';
             $pass = $url['pass'] ?? '';
@@ -27,6 +37,11 @@ class Database {
             $this->conn = new PDO($dsn, $user, $pass, $options);
         } catch (PDOException $e) {
             error_log('Database connection error: ' . $e->getMessage());
+            http_response_code(500);
+            die('Database connection failed. Please try again later.');
+        } catch (Throwable $e) {
+            error_log('Database unexpected error: ' . $e->getMessage());
+            http_response_code(500);
             die('Database connection failed. Please try again later.');
         }
     }

@@ -27,8 +27,8 @@ $guest_id = $_GET['view'] ?? 0;
     <?php if ($guest_id): ?>
     <?php
     try {
-        $stmt = $db->prepare("SELECT * FROM customers WHERE id = ?");
-        $stmt->execute([$guest_id]);
+        $stmt = $db->prepare("SELECT * FROM customers WHERE id = ? AND (branch_id = ? OR branch_id IS NULL)");
+        $stmt->execute([$guest_id, $branch_id]);
         $guest = $stmt->fetch();
         if (!$guest) throw new Exception('Guest not found');
     ?>
@@ -41,7 +41,7 @@ $guest_id = $_GET['view'] ?? 0;
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <h6>Personal Information</h6>
-                    <p class="mb-1"><strong><?php echo htmlspecialchars(($guest['first_name'] ?? '') . ' ' . ($guest['last_name'] ?? '')); ?></strong></p>
+                    <p class="mb-1"><strong><?php echo htmlspecialchars($guest['full_name'] ?? ''); ?></strong></p>
                     <p class="mb-1">Email: <?php echo htmlspecialchars($guest['email'] ?? 'N/A'); ?></p>
                     <p class="mb-1">Phone: <?php echo htmlspecialchars($guest['phone'] ?? 'N/A'); ?></p>
                     <p class="mb-0">ID: <?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $guest['id_type'] ?? 'N/A'))); ?> — <?php echo htmlspecialchars($guest['id_number'] ?? 'N/A'); ?></p>
@@ -49,16 +49,16 @@ $guest_id = $_GET['view'] ?? 0;
                 <div class="col-md-6">
                     <h6>Statistics</h6>
                     <?php
-                    $stmt = $db->prepare("SELECT COUNT(*) FROM bookings WHERE customer_id = ?");
-                    $stmt->execute([$guest_id]);
+                    $stmt = $db->prepare("SELECT COUNT(*) FROM bookings WHERE customer_id = ? AND branch_id = ?");
+                    $stmt->execute([$guest_id, $branch_id]);
                     $total_visits = $stmt->fetchColumn();
 
-                    $stmt = $db->prepare("SELECT COALESCE(SUM(total_amount), 0) FROM bookings WHERE customer_id = ? AND booking_status NOT IN ('cancelled')");
-                    $stmt->execute([$guest_id]);
+                    $stmt = $db->prepare("SELECT COALESCE(SUM(total_amount), 0) FROM bookings WHERE customer_id = ? AND branch_id = ? AND booking_status NOT IN ('cancelled')");
+                    $stmt->execute([$guest_id, $branch_id]);
                     $total_spent = $stmt->fetchColumn();
 
-                    $stmt = $db->prepare("SELECT MAX(created_at) FROM bookings WHERE customer_id = ?");
-                    $stmt->execute([$guest_id]);
+                    $stmt = $db->prepare("SELECT MAX(created_at) FROM bookings WHERE customer_id = ? AND branch_id = ?");
+                    $stmt->execute([$guest_id, $branch_id]);
                     $last_visit = $stmt->fetchColumn();
                     ?>
                     <p class="mb-1">Total Visits: <strong><?php echo $total_visits; ?></strong></p>
@@ -75,12 +75,12 @@ $guest_id = $_GET['view'] ?? 0;
                     </thead>
                     <tbody>
                         <?php
-                        $stmt = $db->prepare("SELECT b.*, rm.room_number FROM bookings b LEFT JOIN rooms rm ON b.room_id = rm.id WHERE b.customer_id = ? ORDER BY b.created_at DESC LIMIT 20");
-                        $stmt->execute([$guest_id]);
+                        $stmt = $db->prepare("SELECT b.*, rm.room_number FROM bookings b LEFT JOIN rooms rm ON b.room_id = rm.id WHERE b.customer_id = ? AND b.branch_id = ? ORDER BY b.created_at DESC LIMIT 20");
+                        $stmt->execute([$guest_id, $branch_id]);
                         while ($b = $stmt->fetch()):
                         ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($b['reference']); ?></td>
+                            <td><?php echo htmlspecialchars($b['booking_reference']); ?></td>
                             <td><?php echo htmlspecialchars($b['room_number'] ?? 'N/A'); ?></td>
                             <td><?php echo formatDate($b['check_in_date']); ?></td>
                             <td><?php echo formatDate($b['check_out_date']); ?></td>
@@ -101,8 +101,8 @@ $guest_id = $_GET['view'] ?? 0;
                     </thead>
                     <tbody>
                         <?php
-                        $stmt = $db->prepare("SELECT p.*, b.reference as booking_ref FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.customer_id = ? ORDER BY p.created_at DESC LIMIT 20");
-                        $stmt->execute([$guest_id]);
+                        $stmt = $db->prepare("SELECT p.*, b.booking_reference as booking_ref FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id WHERE p.customer_id = ? AND p.branch_id = ? ORDER BY p.created_at DESC LIMIT 20");
+                        $stmt->execute([$guest_id, $branch_id]);
                         while ($p = $stmt->fetch()):
                         ?>
                         <tr>
@@ -184,7 +184,7 @@ $guest_id = $_GET['view'] ?? 0;
                                     'email' => 'c.email',
                                     'phone' => 'c.phone',
                                     'id_number' => 'c.id_number',
-                                    default => "CONCAT(c.first_name, ' ', c.last_name)"
+                                    default => "c.full_name"
                                 };
                                 $sql .= " AND $col LIKE ?";
                                 $params[] = "%$search%";
@@ -196,7 +196,7 @@ $guest_id = $_GET['view'] ?? 0;
                             foreach ($guests as $g):
                         ?>
                         <tr>
-                            <td><strong><?php echo htmlspecialchars(($g['first_name'] ?? '') . ' ' . ($g['last_name'] ?? '')); ?></strong></td>
+                            <td><strong><?php echo htmlspecialchars($g['full_name'] ?? ''); ?></strong></td>
                             <td><small><?php echo htmlspecialchars($g['email'] ?? '-'); ?></small></td>
                             <td><small><?php echo htmlspecialchars($g['phone'] ?? '-'); ?></small></td>
                             <td><small><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $g['id_type'] ?? ''))); ?> <?php echo htmlspecialchars($g['id_number'] ?? ''); ?></small></td>

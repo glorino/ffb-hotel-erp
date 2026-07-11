@@ -13,8 +13,6 @@ $branch_id = $_SESSION['branch_id'] ?? 0;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_checkin'])) {
     $booking_id = (int)($_POST['booking_id'] ?? 0);
-    $id_verified = isset($_POST['id_verified']) ? 1 : 0;
-    $signature_collected = isset($_POST['signature_collected']) ? 1 : 0;
     $room_id = (int)($_POST['room_id'] ?? 0);
 
     try {
@@ -28,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_checkin'])) {
         $target_room = $room_id ?: $booking['room_id'];
         if (!$target_room) throw new Exception('No room assigned to this booking');
 
-        $stmt = $db->prepare("UPDATE bookings SET booking_status = 'checked_in', check_in_time = NOW(), id_verified = ?, signature_collected = ?, room_id = ? WHERE id = ?");
-        $stmt->execute([$id_verified, $signature_collected, $target_room, $booking_id]);
+        $stmt = $db->prepare("UPDATE bookings SET booking_status = 'checked_in', actual_check_in = NOW(), room_id = ? WHERE id = ?");
+        $stmt->execute([$target_room, $booking_id]);
 
         $stmt = $db->prepare("UPDATE rooms SET status = 'occupied' WHERE id = ?");
         $stmt->execute([$target_room]);
@@ -60,7 +58,7 @@ $booking_id = $_GET['booking_id'] ?? 0;
     <?php
     try {
         $stmt = $db->prepare("
-            SELECT b.*, c.first_name, c.last_name, c.email, c.phone, c.id_type, c.id_number, rm.room_number, rt.name as room_type, rt.base_price
+            SELECT b.*, c.full_name, c.email, c.phone, c.id_type, c.id_number, rm.room_number, rt.name as room_type, rt.base_price
             FROM bookings b
             LEFT JOIN customers c ON b.customer_id = c.id
             LEFT JOIN rooms rm ON b.room_id = rm.id
@@ -78,14 +76,14 @@ $booking_id = $_GET['booking_id'] ?? 0;
     ?>
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3">
-            <h5 class="mb-0 fw-semibold">Check-in: <?php echo htmlspecialchars($booking['reference']); ?></h5>
+            <h5 class="mb-0 fw-semibold">Check-in: <?php echo htmlspecialchars($booking['booking_reference']); ?></h5>
         </div>
         <div class="card-body">
             <div class="row g-4 mb-4">
                 <div class="col-md-6">
                     <div class="bg-light rounded-3 p-3">
                         <h6>Guest Information</h6>
-                        <p class="mb-1"><strong><?php echo htmlspecialchars(($booking['first_name'] ?? '') . ' ' . ($booking['last_name'] ?? '')); ?></strong></p>
+                        <p class="mb-1"><strong><?php echo htmlspecialchars($booking['full_name'] ?? ''); ?></strong></p>
                         <p class="mb-1">Email: <?php echo htmlspecialchars($booking['email'] ?? 'N/A'); ?></p>
                         <p class="mb-1">Phone: <?php echo htmlspecialchars($booking['phone'] ?? 'N/A'); ?></p>
                         <p class="mb-0">ID: <?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $booking['id_type'] ?? 'N/A'))); ?> — <?php echo htmlspecialchars($booking['id_number'] ?? 'N/A'); ?></p>
@@ -94,7 +92,7 @@ $booking_id = $_GET['booking_id'] ?? 0;
                 <div class="col-md-6">
                     <div class="bg-light rounded-3 p-3">
                         <h6>Booking Details</h6>
-                        <p class="mb-1">Reference: <strong><?php echo htmlspecialchars($booking['reference']); ?></strong></p>
+                        <p class="mb-1">Reference: <strong><?php echo htmlspecialchars($booking['booking_reference']); ?></strong></p>
                         <p class="mb-1">Room: <?php echo htmlspecialchars($booking['room_number'] ?? 'Not assigned'); ?></p>
                         <p class="mb-1">Check In: <?php echo formatDate($booking['check_in_date']); ?></p>
                         <p class="mb-1">Check Out: <?php echo formatDate($booking['check_out_date']); ?></p>
@@ -119,16 +117,6 @@ $booking_id = $_GET['booking_id'] ?? 0;
                             </option>
                             <?php endforeach; ?>
                         </select>
-                    </div>
-                    <div class="col-md-6 d-flex align-items-end gap-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="id_verified" id="idVerified" value="1">
-                            <label class="form-check-label" for="idVerified">ID Verified</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="signature_collected" id="signatureCollected" value="1">
-                            <label class="form-check-label" for="signatureCollected">Signature Collected</label>
-                        </div>
                     </div>
                 </div>
 
@@ -171,7 +159,7 @@ $booking_id = $_GET['booking_id'] ?? 0;
                         <?php
                         try {
                             $stmt = $db->prepare("
-                                SELECT b.*, c.first_name, c.last_name, rm.room_number
+                                SELECT b.*, c.full_name, rm.room_number
                                 FROM bookings b
                                 LEFT JOIN customers c ON b.customer_id = c.id
                                 LEFT JOIN rooms rm ON b.room_id = rm.id
@@ -183,14 +171,14 @@ $booking_id = $_GET['booking_id'] ?? 0;
                             foreach ($bookings as $b):
                         ?>
                         <tr>
-                            <td><strong><?php echo htmlspecialchars($b['reference']); ?></strong></td>
-                            <td><?php echo htmlspecialchars(($b['first_name'] ?? '') . ' ' . ($b['last_name'] ?? 'Guest')); ?></td>
+                            <td><strong><?php echo htmlspecialchars($b['booking_reference']); ?></strong></td>
+                            <td><?php echo htmlspecialchars($b['full_name'] ?? 'Guest'); ?></td>
                             <td><?php echo htmlspecialchars($b['room_number'] ?? '—'); ?></td>
                             <td><?php echo formatDate($b['check_in_date']); ?></td>
                             <td><?php echo formatDate($b['check_out_date']); ?></td>
                             <td><?php echo formatMoney($b['total_amount'] ?? 0); ?></td>
                             <td><?php echo getBookingStatusBadge($b['booking_status']); ?></td>
-                            <td><span class="badge bg-<?php echo $b['booking_source'] === 'online' ? 'info' : 'secondary'; ?>"><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $b['booking_source'] ?? 'walk_in'))); ?></span></td>
+                            <td><span class="badge bg-<?php echo $b['source'] === 'online' ? 'info' : 'secondary'; ?>"><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $b['source'] ?? 'walk_in'))); ?></span></td>
                             <td>
                                 <a href="?booking_id=<?php echo $b['id']; ?>" class="btn btn-sm btn-success">
                                     <i class="bi bi-box-arrow-in-right"></i> Check-in
@@ -222,17 +210,17 @@ $booking_id = $_GET['booking_id'] ?? 0;
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Booking <?php echo htmlspecialchars($b['reference']); ?></h5>
+                    <h5 class="modal-title">Booking <?php echo htmlspecialchars($b['booking_reference']); ?></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <p><strong>Status:</strong> <?php echo getBookingStatusBadge($b['booking_status']); ?></p>
-                    <p><strong>Guest:</strong> <?php echo htmlspecialchars(($b['first_name'] ?? '') . ' ' . ($b['last_name'] ?? '')); ?></p>
+                    <p><strong>Guest:</strong> <?php echo htmlspecialchars($b['full_name'] ?? ''); ?></p>
                     <p><strong>Room:</strong> <?php echo htmlspecialchars($b['room_number'] ?? 'Not assigned'); ?></p>
                     <p><strong>Check In:</strong> <?php echo formatDate($b['check_in_date']); ?></p>
                     <p><strong>Check Out:</strong> <?php echo formatDate($b['check_out_date']); ?></p>
                     <p><strong>Total:</strong> <?php echo formatMoney($b['total_amount'] ?? 0); ?></p>
-                    <p><strong>Source:</strong> <?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $b['booking_source'] ?? 'N/A'))); ?></p>
+                    <p><strong>Source:</strong> <?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $b['source'] ?? 'N/A'))); ?></p>
                 </div>
                 <div class="modal-footer">
                     <a href="?booking_id=<?php echo $b['id']; ?>" class="btn btn-success"><i class="bi bi-box-arrow-in-right"></i> Check-in</a>

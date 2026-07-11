@@ -120,7 +120,7 @@ function handleChargeSuccess(PDO $db, array $data): void
         if ($bk) {
             $booking_id = (int) $bk['id'];
         } else {
-            $stmt = $db->prepare("SELECT id FROM orders WHERE paystack_reference = ? LIMIT 1");
+            $stmt = $db->prepare("SELECT id FROM food_orders WHERE order_reference = ? LIMIT 1");
             $stmt->execute([$reference]);
             $ord = $stmt->fetch();
             if ($ord) {
@@ -197,7 +197,7 @@ function handleChargeSuccess(PDO $db, array $data): void
     }
 
     if ($order_id > 0) {
-        $stmt = $db->prepare("UPDATE orders SET payment_status = 'paid', updated_at = NOW() WHERE id = ?");
+        $stmt = $db->prepare("UPDATE food_orders SET payment_status = 'paid', updated_at = NOW() WHERE id = ?");
         $stmt->execute([$order_id]);
 
         log_audit('webhook_payment_success', 'order', $order_id,
@@ -249,7 +249,7 @@ function handleChargeFailed(PDO $db, array $data): void
         }
 
         if ($order_id > 0) {
-            $stmt = $db->prepare("UPDATE orders SET payment_status = 'failed', updated_at = NOW() WHERE id = ?");
+            $stmt = $db->prepare("UPDATE food_orders SET payment_status = 'failed', updated_at = NOW() WHERE id = ?");
             $stmt->execute([$order_id]);
 
             log_audit('webhook_payment_failed', 'order', $order_id,

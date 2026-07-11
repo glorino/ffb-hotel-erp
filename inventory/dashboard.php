@@ -12,7 +12,6 @@ $db = getDB();
 $branch_id = (int)($_SESSION['branch_id'] ?? 0);
 ?>
 
-<div class="container-fluid">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="dashboard.php"><i class="bi bi-house-door"></i> Home</a></li>
@@ -24,7 +23,7 @@ $branch_id = (int)($_SESSION['branch_id'] ?? 0);
     $stats = [];
     try {
         if ($branch_id) {
-            $stmt = $db->prepare("SELECT COUNT(*) FROM inventory_items WHERE status='active' AND i.branch_id=?");
+            $stmt = $db->prepare("SELECT COUNT(*) FROM inventory_items WHERE status='active' AND branch_id=?");
             $stmt->execute([$branch_id]);
         } else {
             $stmt = $db->query("SELECT COUNT(*) FROM inventory_items WHERE status='active'");
@@ -282,7 +281,6 @@ $branch_id = (int)($_SESSION['branch_id'] ?? 0);
             </div>
         </div>
     </div>
-</div>
 
 <?php
 $cat_labels = []; $cat_data = [];

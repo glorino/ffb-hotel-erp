@@ -17,12 +17,12 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         $id = (int)$_GET['id'];
         $action = $_GET['action'];
         if ($action === 'start') {
-            $stmt = $db->prepare("UPDATE rooms SET status = 'cleaning', cleaned_by = ?, cleaning_started_at = NOW() WHERE id = ?");
-            $stmt->execute([$_SESSION['user_id'], $id]);
+            $stmt = $db->prepare("UPDATE rooms SET status = 'cleaning' WHERE id = ? AND branch_id = ?");
+            $stmt->execute([$id, $branch_id]);
             set_flash('success', 'Room marked as cleaning.');
         } elseif ($action === 'complete') {
-            $stmt = $db->prepare("UPDATE rooms SET status = 'available' WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $db->prepare("UPDATE rooms SET status = 'available' WHERE id = ? AND branch_id = ?");
+            $stmt->execute([$id, $branch_id]);
             $stmt = $db->prepare("INSERT INTO housekeeping_logs (room_id, cleaned_by, cleaned_at, notes) VALUES (?, ?, NOW(), ?)");
             $stmt->execute([$id, $_SESSION['user_id'], $_POST['notes'] ?? '']);
             set_flash('success', 'Room marked as cleaned.');
@@ -38,7 +38,7 @@ $floor_filter = $_GET['floor'] ?? '';
 
 $rooms = [];
 try {
-    $sql = "SELECT r.*, rt.name as room_type_name, b.full_name as guest_name, b.check_in_date, b.check_out_date, b.booking_status FROM rooms r LEFT JOIN room_types rt ON r.room_type_id = rt.id LEFT JOIN bookings b ON r.id = b.room_id AND b.booking_status IN ('checked_in', 'confirmed') WHERE (r.status IN ('cleaning', 'occupied') OR b.booking_status = 'checked_out')" . ($floor_filter ? " AND r.floor = " . $db->quote($floor_filter) : "") . " $branch_filter ORDER BY CASE r.status WHEN 'occupied' THEN 0 WHEN 'cleaning' THEN 1 ELSE 2 END, r.floor, r.room_number";
+    $sql = "SELECT r.*, rt.name as room_type_name, c.full_name as guest_name, b.check_in_date, b.check_out_date, b.booking_status FROM rooms r LEFT JOIN room_types rt ON r.room_type_id = rt.id LEFT JOIN bookings b ON r.id = b.room_id AND b.booking_status IN ('checked_in', 'confirmed') LEFT JOIN customers c ON b.customer_id = c.id WHERE (r.status IN ('cleaning', 'occupied') OR b.booking_status = 'checked_out')" . ($floor_filter ? " AND r.floor = " . $db->quote($floor_filter) : "") . " $branch_filter ORDER BY CASE r.status WHEN 'occupied' THEN 0 WHEN 'cleaning' THEN 1 ELSE 2 END, r.floor, r.room_number";
     $stmt = $db->query($sql);
     $rooms = $stmt->fetchAll();
 } catch (Exception $e) {
@@ -46,7 +46,7 @@ try {
 
 $floors = [];
 try {
-    $stmt = $db->query("SELECT DISTINCT floor FROM rooms WHERE floor IS NOT NULL AND floor != '' ORDER BY floor");
+    $stmt = $db->query("SELECT DISTINCT floor FROM rooms WHERE floor IS NOT NULL AND floor != '' AND branch_id = " . (int)$branch_id . " ORDER BY floor");
     $floors = $stmt->fetchAll(PDO::FETCH_COLUMN);
 } catch (Exception $e) {
 }

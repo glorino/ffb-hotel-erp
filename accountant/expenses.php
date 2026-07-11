@@ -130,7 +130,7 @@ try {
                             <tbody>
                                 <?php
                                 try {
-                                    $st = $db->prepare("SELECT e.*, u.first_name as uf, u.last_name as ul FROM expenses e LEFT JOIN users u ON e.recorded_by = u.id WHERE $where $branch_filter ORDER BY e.created_at DESC");
+                                    $st = $db->prepare("SELECT e.*, u.full_name as staff_name FROM expenses e LEFT JOIN users u ON e.recorded_by = u.id WHERE $where $branch_filter ORDER BY e.created_at DESC");
                                     $st->execute($params);
                                     $expenses = $st->fetchAll();
                                     foreach ($expenses as $e):
@@ -140,7 +140,7 @@ try {
                                     <td><span class="badge bg-secondary"><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $e['category']))); ?></span></td>
                                     <td class="text-danger fw-semibold"><?php echo formatMoney($e['amount']); ?></td>
                                     <td><small class="text-muted"><?php echo formatDate($e['created_at']); ?></small></td>
-                                    <td><small><?php echo htmlspecialchars(($e['uf'] ?? '') . ' ' . ($e['ul'] ?? '—')); ?></small></td>
+                                    <td><small><?php echo htmlspecialchars($e['staff_name'] ?? '—'); ?></small></td>
                                     <td>
                                         <?php if ($e['receipt']): ?>
                                         <a href="<?php echo $base_url . $e['receipt']; ?>" target="_blank" class="btn btn-sm btn-outline-info"><i class="bi bi-eye"></i></a>
@@ -152,8 +152,10 @@ try {
                                         <a href="?delete=<?php echo $e['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this expense?')"><i class="bi bi-trash"></i></a>
                                     </td>
                                 </tr>
-                                <?php endforeach; if (empty($expenses)): ?>
+                                <?php endforeach; ?>
+                                <?php if (empty($expenses)): ?>
                                 <tr><td colspan="7" class="text-center py-4 text-muted">No expenses recorded</td></tr>
+                                <?php endif; ?>
                                 <?php } catch (Exception $e) {
                                     echo '<tr><td colspan="7" class="text-center py-4 text-danger">Error: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
                                 } ?>

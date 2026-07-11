@@ -66,8 +66,8 @@ foreach ($demo_users as $user) {
 
     if ($user['role_slug'] === 'customer') {
         $nameParts = explode(' ', $user['full_name'], 2);
-        $stmt = $db->prepare("INSERT INTO customers (user_id, first_name, last_name, email, phone, branch_id, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-        $stmt->execute([$userId, $nameParts[0] ?? '', $nameParts[1] ?? '', $user['email'], $user['phone'], $user['branch_id']]);
+        $stmt = $db->prepare("INSERT INTO customers (user_id, full_name, email, phone, branch_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+        $stmt->execute([$userId, $user['full_name'], $user['email'], $user['phone'], $user['branch_id']]);
     }
 
     $results[] = ['email' => $user['email'], 'status' => 'created', 'role' => $user['role_slug']];

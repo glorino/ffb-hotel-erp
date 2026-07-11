@@ -55,7 +55,7 @@ if (!empty($errors)) {
 }
 
 try {
-    $pdo = Database::getInstance();
+    $pdo = getDB();
 
     $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email LIMIT 1");
     $stmt->execute([':email' => $email]);

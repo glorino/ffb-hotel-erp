@@ -18,7 +18,7 @@ if (!$customer_id) {
     if ($customer_id) $_SESSION['customer_id'] = $customer_id;
 }
 
-$stmt = $db->prepare("SELECT p.*, b.reference as booking_ref, b.check_in_date, b.check_out_date, rm.room_number FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id LEFT JOIN rooms rm ON b.room_id = rm.id WHERE p.customer_id = ? ORDER BY p.created_at DESC");
+$stmt = $db->prepare("SELECT p.*, b.booking_reference as booking_ref, b.check_in_date, b.check_out_date, rm.room_number FROM payments p LEFT JOIN bookings b ON p.booking_id = b.id LEFT JOIN rooms rm ON b.room_id = rm.id WHERE p.customer_id = ? ORDER BY p.created_at DESC");
 $stmt->execute([$customer_id]);
 $payments = $stmt->fetchAll();
 ?>

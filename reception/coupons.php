@@ -16,8 +16,8 @@ $validate_code = $_GET['validate'] ?? '';
 
 if ($validate_code) {
     try {
-        $stmt = $db->prepare("SELECT * FROM coupons WHERE code = ? AND status = 'active' AND valid_from <= NOW() AND valid_to >= NOW()");
-        $stmt->execute([$validate_code]);
+        $stmt = $db->prepare("SELECT * FROM coupons WHERE code = ? AND status = 'active' AND valid_from <= NOW() AND valid_to >= NOW() AND (branch_id = ? OR branch_id IS NULL)");
+        $stmt->execute([$validate_code, $branch_id]);
         $coupon = $stmt->fetch();
         if ($coupon) {
             if ($coupon['max_uses'] > 0 && $coupon['used_count'] >= $coupon['max_uses']) {
@@ -105,8 +105,8 @@ if ($validate_code) {
                             <tbody>
                                 <?php
                                 try {
-                                    $stmt = $db->prepare("SELECT * FROM coupons WHERE status = 'active' AND valid_to >= CURRENT_DATE ORDER BY valid_to ASC");
-                                    $stmt->execute();
+                                    $stmt = $db->prepare("SELECT * FROM coupons WHERE status = 'active' AND valid_to >= CURRENT_DATE AND (branch_id = ? OR branch_id IS NULL) ORDER BY valid_to ASC");
+                                    $stmt->execute([$branch_id]);
                                     $coupons = $stmt->fetchAll();
                                     foreach ($coupons as $c):
                                         $is_expired = $c['valid_to'] < date('Y-m-d H:i:s');

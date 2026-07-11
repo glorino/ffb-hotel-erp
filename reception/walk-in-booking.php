@@ -37,17 +37,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_booking'])) {
     try {
         $db->beginTransaction();
 
-        $stmt = $db->prepare("SELECT id, first_name, last_name FROM customers WHERE email = ? OR phone = ? LIMIT 1");
-        $stmt->execute([$guest_email, $guest_phone]);
+        $stmt = $db->prepare("SELECT id, full_name FROM customers WHERE (email = ? OR phone = ?) AND branch_id = ? LIMIT 1");
+        $stmt->execute([$guest_email, $guest_phone, $branch_id]);
         $existing = $stmt->fetch();
 
         if ($existing) {
             $customer_id = $existing['id'];
-            $stmt = $db->prepare("UPDATE customers SET first_name = ?, last_name = ?, email = ?, phone = ?, id_type = ?, id_number = ? WHERE id = ?");
-            $stmt->execute([$guest_first_name, $guest_last_name, $guest_email, $guest_phone, $guest_id_type, $guest_id_number, $customer_id]);
+            $stmt = $db->prepare("UPDATE customers SET full_name = ?, email = ?, phone = ?, id_type = ?, id_number = ? WHERE id = ? AND branch_id = ?");
+            $stmt->execute([$guest_first_name . ' ' . $guest_last_name, $guest_email, $guest_phone, $guest_id_type, $guest_id_number, $customer_id, $branch_id]);
         } else {
-            $stmt = $db->prepare("INSERT INTO customers (first_name, last_name, email, phone, id_type, id_number, branch_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
-            $stmt->execute([$guest_first_name, $guest_last_name, $guest_email, $guest_phone, $guest_id_type, $guest_id_number, $branch_id]);
+            $stmt = $db->prepare("INSERT INTO customers (full_name, email, phone, id_type, id_number, branch_id, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
+            $stmt->execute([$guest_first_name . ' ' . $guest_last_name, $guest_email, $guest_phone, $guest_id_type, $guest_id_number, $branch_id]);
             $customer_id = $db->lastInsertId();
         }
 
@@ -59,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_booking'])) {
         $discount = 0;
 
         if (!empty($coupon_code)) {
-            $stmt = $db->prepare("SELECT * FROM coupons WHERE code = ? AND status = 'active' AND valid_from <= NOW() AND valid_to >= NOW() AND (max_uses = 0 OR used_count < max_uses)");
-            $stmt->execute([$coupon_code]);
+            $stmt = $db->prepare("SELECT * FROM coupons WHERE code = ? AND status = 'active' AND valid_from <= NOW() AND valid_to >= NOW() AND (max_uses = 0 OR used_count < max_uses) AND (branch_id = ? OR branch_id IS NULL)");
+            $stmt->execute([$coupon_code, $branch_id]);
             $coupon = $stmt->fetch();
             if ($coupon) {
                 if ($coupon['discount_type'] === 'percentage') {
@@ -76,16 +76,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_booking'])) {
         $final_amount = max(0, $total_amount - $discount);
         $reference = generateReference('WKB');
 
-        $stmt = $db->prepare("INSERT INTO bookings (branch_id, customer_id, room_id, reference, booking_source, check_in_date, check_out_date, total_amount, discount, final_amount, booking_status, created_at) VALUES (?, ?, ?, ?, 'walk_in', ?, ?, ?, ?, ?, 'confirmed', NOW())");
+        $stmt = $db->prepare("INSERT INTO bookings (branch_id, customer_id, room_id, booking_reference, source, check_in_date, check_out_date, total_amount, discount_amount, payable_amount, booking_status, created_at) VALUES (?, ?, ?, ?, 'walk_in', ?, ?, ?, ?, ?, 'confirmed', NOW())");
         $stmt->execute([$branch_id, $customer_id, $room_id, $reference, $check_in, $check_out, $total_amount, $discount, $final_amount]);
         $booking_id = $db->lastInsertId();
 
-        $stmt = $db->prepare("UPDATE rooms SET status = 'reserved' WHERE id = ?");
-        $stmt->execute([$room_id]);
+        $stmt = $db->prepare("UPDATE rooms SET status = 'reserved' WHERE id = ? AND branch_id = ?");
+        $stmt->execute([$room_id, $branch_id]);
 
         if ($payment_method && $payment_amount > 0) {
             $pay_ref = generateReference('PAY');
-            $stmt = $db->prepare("INSERT INTO payments (branch_id, booking_id, customer_id, reference, amount, payment_method, payment_category, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'room', 'paid', NOW())");
+            $stmt = $db->prepare("INSERT INTO payments (branch_id, booking_id, customer_id, payment_reference, amount, payment_method, payment_category, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'room', 'paid', NOW())");
             $stmt->execute([$branch_id, $booking_id, $customer_id, $pay_ref, $payment_amount, $payment_method]);
         }
 
@@ -196,7 +196,7 @@ if ($room_id) {
             $stmt->execute([$branch_id, $check_out, $check_in, $check_out, $check_in]);
             while ($row = $stmt->fetch()) $booked_ids[] = $row['room_id'];
 
-            $room_sql = "SELECT r.*, rt.name as type_name, rt.base_price, rt.capacity FROM rooms r JOIN room_types rt ON r.room_type_id = rt.id WHERE r.branch_id = ? AND r.status NOT IN ('maintenance','out_of_service')";
+            $room_sql = "SELECT r.*, rt.name as type_name, rt.base_price, rt.max_guests FROM rooms r JOIN room_types rt ON r.room_type_id = rt.id WHERE r.branch_id = ? AND r.status NOT IN ('maintenance','out_of_service')";
             $room_params = [$branch_id];
             if ($room_type_id) { $room_sql .= " AND r.room_type_id = ?"; $room_params[] = $room_type_id; }
             $room_sql .= " ORDER BY r.floor, r.room_number";

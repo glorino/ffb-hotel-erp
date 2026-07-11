@@ -97,7 +97,7 @@ $status_filter = $_GET['status'] ?? '';
                     <tbody>
                         <?php
                         try {
-                            $sql = "SELECT b.*, c.first_name, c.last_name, c.email, c.phone, rm.room_number
+                            $sql = "SELECT b.*, c.full_name, c.email, c.phone, rm.room_number
                                     FROM bookings b
                                     LEFT JOIN customers c ON b.customer_id = c.id
                                     LEFT JOIN rooms rm ON b.room_id = rm.id
@@ -113,7 +113,7 @@ $status_filter = $_GET['status'] ?? '';
                         <tr>
                             <td><strong><?php echo htmlspecialchars($b['reference']); ?></strong></td>
                             <td>
-                                <strong><?php echo htmlspecialchars(($b['first_name'] ?? '') . ' ' . ($b['last_name'] ?? '')); ?></strong>
+                                <strong><?php echo htmlspecialchars($b['full_name'] ?? ''); ?></strong>
                                 <br><small class="text-muted"><?php echo htmlspecialchars($b['email'] ?? ''); ?></small>
                             </td>
                             <td><?php echo htmlspecialchars($b['room_number'] ?? 'Not assigned'); ?></td>

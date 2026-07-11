@@ -17,8 +17,8 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         $id = (int)$_GET['id'];
         $action = $_GET['action'];
         if ($action === 'needs_cleaning') {
-            $stmt = $db->prepare("UPDATE rooms SET status = 'cleaning' WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $db->prepare("UPDATE rooms SET status = 'cleaning' WHERE id = ? AND branch_id = ?");
+            $stmt->execute([$id, $branch_id]);
             set_flash('success', 'Room marked as needs cleaning.');
         } elseif ($action === 'request_entry') {
             $stmt = $db->prepare("INSERT INTO housekeeping_requests (room_id, request_type, requested_by, notes) VALUES (?, 'entry', ?, ?)");
@@ -34,7 +34,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
 
 $rooms = [];
 try {
-    $sql = "SELECT r.*, rt.name as room_type_name, b.id as booking_id, b.full_name as guest_name, b.check_in_date, b.check_out_date, b.booking_reference FROM rooms r LEFT JOIN room_types rt ON r.room_type_id = rt.id LEFT JOIN (SELECT b1.*, c.full_name FROM bookings b1 JOIN customers c ON b1.customer_id = c.id WHERE b1.booking_status IN ('checked_in', 'confirmed') ORDER BY b1.check_in_date DESC) b ON r.id = b.room_id WHERE r.status = 'occupied' $branch_filter ORDER BY r.floor, r.room_number";
+    $sql = "SELECT r.*, rt.name as room_type_name, b.id as booking_id, c.full_name as guest_name, b.check_in_date, b.check_out_date, b.booking_reference FROM rooms r LEFT JOIN room_types rt ON r.room_type_id = rt.id LEFT JOIN (SELECT b1.*, b1.customer_id FROM bookings b1 WHERE b1.booking_status IN ('checked_in', 'confirmed') ORDER BY b1.check_in_date DESC) b ON r.id = b.room_id LEFT JOIN customers c ON b.customer_id = c.id WHERE r.status = 'occupied' $branch_filter ORDER BY r.floor, r.room_number";
     $stmt = $db->query($sql);
     $rooms = $stmt->fetchAll();
 } catch (Exception $e) {

@@ -73,7 +73,7 @@ $bookings = $stmt->fetchAll();
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
                             <h6 class="mb-1 fw-semibold"><?php echo htmlspecialchars($b['room_type'] ?? 'Room Booking'); ?></h6>
-                            <small class="text-muted">Ref: <?php echo htmlspecialchars($b['reference'] ?? 'BKG-' . $b['id']); ?></small>
+                            <small class="text-muted">Ref: <?php echo htmlspecialchars($b['booking_reference'] ?? 'BKG-' . $b['id']); ?></small>
                         </div>
                         <?php echo getBookingStatusBadge($b['booking_status']); ?>
                     </div>

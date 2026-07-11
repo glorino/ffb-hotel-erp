@@ -112,11 +112,11 @@ if (!validateDate($date_to)) $date_to = date('Y-m-d');
                     <tbody>
                         <?php
                         try {
-                            $stmt = $db->prepare("SELECT b.*, c.first_name, c.last_name, rm.room_number FROM bookings b LEFT JOIN customers c ON b.customer_id = c.id LEFT JOIN rooms rm ON b.room_id = rm.id WHERE b.branch_id = ? AND DATE(b.created_at) BETWEEN ? AND ? ORDER BY b.created_at DESC");
+                            $stmt = $db->prepare("SELECT b.*, c.full_name, rm.room_number FROM bookings b LEFT JOIN customers c ON b.customer_id = c.id LEFT JOIN rooms rm ON b.room_id = rm.id WHERE b.branch_id = ? AND DATE(b.created_at) BETWEEN ? AND ? ORDER BY b.created_at DESC");
                             $stmt->execute([$branch_id, $date_from, $date_to]);
                             while ($b = $stmt->fetch()):
                         ?>
-                        <tr><td><?php echo htmlspecialchars($b['reference']); ?></td><td><?php echo htmlspecialchars(($b['first_name'] ?? '') . ' ' . ($b['last_name'] ?? '')); ?></td><td><?php echo htmlspecialchars($b['room_number'] ?? 'N/A'); ?></td><td><?php echo formatDate($b['check_in_date']); ?></td><td><?php echo formatDate($b['check_out_date']); ?></td><td><?php echo formatMoney($b['total_amount'] ?? 0); ?></td><td><?php echo getBookingStatusBadge($b['booking_status']); ?></td><td><small><?php echo formatDate($b['created_at']); ?></small></td></tr>
+                        <tr><td><?php echo htmlspecialchars($b['reference']); ?></td><td><?php echo htmlspecialchars($b['full_name'] ?? ''); ?></td><td><?php echo htmlspecialchars($b['room_number'] ?? 'N/A'); ?></td><td><?php echo formatDate($b['check_in_date']); ?></td><td><?php echo formatDate($b['check_out_date']); ?></td><td><?php echo formatMoney($b['total_amount'] ?? 0); ?></td><td><?php echo getBookingStatusBadge($b['booking_status']); ?></td><td><small><?php echo formatDate($b['created_at']); ?></small></td></tr>
                         <?php
                             endwhile;
                         } catch (Exception $e) { echo '<tr><td colspan="8" class="text-center py-4 text-danger">Error</td></tr>'; }

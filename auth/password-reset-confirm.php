@@ -41,13 +41,12 @@ if ($password !== $confirmPassword) {
 }
 
 try {
-    $pdo = Database::getInstance();
+    $pdo = getDB();
 
     $stmt = $pdo->prepare("
         SELECT pr.id, pr.user_id, pr.expires_at
         FROM password_resets pr
         WHERE pr.token = :token
-          AND pr.used = 0
           AND pr.expires_at > NOW()
         LIMIT 1
     ");
@@ -68,16 +67,13 @@ try {
         ':id'       => (int) $reset['user_id'],
     ]);
 
-    $stmt = $pdo->prepare("UPDATE password_resets SET used = 1 WHERE id = :id");
+    // Delete this token so it cannot be reused
+    $stmt = $pdo->prepare("DELETE FROM password_resets WHERE id = :id");
     $stmt->execute([':id' => (int) $reset['id']]);
 
     // Invalidate all other password reset tokens for this user
-    $stmt = $pdo->prepare("UPDATE password_resets SET used = 1 WHERE user_id = :user_id AND used = 0");
-    $stmt->execute([':user_id' => (int) $reset['user_id']]);
-
-    // Invalidate remember-me tokens for security
-    $stmt = $pdo->prepare("UPDATE users SET remember_token = NULL WHERE id = :id");
-    $stmt->execute([':id' => (int) $reset['user_id']]);
+    $stmt = $pdo->prepare("DELETE FROM password_resets WHERE user_id = :user_id AND id != :id");
+    $stmt->execute([':user_id' => (int) $reset['user_id'], ':id' => (int) $reset['id']]);
 
     log_audit('password_reset', 'user', $reset['user_id'], null, ['password_reset_id' => $reset['id']]);
 

@@ -20,7 +20,7 @@ if (!$customer_id) {
 
 if (isset($_GET['cancel']) && (int)$_GET['cancel']) {
     try {
-        $stmt = $db->prepare("UPDATE table_reservations SET status = 'cancelled' WHERE id = ? AND customer_id = ? AND status IN ('pending','confirmed')");
+        $stmt = $db->prepare("UPDATE reservations SET status = 'cancelled' WHERE id = ? AND customer_id = ? AND status IN ('pending','confirmed')");
         $stmt->execute([(int)$_GET['cancel'], $customer_id]);
         if ($stmt->rowCount()) {
             set_flash('success', 'Reservation cancelled successfully');
@@ -37,7 +37,7 @@ $status_filter = $_GET['status'] ?? '';
 $where = "r.customer_id = ?"; $params = [$customer_id];
 if ($status_filter) { $where .= " AND r.status = ?"; $params[] = $status_filter; }
 
-$stmt = $db->prepare("SELECT r.*, br.name as branch_name FROM table_reservations r LEFT JOIN branches br ON r.branch_id = br.id WHERE $where ORDER BY r.reservation_date DESC, r.reservation_time DESC");
+$stmt = $db->prepare("SELECT r.*, br.name as branch_name FROM reservations r LEFT JOIN branches br ON r.branch_id = br.id WHERE $where ORDER BY r.reservation_date DESC, r.reservation_time DESC");
 $stmt->execute($params);
 $reservations = $stmt->fetchAll();
 ?>

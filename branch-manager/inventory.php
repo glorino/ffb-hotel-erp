@@ -45,15 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_stock'])) {
     $total_items = 0;
     $low_stock_count = 0;
     try {
-        $stmt = $db->prepare("SELECT COUNT(*) FROM inventory WHERE branch_id = ?");
+        $stmt = $db->prepare("SELECT COUNT(*) FROM inventory_items WHERE branch_id = ?");
         $stmt->execute([$branch_id]);
         $total_items = $stmt->fetchColumn();
 
-        $stmt = $db->prepare("SELECT COUNT(*) FROM inventory WHERE branch_id = ? AND quantity <= reorder_level");
+        $stmt = $db->prepare("SELECT COUNT(*) FROM inventory_items WHERE branch_id = ? AND quantity <= reorder_level");
         $stmt->execute([$branch_id]);
         $low_stock_count = $stmt->fetchColumn();
 
-        $stmt = $db->prepare("SELECT * FROM inventory WHERE branch_id = ? AND quantity <= reorder_level ORDER BY quantity ASC LIMIT 10");
+        $stmt = $db->prepare("SELECT * FROM inventory_items WHERE branch_id = ? AND quantity <= reorder_level ORDER BY quantity ASC LIMIT 10");
         $stmt->execute([$branch_id]);
         $low_stock_items = $stmt->fetchAll();
     } catch (Exception $e) {
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_stock'])) {
                             <tbody>
                                 <?php foreach ($low_stock_items as $item): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($item['item_name']); ?></td>
+                                    <td><?php echo htmlspecialchars($item['name']); ?></td>
                                     <td class="fw-bold text-danger"><?php echo $item['quantity']; ?></td>
                                     <td><?php echo $item['reorder_level']; ?></td>
                                     <td><?php echo htmlspecialchars($item['unit'] ?? 'pcs'); ?></td>
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_stock'])) {
                             <tbody>
                                 <?php
                                 try {
-                                    $stmt = $db->prepare("SELECT * FROM inventory WHERE branch_id = ? ORDER BY item_name");
+                                    $stmt = $db->prepare("SELECT * FROM inventory_items WHERE branch_id = ? ORDER BY name");
                                     $stmt->execute([$branch_id]);
                                     $items = $stmt->fetchAll();
                                     foreach ($items as $item):
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_stock'])) {
                                         $status_text = $item['quantity'] <= $item['reorder_level'] ? 'Low Stock' : 'In Stock';
                                 ?>
                                 <tr>
-                                    <td><strong><?php echo htmlspecialchars($item['item_name']); ?></strong></td>
+                                    <td><strong><?php echo htmlspecialchars($item['name']); ?></strong></td>
                                     <td><?php echo htmlspecialchars($item['category'] ?? 'General'); ?></td>
                                     <td><?php echo $item['quantity']; ?></td>
                                     <td><?php echo htmlspecialchars($item['unit'] ?? 'pcs'); ?></td>

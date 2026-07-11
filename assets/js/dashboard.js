@@ -573,3 +573,78 @@ const DashboardApp = (function () {
 
 // ── Bootstrap ──
 document.addEventListener('DOMContentLoaded', DashboardApp.init);
+
+// ═══════════════════════════════════════════════════════════
+// FRAMER-STYLE SCROLL REVEAL & ANIMATIONS
+// ═══════════════════════════════════════════════════════════
+(function() {
+  'use strict';
+
+  // Scroll reveal for .reveal elements
+  function initScrollReveal() {
+    var reveals = document.querySelectorAll('.reveal');
+    if (!reveals.length) return;
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    reveals.forEach(function(el) { observer.observe(el); });
+  }
+
+  // Animate stat values (count-up effect)
+  function initCountUp() {
+    document.querySelectorAll('.stat-value').forEach(function(el) {
+      var text = el.textContent.trim();
+      var match = text.match(/^[\₦$£€]?([\d,.]+)/);
+      if (!match) return;
+
+      var prefix = text.substring(0, text.indexOf(match[1]));
+      var numStr = match[1].replace(/,/g, '');
+      var num = parseFloat(numStr);
+      if (isNaN(num) || num === 0) return;
+
+      var suffix = text.substring(text.indexOf(match[1]) + match[1].length);
+      var hasDecimal = match[1].includes('.');
+      var duration = 800;
+      var start = performance.now();
+
+      function tick(now) {
+        var elapsed = now - start;
+        var progress = Math.min(elapsed / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        var current = num * eased;
+
+        if (hasDecimal) {
+          el.textContent = prefix + current.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + suffix;
+        } else {
+          el.textContent = prefix + Math.round(current).toLocaleString() + suffix;
+        }
+
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+
+      el.textContent = prefix + '0' + suffix;
+      requestAnimationFrame(tick);
+    });
+  }
+
+  // Stagger animation for table rows
+  function initTableStagger() {
+    document.querySelectorAll('.table tbody tr, .data-table tbody tr').forEach(function(row, i) {
+      row.style.animationDelay = (i * 0.04) + 's';
+    });
+  }
+
+  // Init on load
+  document.addEventListener('DOMContentLoaded', function() {
+    initScrollReveal();
+    initCountUp();
+    initTableStagger();
+  });
+})();

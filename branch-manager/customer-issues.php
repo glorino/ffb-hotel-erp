@@ -116,7 +116,7 @@ $status_filter = $_GET['status'] ?? '';
                             <tbody>
                                 <?php
                                 try {
-                                    $sql = "SELECT ci.*, c.first_name, c.last_name, c.email, c.phone
+                                    $sql = "SELECT ci.*, c.full_name, c.email, c.phone
                                             FROM customer_issues ci
                                             LEFT JOIN customers c ON ci.customer_id = c.id
                                             WHERE ci.branch_id = ?";
@@ -130,7 +130,7 @@ $status_filter = $_GET['status'] ?? '';
                                 ?>
                                 <tr>
                                     <td>
-                                        <strong><?php echo htmlspecialchars(($iss['first_name'] ?? '') . ' ' . ($iss['last_name'] ?? 'Unknown')); ?></strong>
+                                        <strong><?php echo htmlspecialchars($iss['full_name'] ?? 'Unknown'); ?></strong>
                                         <br><small class="text-muted"><?php echo htmlspecialchars($iss['phone'] ?? $iss['email'] ?? ''); ?></small>
                                     </td>
                                     <td><span class="badge bg-secondary"><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $iss['issue_type']))); ?></span></td>
@@ -190,11 +190,11 @@ $status_filter = $_GET['status'] ?? '';
                             <select name="customer_id" class="form-select" required>
                                 <option value="">Select customer</option>
                                 <?php
-                                $custs = $db->prepare("SELECT id, first_name, last_name, email, phone FROM customers WHERE branch_id = ? OR branch_id IS NULL ORDER BY first_name LIMIT 100");
+                                $custs = $db->prepare("SELECT id, full_name, email, phone FROM customers WHERE branch_id = ? OR branch_id IS NULL ORDER BY full_name LIMIT 100");
                                 $custs->execute([$branch_id]);
                                 while ($c = $custs->fetch()):
                                 ?>
-                                <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['first_name'] . ' ' . $c['last_name'] . ' (' . ($c['phone'] ?? $c['email']) . ')'); ?></option>
+                                <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['full_name'] . ' (' . ($c['phone'] ?? $c['email']) . ')'); ?></option>
                                 <?php endwhile; ?>
                             </select>
                         </div>

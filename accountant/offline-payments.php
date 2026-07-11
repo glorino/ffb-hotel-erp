@@ -82,7 +82,7 @@ if ($status_filter) { $where .= " AND p.status = ?"; $params[] = $status_filter;
                     <tbody>
                         <?php
                         try {
-                            $st = $db->prepare("SELECT p.*, c.first_name, c.last_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id WHERE $where $branch_filter ORDER BY p.created_at DESC");
+                            $st = $db->prepare("SELECT p.*, c.full_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id WHERE $where $branch_filter ORDER BY p.created_at DESC");
                             $st->execute($params);
                             $payments = $st->fetchAll();
                             foreach ($payments as $p):
@@ -96,7 +96,7 @@ if ($status_filter) { $where .= " AND p.status = ?"; $params[] = $status_filter;
                                 echo "<i class='bi {$ic} me-1'></i> " . htmlspecialchars(ucfirst(str_replace('_', ' ', $p['payment_method'] ?? '—')));
                                 ?>
                             </td>
-                            <td><?php echo htmlspecialchars(($p['first_name'] ?? '') . ' ' . ($p['last_name'] ?? '—')); ?></td>
+                            <td><?php echo htmlspecialchars($p['full_name'] ?? '—'); ?></td>
                             <td><strong><?php echo formatMoney($p['amount']); ?></strong></td>
                             <td><?php echo getPaymentStatusBadge($p['status']); ?></td>
                             <td>
@@ -115,8 +115,10 @@ if ($status_filter) { $where .= " AND p.status = ?"; $params[] = $status_filter;
                                 <?php endif; ?>
                             </td>
                         </tr>
-                        <?php endforeach; if (empty($payments)): ?>
+                        <?php endforeach; ?>
+                        <?php if (empty($payments)): ?>
                         <tr><td colspan="8" class="text-center py-4 text-muted">No offline payments found</td></tr>
+                        <?php endif; ?>
                         <?php } catch (Exception $e) {
                             echo '<tr><td colspan="8" class="text-center py-4 text-danger">Error: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
                         } ?>

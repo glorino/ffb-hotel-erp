@@ -188,8 +188,8 @@ try {
     }
 
     if ($order_id > 0) {
-        $stmt = $db->prepare("UPDATE orders SET payment_status = 'paid', paystack_reference = ?, updated_at = NOW() WHERE id = ?");
-        $stmt->execute([$flw_reference, $order_id]);
+        $stmt = $db->prepare("UPDATE food_orders SET payment_status = 'paid', updated_at = NOW() WHERE id = ?");
+        $stmt->execute([$order_id]);
 
         log_audit('payment_success', 'order', $order_id,
             ['payment_status' => 'pending'],

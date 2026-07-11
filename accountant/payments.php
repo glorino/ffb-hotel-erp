@@ -24,25 +24,25 @@ if ($date_from) { $where .= " AND DATE(p.created_at) >= ?"; $params[] = $date_fr
 if ($date_to) { $where .= " AND DATE(p.created_at) <= ?"; $params[] = $date_to; }
 if ($method) { $where .= " AND p.payment_method = ?"; $params[] = $method; }
 if ($status) { $where .= " AND p.status = ?"; $params[] = $status; }
-if ($search) { $where .= " AND (p.reference LIKE ? OR c.first_name LIKE ? OR c.last_name LIKE ?)"; $s = "%$search%"; $params[] = $s; $params[] = $s; $params[] = $s; }
+if ($search) { $where .= " AND (p.reference LIKE ? OR c.full_name LIKE ?)"; $s = "%$search%"; $params[] = $s; $params[] = $s; }
 
 if (isset($_GET['export_csv'])) {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename=payments_export_' . date('Ymd') . '.csv');
     $output = fopen('php://output', 'w');
     fputcsv($output, ['Reference', 'Customer', 'Amount', 'Method', 'Category', 'Status', 'Date', 'Recorded By']);
-    $q = $db->prepare("SELECT p.*, c.first_name, c.last_name, u.first_name as uf, u.last_name as ul FROM payments p LEFT JOIN customers c ON p.customer_id = c.id LEFT JOIN users u ON p.recorded_by = u.id WHERE $where $branch_filter ORDER BY p.created_at DESC");
+    $q = $db->prepare("SELECT p.*, c.full_name, u.full_name as staff_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id LEFT JOIN users u ON p.recorded_by = u.id WHERE $where $branch_filter ORDER BY p.created_at DESC");
     $q->execute($params);
     while ($row = $q->fetch()) {
         fputcsv($output, [
             $row['reference'] ?? 'PAY-' . $row['id'],
-            ($row['first_name'] ?? '') . ' ' . ($row['last_name'] ?? ''),
+            ($row['full_name'] ?? ''),
             number_format($row['amount'], 2),
             ucfirst(str_replace('_', ' ', $row['payment_method'] ?? '')),
             $row['payment_category'] ?? '',
             $row['status'],
             $row['created_at'],
-            ($row['uf'] ?? '') . ' ' . ($row['ul'] ?? '')
+            ($row['staff_name'] ?? '')
         ]);
     }
     fclose($output);
@@ -58,7 +58,7 @@ $count_q->execute($params);
 $total_records = $count_q->fetchColumn();
 $total_pages = ceil($total_records / $per_page);
 
-$stmt = $db->prepare("SELECT p.*, c.first_name, c.last_name, c.email as cust_email, u.first_name as uf, u.last_name as ul FROM payments p LEFT JOIN customers c ON p.customer_id = c.id LEFT JOIN users u ON p.recorded_by = u.id WHERE $where $branch_filter ORDER BY p.created_at DESC LIMIT $per_page OFFSET $offset");
+$stmt = $db->prepare("SELECT p.*, c.full_name, c.email as cust_email, u.full_name as staff_name FROM payments p LEFT JOIN customers c ON p.customer_id = c.id LEFT JOIN users u ON p.recorded_by = u.id WHERE $where $branch_filter ORDER BY p.created_at DESC LIMIT $per_page OFFSET $offset");
 $stmt->execute($params);
 $payments = $stmt->fetchAll();
 ?>
@@ -131,12 +131,12 @@ $payments = $stmt->fetchAll();
                         <?php foreach ($payments as $p): ?>
                         <tr>
                             <td><small class="fw-medium"><?php echo htmlspecialchars($p['reference'] ?? 'PAY-' . $p['id']); ?></small></td>
-                            <td><?php echo htmlspecialchars(($p['first_name'] ?? '') . ' ' . ($p['last_name'] ?? '—')); ?><br><small class="text-muted"><?php echo htmlspecialchars($p['cust_email'] ?? ''); ?></small></td>
+                            <td><?php echo htmlspecialchars($p['full_name'] ?? '—'); ?><br><small class="text-muted"><?php echo htmlspecialchars($p['cust_email'] ?? ''); ?></small></td>
                             <td><strong><?php echo formatMoney($p['amount']); ?></strong></td>
                             <td><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $p['payment_method'] ?? '—'))); ?></td>
                             <td><?php echo getPaymentStatusBadge($p['status']); ?></td>
                             <td><small class="text-muted"><?php echo formatDateTime($p['created_at']); ?></small></td>
-                            <td><small><?php echo htmlspecialchars(($p['uf'] ?? '') . ' ' . ($p['ul'] ?? '—')); ?></small></td>
+                            <td><small><?php echo htmlspecialchars($p['staff_name'] ?? '—'); ?></small></td>
                         </tr>
                         <?php endforeach; if (empty($payments)): ?>
                         <tr><td colspan="7" class="text-center py-4 text-muted">No payments found</td></tr>

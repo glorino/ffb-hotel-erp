@@ -193,7 +193,7 @@ if (!validateDate($sale_date)) $sale_date = date('Y-m-d');
                                 <?php
                                 try {
                                     $stmt = $db->prepare("
-                                        SELECT p.*, b.reference as booking_ref
+                                        SELECT p.*, b.booking_reference as booking_ref
                                         FROM payments p
                                         LEFT JOIN bookings b ON p.booking_id = b.id
                                         WHERE p.branch_id = ? AND DATE(p.created_at) = ?

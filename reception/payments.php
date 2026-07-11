@@ -72,11 +72,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['record_payment'])) {
                             <select name="booking_id" class="form-select">
                                 <option value="">Select booking</option>
                                 <?php
-                                $stmt = $db->prepare("SELECT b.id, b.reference, c.first_name, c.last_name FROM bookings b LEFT JOIN customers c ON b.customer_id = c.id WHERE b.branch_id = ? AND b.booking_status IN ('confirmed','checked_in') ORDER BY b.created_at DESC LIMIT 50");
+                                $stmt = $db->prepare("SELECT b.id, b.booking_reference, c.full_name FROM bookings b LEFT JOIN customers c ON b.customer_id = c.id WHERE b.branch_id = ? AND b.booking_status IN ('confirmed','checked_in') ORDER BY b.created_at DESC LIMIT 50");
                                 $stmt->execute([$branch_id]);
                                 while ($b = $stmt->fetch()):
                                 ?>
-                                <option value="<?php echo $b['id']; ?>"><?php echo htmlspecialchars($b['reference'] . ' - ' . ($b['first_name'] ?? '') . ' ' . ($b['last_name'] ?? '')); ?></option>
+                                <option value="<?php echo $b['id']; ?>"><?php echo htmlspecialchars($b['booking_reference'] . ' - ' . ($b['full_name'] ?? '')); ?></option>
                                 <?php endwhile; ?>
                             </select>
                         </div>
@@ -85,11 +85,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['record_payment'])) {
                             <select name="customer_id" class="form-select">
                                 <option value="">Select customer</option>
                                 <?php
-                                $custs = $db->prepare("SELECT id, first_name, last_name, email FROM customers WHERE branch_id = ? OR branch_id IS NULL ORDER BY first_name LIMIT 100");
+                                $custs = $db->prepare("SELECT id, full_name, email FROM customers WHERE branch_id = ? OR branch_id IS NULL ORDER BY full_name LIMIT 100");
                                 $custs->execute([$branch_id]);
                                 while ($c = $custs->fetch()):
                                 ?>
-                                <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['first_name'] . ' ' . $c['last_name'] . ' (' . ($c['email'] ?? '') . ')'); ?></option>
+                                <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['full_name'] . ' (' . ($c['email'] ?? '') . ')'); ?></option>
                                 <?php endwhile; ?>
                             </select>
                         </div>
@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['record_payment'])) {
                                 <?php
                                 try {
                                     $stmt = $db->prepare("
-                                        SELECT p.*, c.first_name, c.last_name, b.reference as booking_ref
+                                        SELECT p.*, c.full_name, b.booking_reference as booking_ref
                                         FROM payments p
                                         LEFT JOIN customers c ON p.customer_id = c.id
                                         LEFT JOIN bookings b ON p.booking_id = b.id
@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['record_payment'])) {
                                 ?>
                                 <tr>
                                     <td><small><?php echo htmlspecialchars($p['reference'] ?? $p['id']); ?></small></td>
-                                    <td><?php echo htmlspecialchars(($p['first_name'] ?? '') . ' ' . ($p['last_name'] ?? '—')); ?></td>
+                                    <td><?php echo htmlspecialchars($p['full_name'] ?? '—'); ?></td>
                                     <td><strong><?php echo formatMoney($p['amount']); ?></strong></td>
                                     <td><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $p['payment_method'] ?? ''))); ?></td>
                                     <td><span class="badge bg-secondary"><?php echo htmlspecialchars(ucfirst($p['payment_category'] ?? '')); ?></span></td>

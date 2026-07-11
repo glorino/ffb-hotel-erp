@@ -66,7 +66,7 @@ try {
         $stmt->execute([$booking_id]);
         $existing_paid = (float) $stmt->fetchColumn();
     } elseif ($order_id > 0) {
-        $stmt = $db->prepare("SELECT total_amount as payable_amount, payment_status FROM orders WHERE id = ? FOR UPDATE");
+        $stmt = $db->prepare("SELECT total_amount as payable_amount, payment_status FROM food_orders WHERE id = ? FOR UPDATE");
         $stmt->execute([$order_id]);
         $order = $stmt->fetch();
         if (!$order) {
@@ -156,7 +156,7 @@ try {
     }
 
     if ($order_id > 0) {
-        $stmt = $db->prepare("UPDATE orders SET payment_status = ?, updated_at = NOW() WHERE id = ?");
+        $stmt = $db->prepare("UPDATE food_orders SET payment_status = ?, updated_at = NOW() WHERE id = ?");
         $stmt->execute([$payment_status, $order_id]);
 
         log_audit('offline_payment', 'order', $order_id,

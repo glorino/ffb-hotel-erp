@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                     <tbody>
                         <?php
                         try {
-                            $sql = "SELECT r.*, rt.name as type_name, rt.base_price, rt.capacity
+                            $sql = "SELECT r.*, rt.name as type_name, rt.base_price, rt.max_guests
                                     FROM rooms r
                                     JOIN room_types rt ON r.room_type_id = rt.id
                                     WHERE r.branch_id = ?";
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                             $stmt->execute($params);
                             $rooms = $stmt->fetchAll();
                             foreach ($rooms as $r):
-                                $guest_stmt = $db->prepare("SELECT c.first_name, c.last_name FROM bookings b JOIN customers c ON b.customer_id = c.id WHERE b.room_id = ? AND b.booking_status = 'checked_in' LIMIT 1");
+                                $guest_stmt = $db->prepare("SELECT c.full_name FROM bookings b JOIN customers c ON b.customer_id = c.id WHERE b.room_id = ? AND b.booking_status = 'checked_in' LIMIT 1");
                                 $guest_stmt->execute([$r['id']]);
                                 $guest = $guest_stmt->fetch();
                         ?>
@@ -120,10 +120,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                             <td><strong><?php echo htmlspecialchars($r['room_number']); ?></strong></td>
                             <td><?php echo htmlspecialchars($r['type_name']); ?></td>
                             <td><?php echo $r['floor']; ?></td>
-                            <td><?php echo $r['capacity']; ?> guests</td>
+                            <td><?php echo $r['max_guests']; ?> guests</td>
                             <td><?php echo formatMoney($r['base_price']); ?></td>
                             <td><?php echo getRoomStatusBadge($r['status']); ?></td>
-                            <td><?php echo $guest ? htmlspecialchars($guest['first_name'] . ' ' . $guest['last_name']) : '<span class="text-muted">—</span>'; ?></td>
+                            <td><?php echo $guest ? htmlspecialchars($guest['full_name']) : '<span class="text-muted">—</span>'; ?></td>
                             <td>
                                 <div class="d-flex gap-1">
                                     <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#roomModal<?php echo $r['id']; ?>"><i class="bi bi-eye"></i></button>
@@ -162,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
 </div>
 
 <?php foreach ($rooms ?? [] as $r):
-    $g = $db->prepare("SELECT c.first_name, c.last_name, c.email, c.phone FROM bookings b JOIN customers c ON b.customer_id = c.id WHERE b.room_id = ? AND b.booking_status = 'checked_in' LIMIT 1");
+    $g = $db->prepare("SELECT c.full_name, c.email, c.phone FROM bookings b JOIN customers c ON b.customer_id = c.id WHERE b.room_id = ? AND b.booking_status = 'checked_in' LIMIT 1");
     $g->execute([$r['id']]);
     $guest = $g->fetch();
 ?>
@@ -180,14 +180,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                     <dt class="col-sm-5">Floor</dt>
                     <dd class="col-sm-7"><?php echo $r['floor']; ?></dd>
                     <dt class="col-sm-5">Capacity</dt>
-                    <dd class="col-sm-7"><?php echo $r['capacity']; ?></dd>
+                    <dd class="col-sm-7"><?php echo $r['max_guests']; ?></dd>
                     <dt class="col-sm-5">Price/Night</dt>
                     <dd class="col-sm-7"><?php echo formatMoney($r['base_price']); ?></dd>
                     <dt class="col-sm-5">Status</dt>
                     <dd class="col-sm-7"><?php echo getRoomStatusBadge($r['status']); ?></dd>
                     <?php if ($guest): ?>
                     <dt class="col-sm-5">Guest</dt>
-                    <dd class="col-sm-7"><?php echo htmlspecialchars($guest['first_name'] . ' ' . $guest['last_name']); ?></dd>
+                    <dd class="col-sm-7"><?php echo htmlspecialchars($guest['full_name']); ?></dd>
                     <dt class="col-sm-5">Email</dt>
                     <dd class="col-sm-7"><?php echo htmlspecialchars($guest['email'] ?? 'N/A'); ?></dd>
                     <dt class="col-sm-5">Phone</dt>

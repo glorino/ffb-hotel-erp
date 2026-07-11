@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_checkout'])) {
 
         $total_due = (float)($booking['total_amount'] ?? 0) + $extra_charges;
 
-        $stmt = $db->prepare("UPDATE bookings SET booking_status = 'checked_out', check_out_time = NOW(), extra_charges = ?, extra_description = ?, final_amount = ? WHERE id = ?");
+        $stmt = $db->prepare("UPDATE bookings SET booking_status = 'checked_out', actual_check_out = NOW(), extra_charges = ?, extra_charges_note = ?, payable_amount = ? WHERE id = ?");
         $stmt->execute([$extra_charges, $extra_description, $total_due, $booking_id]);
 
         if ($booking['room_id']) {
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_checkout'])) {
 
         if ($amount_paid > 0 && $payment_method) {
             $pay_ref = generateReference('CO');
-            $stmt = $db->prepare("INSERT INTO payments (branch_id, booking_id, customer_id, reference, amount, payment_method, payment_category, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'room', 'paid', NOW())");
+            $stmt = $db->prepare("INSERT INTO payments (branch_id, booking_id, customer_id, payment_reference, amount, payment_method, payment_category, status, created_at) VALUES (?, ?, ?, ?, ?, ?, 'room', 'paid', NOW())");
             $stmt->execute([$branch_id, $booking_id, $booking['customer_id'], $pay_ref, $amount_paid, $payment_method]);
         }
 
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_checkout'])) {
         log_audit('check_out', 'booking', $booking_id, null, ['final_amount' => $total_due, 'extra_charges' => $extra_charges]);
         $db->commit();
 
-        $guest_name = trim(($booking['first_name'] ?? '') . ' ' . ($booking['last_name'] ?? ''));
+        $guest_name = trim($booking['full_name'] ?? '');
         if (empty($guest_name)) $guest_name = 'valued guest';
         set_flash('success', "Thank you for staying with us, {$guest_name}! It was a pleasure hosting you. We look forward to welcoming you back to FFB Hotel whenever you're in town. Safe travels!");
         header("Location: receipts.php?ref={$receipt_no}");
@@ -78,7 +78,7 @@ $booking_id = $_GET['booking_id'] ?? 0;
     <?php
     try {
         $stmt = $db->prepare("
-            SELECT b.*, c.first_name, c.last_name, c.email, c.phone, rm.room_number, rt.name as room_type
+            SELECT b.*, c.full_name, c.email, c.phone, rm.room_number, rt.name as room_type
             FROM bookings b
             LEFT JOIN customers c ON b.customer_id = c.id
             LEFT JOIN rooms rm ON b.room_id = rm.id
@@ -95,14 +95,14 @@ $booking_id = $_GET['booking_id'] ?? 0;
     ?>
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3">
-            <h5 class="mb-0 fw-semibold">Check-out: <?php echo htmlspecialchars($booking['reference']); ?></h5>
+            <h5 class="mb-0 fw-semibold">Check-out: <?php echo htmlspecialchars($booking['booking_reference']); ?></h5>
         </div>
         <div class="card-body">
             <div class="row g-4 mb-4">
                 <div class="col-md-6">
                     <div class="bg-light rounded-3 p-3">
                         <h6>Guest</h6>
-                        <p class="mb-1"><strong><?php echo htmlspecialchars(($booking['first_name'] ?? '') . ' ' . ($booking['last_name'] ?? '')); ?></strong></p>
+                        <p class="mb-1"><strong><?php echo htmlspecialchars($booking['full_name'] ?? ''); ?></strong></p>
                         <p class="mb-1">Email: <?php echo htmlspecialchars($booking['email'] ?? 'N/A'); ?></p>
                         <p class="mb-0">Phone: <?php echo htmlspecialchars($booking['phone'] ?? 'N/A'); ?></p>
                     </div>
@@ -214,7 +214,7 @@ $booking_id = $_GET['booking_id'] ?? 0;
                         <?php
                         try {
                             $stmt = $db->prepare("
-                                SELECT b.*, c.first_name, c.last_name, rm.room_number
+                                SELECT b.*, c.full_name, rm.room_number
                                 FROM bookings b
                                 LEFT JOIN customers c ON b.customer_id = c.id
                                 LEFT JOIN rooms rm ON b.room_id = rm.id
@@ -226,8 +226,8 @@ $booking_id = $_GET['booking_id'] ?? 0;
                             foreach ($bookings as $b):
                         ?>
                         <tr>
-                            <td><strong><?php echo htmlspecialchars($b['reference']); ?></strong></td>
-                            <td><?php echo htmlspecialchars(($b['first_name'] ?? '') . ' ' . ($b['last_name'] ?? 'Guest')); ?></td>
+                            <td><strong><?php echo htmlspecialchars($b['booking_reference']); ?></strong></td>
+                            <td><?php echo htmlspecialchars($b['full_name'] ?? 'Guest'); ?></td>
                             <td><?php echo htmlspecialchars($b['room_number'] ?? '—'); ?></td>
                             <td><?php echo formatDate($b['check_in_date']); ?></td>
                             <td><?php echo formatDate($b['check_out_date']); ?></td>

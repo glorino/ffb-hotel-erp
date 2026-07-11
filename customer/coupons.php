@@ -20,13 +20,13 @@ if (!$customer_id) {
 
 $available = [];
 try {
-    $stmt = $db->query("SELECT c.*, (SELECT COUNT(*) FROM customer_coupons cc WHERE cc.coupon_id = c.id) as used_count FROM coupons c WHERE c.status = 'active' AND (c.expiry_date IS NULL OR c.expiry_date >= CURRENT_DATE) AND (c.max_usage IS NULL OR c.used_count < c.max_usage) ORDER BY c.expiry_date ASC");
+    $stmt = $db->query("SELECT c.*, (SELECT COUNT(*) FROM coupon_usages cc WHERE cc.coupon_id = c.id) as used_count FROM coupons c WHERE c.status = 'active' AND (c.end_date IS NULL OR c.end_date >= CURRENT_DATE) AND (c.usage_limit IS NULL OR c.used_count < c.usage_limit) ORDER BY c.end_date ASC");
     $available = $stmt->fetchAll();
 } catch (Exception $e) {}
 
 $used = [];
 try {
-    $stmt = $db->prepare("SELECT c.*, cc.used_at FROM customer_coupons cc JOIN coupons c ON cc.coupon_id = c.id WHERE cc.customer_id = ? ORDER BY cc.used_at DESC");
+    $stmt = $db->prepare("SELECT c.*, cc.used_at FROM coupon_usages cc JOIN coupons c ON cc.coupon_id = c.id WHERE cc.customer_id = ? ORDER BY cc.used_at DESC");
     $stmt->execute([$customer_id]);
     $used = $stmt->fetchAll();
 } catch (Exception $e) {}
@@ -79,8 +79,8 @@ try {
                     <?php endif; ?>
                     <div class="d-flex justify-content-between align-items-center mt-auto">
                         <small class="text-muted">
-                            <?php if ($coupon['expiry_date']): ?>
-                            <i class="bi bi-clock"></i> Expires: <?php echo formatDate($coupon['expiry_date']); ?>
+                            <?php if ($coupon['end_date']): ?>
+                            <i class="bi bi-clock"></i> Expires: <?php echo formatDate($coupon['end_date']); ?>
                             <?php else: ?>
                             No expiry
                             <?php endif; ?>

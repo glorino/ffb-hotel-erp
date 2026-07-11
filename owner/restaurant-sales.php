@@ -166,7 +166,7 @@ switch ($period) {
                                 <?php endforeach; ?>
                                 <?php if (empty($items)): ?>
                                 <tr><td colspan="4" class="text-center text-muted py-3">No data for this period.</td></tr>
-                                <?php } ?>
+                                <?php endif; ?>
                                 <?php } catch (Exception $e) { ?>
                                 <tr><td colspan="4" class="text-center text-muted py-3">No data available.</td></tr>
                                 <?php } ?>

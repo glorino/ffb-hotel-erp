@@ -22,8 +22,8 @@ try {
 $items_by_supplier = [];
 if (!empty($_GET['view_items'])) {
     try {
-        $stmt = $db->prepare("SELECT i.* FROM inventory_items i WHERE i.supplier_id = ? AND i.status = 'active' ORDER BY i.name");
-        $stmt->execute([(int)$_GET['view_items']]);
+        $stmt = $db->prepare("SELECT i.* FROM inventory_items i WHERE i.supplier_id = ? AND i.status = 'active' AND i.branch_id = ? ORDER BY i.name");
+        $stmt->execute([(int)$_GET['view_items'], $branch_id]);
         $items_by_supplier = $stmt->fetchAll();
     } catch (Exception $e) {
     }

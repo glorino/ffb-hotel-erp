@@ -13,7 +13,6 @@ $branch_id = $_SESSION['branch_id'] ?? 0;
 $user_id = $_SESSION['user_id'] ?? 0;
 ?>
 
-<div class="container-fluid">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="dashboard.php"><i class="bi bi-house-door"></i> Home</a></li>
@@ -293,7 +292,7 @@ $user_id = $_SESSION['user_id'] ?? 0;
                                     <?php endwhile; ?>
                                 </tbody>
                             </table>
-                        <?php } catch (Exception $e) {
+                        <?php                         } catch (Exception $e) {
                             error_log('Today activity error: ' . $e->getMessage());
                         } ?>
                     </div>
@@ -301,7 +300,6 @@ $user_id = $_SESSION['user_id'] ?? 0;
             </div>
         </div>
     </div>
-</div>
 
 <?php
 $hour_labels = [];
@@ -336,8 +334,8 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 label: 'Orders',
                 data: <?php echo json_encode($hour_data); ?>,
-                backgroundColor: 'rgba(13, 110, 253, 0.7)',
-                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(212,175,55,0.7)',
+                borderColor: '#d4af37',
                 borderWidth: 1,
                 borderRadius: 4
             }]

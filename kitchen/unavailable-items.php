@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_id'])) {
         $stmt->execute([$item_id, $branch_id]);
         $item = $stmt->fetch();
         if ($item) {
-            $new_status = $item['is_available'] ? 0 : 1;
+            $new_status = $item['is_available'] ? false : true;
             $stmt = $db->prepare("UPDATE food_items SET is_available = ? WHERE id = ? AND branch_id = ?");
             $stmt->execute([$new_status, $item_id, $branch_id]);
             set_flash('success', 'Item availability updated.');
@@ -98,9 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_stock_note']))
                             $params = [$branch_id];
 
                             if ($filter === 'available') {
-                                $sql .= " AND fi.is_available = 1";
+                                $sql .= " AND fi.is_available = TRUE";
                             } elseif ($filter === 'unavailable') {
-                                $sql .= " AND fi.is_available = 0";
+                                $sql .= " AND fi.is_available = FALSE";
                             }
                             $sql .= " ORDER BY fc.name, fi.name";
 

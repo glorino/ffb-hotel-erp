@@ -41,8 +41,8 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
             $stmt->execute([$_SESSION['user_id'], $id]);
             set_flash('success', 'Request marked as resolved.');
         } elseif ($_GET['action'] === 'in_progress') {
-            $stmt = $db->prepare("UPDATE maintenance_requests SET status = 'in_progress', assigned_to = ? WHERE id = ?");
-            $stmt->execute([$_SESSION['user_id'], $id]);
+            $stmt = $db->prepare("UPDATE maintenance_requests SET status = 'in_progress' WHERE id = ?");
+            $stmt->execute([$id]);
             set_flash('success', 'Request marked as in progress.');
         }
     } catch (Exception $e) {

@@ -17,8 +17,8 @@ if (isset($_GET['print']) && $_GET['print']) {
     $receipt_id = (int)$_GET['print'];
     try {
         $stmt = $db->prepare("
-            SELECT r.*, b.reference as booking_ref, b.check_in_date, b.check_out_date, b.total_amount, b.final_amount,
-                   c.first_name, c.last_name, c.email, c.phone, rm.room_number, rt.name as room_type, br.name as branch_name
+            SELECT r.*, b.booking_reference as booking_ref, b.check_in_date, b.check_out_date, b.total_amount, b.payable_amount,
+                   c.full_name, c.email, c.phone, rm.room_number, rt.name as room_type, br.name as branch_name
             FROM receipts r
             JOIN bookings b ON r.booking_id = b.id
             LEFT JOIN customers c ON b.customer_id = c.id
@@ -61,7 +61,7 @@ if (isset($_GET['print']) && $_GET['print']) {
         <div class="row mb-4">
             <div class="col-6">
                 <h6>Guest Details</h6>
-                <p class="mb-0"><?php echo htmlspecialchars(($receipt['first_name'] ?? '') . ' ' . ($receipt['last_name'] ?? '')); ?></p>
+                <p class="mb-0"><?php echo htmlspecialchars($receipt['full_name'] ?? ''); ?></p>
                 <p class="mb-0"><?php echo htmlspecialchars($receipt['email'] ?? ''); ?></p>
                 <p class="mb-0"><?php echo htmlspecialchars($receipt['phone'] ?? ''); ?></p>
             </div>
@@ -82,10 +82,10 @@ if (isset($_GET['print']) && $_GET['print']) {
                     <td><?php echo htmlspecialchars($receipt['room_type'] ?? 'Room'); ?> (<?php echo calculateNights($receipt['check_in_date'], $receipt['check_out_date']); ?> nights)</td>
                     <td class="text-end"><?php echo formatMoney($receipt['total_amount'] ?? 0); ?></td>
                 </tr>
-                <?php if (($receipt['total_amount'] ?? 0) != ($receipt['final_amount'] ?? 0)): ?>
+                <?php if (($receipt['total_amount'] ?? 0) != ($receipt['payable_amount'] ?? 0)): ?>
                 <tr>
                     <td>Discounts / Adjustments</td>
-                    <td class="text-end text-danger">-<?php echo formatMoney(($receipt['total_amount'] ?? 0) - ($receipt['final_amount'] ?? 0)); ?></td>
+                    <td class="text-end text-danger">-<?php echo formatMoney(($receipt['total_amount'] ?? 0) - ($receipt['payable_amount'] ?? 0)); ?></td>
                 </tr>
                 <?php endif; ?>
             </tbody>
@@ -177,8 +177,8 @@ if (isset($_GET['regenerate']) && $_GET['regenerate']) {
                     <tbody>
                         <?php
                         try {
-                            $sql = "SELECT r.*, b.reference as booking_ref, b.total_amount, b.branch_id,
-                                    c.first_name, c.last_name
+                            $sql = "SELECT r.*, b.booking_reference as booking_ref, b.total_amount, b.branch_id,
+                                    c.full_name
                                     FROM receipts r
                                     JOIN bookings b ON r.booking_id = b.id
                                     LEFT JOIN customers c ON b.customer_id = c.id
@@ -197,7 +197,7 @@ if (isset($_GET['regenerate']) && $_GET['regenerate']) {
                         <tr>
                             <td><strong><?php echo htmlspecialchars($r['receipt_number']); ?></strong></td>
                             <td><?php echo htmlspecialchars($r['booking_ref'] ?? 'N/A'); ?></td>
-                            <td><?php echo htmlspecialchars(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? '')); ?></td>
+                            <td><?php echo htmlspecialchars($r['full_name'] ?? ''); ?></td>
                             <td><?php echo formatMoney($r['amount']); ?></td>
                             <td><small class="text-muted"><?php echo timeAgo($r['generated_at']); ?></small></td>
                             <td>

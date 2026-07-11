@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $due_date = $_POST['due_date'] ?? '';
         $invoice_number = 'INV-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5));
         try {
-            $stmt = $db->prepare("INSERT INTO invoices (branch_id, customer_id, invoice_number, amount, amount_paid, status, due_date, created_at) VALUES (?, ?, ?, ?, 0, 'unpaid', ?, NOW())");
+            $stmt = $db->prepare("INSERT INTO invoices (branch_id, customer_id, invoice_number, total_amount, paid_amount, status, due_date, created_at) VALUES (?, ?, ?, ?, 0, 'unpaid', ?, NOW())");
             $stmt->execute([$branch_id ?: null, $customer_id ?: null, $invoice_number, $amount, $due_date]);
             set_flash('success', "Invoice $invoice_number generated successfully");
         } catch (Exception $e) {
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = (int)($_POST['invoice_id'] ?? 0);
         $amount_paid = (float)($_POST['amount_paid'] ?? 0);
         try {
-            $stmt = $db->prepare("UPDATE invoices SET status = 'paid', amount_paid = ?, paid_at = NOW() WHERE id = ?");
+            $stmt = $db->prepare("UPDATE invoices SET status = 'paid', paid_amount = ? WHERE id = ?");
             $stmt->execute([$amount_paid, $id]);
             set_flash('success', 'Invoice marked as paid');
         } catch (Exception $e) {
@@ -50,7 +50,7 @@ $where = "1=1"; $params = [];
 if ($date_from) { $where .= " AND DATE(i.created_at) >= ?"; $params[] = $date_from; }
 if ($date_to) { $where .= " AND DATE(i.created_at) <= ?"; $params[] = $date_to; }
 if ($inv_status) { $where .= " AND i.status = ?"; $params[] = $inv_status; }
-if ($search) { $where .= " AND (i.invoice_number LIKE ? OR c.first_name LIKE ? OR c.last_name LIKE ?)"; $s = "%$search%"; $params[] = $s; $params[] = $s; $params[] = $s; }
+if ($search) { $where .= " AND (i.invoice_number LIKE ? OR c.full_name LIKE ?)"; $s = "%$search%"; $params[] = $s; $params[] = $s; }
 ?>
 <div class="container-fluid">
     <nav aria-label="breadcrumb" class="mb-4">
@@ -65,7 +65,7 @@ if ($search) { $where .= " AND (i.invoice_number LIKE ? OR c.first_name LIKE ? O
     try {
         $stmt = $db->query("SELECT COUNT(*) FROM invoices WHERE status = 'unpaid' $branch_filter");
         $inv_stats['unpaid'] = $stmt->fetchColumn();
-        $stmt = $db->query("SELECT COALESCE(SUM(amount), 0) FROM invoices WHERE status = 'unpaid' $branch_filter");
+        $stmt = $db->query("SELECT COALESCE(SUM(total_amount), 0) FROM invoices WHERE status = 'unpaid' $branch_filter");
         $inv_stats['unpaid_total'] = $stmt->fetchColumn();
         $stmt = $db->query("SELECT COUNT(*) FROM invoices WHERE status = 'overdue' $branch_filter");
         $inv_stats['overdue'] = $stmt->fetchColumn();
@@ -156,17 +156,17 @@ if ($search) { $where .= " AND (i.invoice_number LIKE ? OR c.first_name LIKE ? O
                     <tbody>
                         <?php
                         try {
-                            $st = $db->prepare("SELECT i.*, c.first_name, c.last_name, c.email FROM invoices i LEFT JOIN customers c ON i.customer_id = c.id WHERE $where $branch_filter ORDER BY i.created_at DESC");
+                            $st = $db->prepare("SELECT i.*, c.full_name, c.email FROM invoices i LEFT JOIN customers c ON i.customer_id = c.id WHERE $where $branch_filter ORDER BY i.created_at DESC");
                             $st->execute($params);
                             $invoices = $st->fetchAll();
                             foreach ($invoices as $inv):
                         ?>
                         <tr>
                             <td><span class="fw-medium"><?php echo htmlspecialchars($inv['invoice_number']); ?></span></td>
-                            <td><?php echo htmlspecialchars(($inv['first_name'] ?? '') . ' ' . ($inv['last_name'] ?? '—')); ?><br><small class="text-muted"><?php echo htmlspecialchars($inv['email'] ?? ''); ?></small></td>
-                            <td><?php echo formatMoney($inv['amount']); ?></td>
-                            <td><?php echo formatMoney($inv['amount_paid'] ?? 0); ?></td>
-                            <td><?php echo formatMoney(max(0, $inv['amount'] - ($inv['amount_paid'] ?? 0))); ?></td>
+                            <td><?php echo htmlspecialchars($inv['full_name'] ?? '—'); ?><br><small class="text-muted"><?php echo htmlspecialchars($inv['email'] ?? ''); ?></small></td>
+                            <td><?php echo formatMoney($inv['total_amount']); ?></td>
+                            <td><?php echo formatMoney($inv['paid_amount'] ?? 0); ?></td>
+                            <td><?php echo formatMoney(max(0, $inv['total_amount'] - ($inv['paid_amount'] ?? 0))); ?></td>
                             <td>
                                 <?php
                                 $badge_map = ['paid'=>'success','unpaid'=>'warning','overdue'=>'danger','partially_paid'=>'info'];
@@ -196,9 +196,9 @@ if ($search) { $where .= " AND (i.invoice_number LIKE ? OR c.first_name LIKE ? O
                                                 <div class="modal-body">
                                                     <div class="mb-3">
                                                         <label class="form-label small">Amount Paid</label>
-                                                        <input type="number" step="0.01" name="amount_paid" class="form-control" value="<?php echo $inv['amount']; ?>" required>
+                                                         <input type="number" step="0.01" name="amount_paid" class="form-control" value="<?php echo $inv['total_amount']; ?>" required>
                                                     </div>
-                                                    <p class="small text-muted mb-0">Invoice: <?php echo htmlspecialchars($inv['invoice_number']); ?> — Total: <?php echo formatMoney($inv['amount']); ?></p>
+                                                     <p class="small text-muted mb-0">Invoice: <?php echo htmlspecialchars($inv['invoice_number']); ?> — Total: <?php echo formatMoney($inv['total_amount']); ?></p>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -211,8 +211,10 @@ if ($search) { $where .= " AND (i.invoice_number LIKE ? OR c.first_name LIKE ? O
                                 <?php endif; ?>
                             </td>
                         </tr>
-                        <?php endforeach; if (empty($invoices)): ?>
+                        <?php endforeach; ?>
+                        <?php if (empty($invoices)): ?>
                         <tr><td colspan="8" class="text-center py-4 text-muted">No invoices found</td></tr>
+                        <?php endif; ?>
                         <?php } catch (Exception $e) {
                             echo '<tr><td colspan="8" class="text-center py-4 text-danger">Error: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
                         } ?>
@@ -234,10 +236,10 @@ if ($search) { $where .= " AND (i.invoice_number LIKE ? OR c.first_name LIKE ? O
                         <select name="customer_id" class="form-select" required>
                             <option value="">Select customer</option>
                             <?php
-                            $custs = $db->query("SELECT id, first_name, last_name, email FROM customers WHERE status = 'active' OR status IS NULL ORDER BY first_name");
+                            $custs = $db->query("SELECT id, full_name, email FROM customers WHERE status = 'active' OR status IS NULL ORDER BY full_name");
                             while ($c = $custs->fetch()):
                             ?>
-                            <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['first_name'] . ' ' . $c['last_name'] . ' (' . ($c['email'] ?? '') . ')'); ?></option>
+                            <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['full_name'] . ' (' . ($c['email'] ?? '') . ')'); ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>

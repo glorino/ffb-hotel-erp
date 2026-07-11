@@ -59,7 +59,7 @@ $active_sessions = [];
 try {
     $stmt = $db->prepare("
         SELECT cs.*, 
-               c.first_name, c.last_name, c.email,
+               c.full_name, c.email,
                (SELECT message FROM chat_messages WHERE chat_session_id = cs.id ORDER BY created_at DESC LIMIT 1) as last_message,
                (SELECT created_at FROM chat_messages WHERE chat_session_id = cs.id ORDER BY created_at DESC LIMIT 1) as last_message_time,
                (SELECT COUNT(*) FROM chat_messages WHERE chat_session_id = cs.id AND sender_type = 'customer' AND is_read = 0) as unread_count
@@ -81,7 +81,7 @@ $session_id = $_GET['session'] ?? 0;
 if ($session_id) {
     try {
         $stmt = $db->prepare("
-            SELECT cs.*, c.first_name, c.last_name, c.email, u.first_name as staff_first, u.last_name as staff_last
+            SELECT cs.*, c.full_name, c.email, u.full_name as staff_name
             FROM chat_sessions cs
             LEFT JOIN customers c ON cs.customer_id = c.id
             LEFT JOIN users u ON cs.assigned_to = u.id
@@ -152,10 +152,10 @@ if (isset($_GET['poll']) && $session_id) {
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center bg-<?php echo $s['unread_count'] > 0 ? 'success' : 'secondary'; ?> text-white" style="width:40px;height:40px;font-size:14px;font-weight:600;flex-shrink:0;">
-                                            <?php echo strtoupper(substr($s['first_name'] ?? '?', 0, 1) . substr($s['last_name'] ?? '?', 0, 1)); ?>
+                                            <?php echo strtoupper(substr($s['full_name'] ?? '?', 0, 1)); ?>
                                         </div>
                                         <div>
-                                            <strong><?php echo htmlspecialchars(($s['first_name'] ?? '') . ' ' . ($s['last_name'] ?? 'Guest')); ?></strong>
+                                            <strong><?php echo htmlspecialchars($s['full_name'] ?? 'Guest'); ?></strong>
                                             <small class="d-block text-muted" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
                                                 <?php echo htmlspecialchars(truncate($s['last_message'] ?? 'No messages', 40)); ?>
                                             </small>
@@ -180,13 +180,13 @@ if (isset($_GET['poll']) && $session_id) {
                 <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
                     <div>
                         <h6 class="mb-0">
-                            <?php echo htmlspecialchars(($selected_session['first_name'] ?? '') . ' ' . ($selected_session['last_name'] ?? 'Guest')); ?>
+                            <?php echo htmlspecialchars($selected_session['full_name'] ?? 'Guest'); ?>
                             <?php if ($selected_session['email']): ?>
                             <small class="text-muted">(<?php echo htmlspecialchars($selected_session['email']); ?>)</small>
                             <?php endif; ?>
                         </h6>
                         <small class="text-muted">
-                            <?php echo $selected_session['staff_first'] ? 'Assigned to: ' . htmlspecialchars($selected_session['staff_first'] . ' ' . $selected_session['staff_last']) : 'Unassigned'; ?>
+                            <?php echo $selected_session['staff_name'] ? 'Assigned to: ' . htmlspecialchars($selected_session['staff_name']) : 'Unassigned'; ?>
                         </small>
                     </div>
                     <div class="d-flex gap-2">

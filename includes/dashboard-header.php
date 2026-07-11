@@ -28,6 +28,13 @@ try {
 } catch (Exception $e) {
     $unread_count = 0;
 }
+
+$page_greeting = '';
+$hour = (int) date('G');
+if ($hour < 12) $page_greeting = 'Good morning';
+elseif ($hour < 17) $page_greeting = 'Good afternoon';
+else $page_greeting = 'Good evening';
+$first_name = explode(' ', $current_user['full_name'] ?? 'User')[0];
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,15 +45,15 @@ try {
     <link rel="icon" type="image/x-icon" href="<?php echo $base_url; ?>favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo $base_url; ?>assets/css/dashboard.css">
-    <link rel="stylesheet" href="<?php echo $base_url; ?>assets/css/responsive.css">
 </head>
 <body>
 
 <div class="dashboard-wrapper">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <aside class="sidebar" id="sidebar">
-        <button type="button" class="sidebar-close d-lg-none" id="sidebarClose" style="position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,0.6);font-size:1.2rem;z-index:10;">
+        <button type="button" class="sidebar-close d-lg-none" id="sidebarClose">
             <i class="bi bi-x-lg"></i>
         </button>
         <?php
@@ -62,59 +69,83 @@ try {
 
     <div class="main-content">
         <header class="top-navbar">
-            <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center gap-3">
                 <button type="button" class="sidebar-toggle d-lg-none" id="sidebarToggle">
                     <i class="bi bi-list"></i>
                 </button>
-                <div class="search-bar d-none d-md-block">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Search..." aria-label="Search">
-                    </div>
+                <div class="header-greeting d-none d-md-block">
+                    <h6 class="mb-0 fw-semibold" style="font-size:0.95rem;color:var(--text-dark);"><?php echo $page_greeting; ?>, <?php echo htmlspecialchars($first_name); ?></h6>
+                    <small class="text-muted" style="font-size:0.78rem;"><?php echo date('l, M j, Y'); ?></small>
                 </div>
             </div>
             <div class="nav-controls">
-                <div class="notification-bell dropdown me-3">
-                    <button class="btn position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:var(--text-muted);">
-                        <i class="bi bi-bell" style="font-size:1.2rem;"></i>
-                        <?php if ($unread_count > 0): ?>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.6rem;">
-                            <?php echo $unread_count > 99 ? '99+' : $unread_count; ?>
-                        </span>
-                        <?php endif; ?>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" style="width:320px;max-height:400px;overflow-y:auto;">
-                        <li class="dropdown-header fw-bold">Notifications</li>
-                        <li><hr class="dropdown-divider"></li>
+                <div class="header-search d-none d-lg-block">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" class="form-control" placeholder="Search rooms, guests, bookings..." aria-label="Search">
+                </div>
+                <div class="notification-btn position-relative" id="notificationBtn">
+                    <i class="bi bi-bell"></i>
+                    <?php if ($unread_count > 0): ?>
+                    <span class="notification-badge"><?php echo $unread_count > 99 ? '99+' : $unread_count; ?></span>
+                    <?php endif; ?>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-dropdown-header">
+                            <span>Notifications</span>
+                            <a href="notifications.php">View All</a>
+                        </div>
                         <?php if (empty($notifications)): ?>
-                        <li><span class="dropdown-item text-muted text-center py-3">No notifications</span></li>
+                        <div class="text-center py-4 text-muted" style="font-size:0.85rem;">
+                            <i class="bi bi-bell-slash d-block mb-2" style="font-size:1.5rem;opacity:0.4;"></i>
+                            No notifications yet
+                        </div>
                         <?php else: ?>
                         <?php foreach (array_slice($notifications, 0, 5) as $n): ?>
-                        <li><a class="dropdown-item py-2" href="notifications.php?id=<?php echo $n['id']; ?>">
-                            <div class="d-flex align-items-start gap-2">
-                                <div class="flex-shrink-0 mt-1"><i class="bi bi-bell-fill text-primary" style="font-size:0.7rem;"></i></div>
-                                <div>
-                                    <div style="font-size:0.82rem;line-height:1.3;"><?php echo htmlspecialchars($n['message'] ?? $n['title'] ?? 'Notification'); ?></div>
-                                    <small class="text-muted"><?php echo htmlspecialchars($n['created_at'] ?? ''); ?></small>
-                                </div>
+                        <div class="notification-item" onclick="window.location.href='notifications.php?id=<?php echo $n['id']; ?>'">
+                            <div class="notif-icon info">
+                                <i class="bi bi-bell-fill"></i>
                             </div>
-                        </a></li>
+                            <div class="notif-content">
+                                <div class="notif-title"><?php echo htmlspecialchars($n['title'] ?? 'Notification'); ?></div>
+                                <div class="notif-text"><?php echo htmlspecialchars(truncate($n['message'] ?? '', 60)); ?></div>
+                                <div class="notif-time"><?php echo timeAgo($n['created_at'] ?? ''); ?></div>
+                            </div>
+                        </div>
                         <?php endforeach; ?>
                         <?php endif; ?>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-center py-2 fw-semibold" href="notifications.php" style="font-size:0.82rem;">View All Notifications</a></li>
-                    </ul>
+                    </div>
                 </div>
-                <div class="user-dropdown dropdown">
-                    <button class="btn dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:var(--gold);color:var(--navy);font-size:14px;font-weight:600;">
+                <div class="profile-wrapper position-relative" id="profileWrapper">
+                    <button class="profile-btn" type="button" id="profileBtn">
+                        <div class="avatar">
                             <?php echo strtoupper(substr($current_user['full_name'] ?? 'U', 0, 1)); ?>
                         </div>
-                        <div class="user-info d-none d-md-block text-start ms-2">
-                            <span class="user-name d-block" style="font-size:0.85rem;font-weight:600;"><?php echo htmlspecialchars($current_user['full_name'] ?? 'User'); ?></span>
-                            <span class="user-role d-block text-muted" style="font-size:0.72rem;"><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $current_user['role_slug'] ?? ''))); ?></span>
+                        <div class="d-none d-md-block text-start">
+                            <span class="profile-name"><?php echo htmlspecialchars($current_user['full_name'] ?? 'User'); ?></span>
+                            <span class="profile-role"><?php echo htmlspecialchars(ucfirst(str_replace('_', ' ', $current_user['role_slug'] ?? ''))); ?></span>
                         </div>
+                        <i class="bi bi-chevron-down" style="font-size:0.7rem;color:var(--text-muted);"></i>
                     </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-header">
+                            <div class="avatar-lg">
+                                <?php echo strtoupper(substr($current_user['full_name'] ?? 'U', 0, 1)); ?>
+                            </div>
+                            <div class="profile-info">
+                                <h4><?php echo htmlspecialchars($current_user['full_name'] ?? 'User'); ?></h4>
+                                <span><?php echo htmlspecialchars($current_user['email'] ?? ''); ?></span>
+                            </div>
+                        </div>
+                        <a href="settings.php" class="profile-menu-item">
+                            <span class="menu-icon"><i class="bi bi-gear"></i></span> Settings
+                        </a>
+                        <a href="notifications.php" class="profile-menu-item">
+                            <span class="menu-icon"><i class="bi bi-bell"></i></span> Notifications
+                        </a>
+                        <div style="border-top:1px solid var(--border);margin:4px 0;"></div>
+                        <a href="../logout.php" class="profile-menu-item danger">
+                            <span class="menu-icon"><i class="bi bi-box-arrow-right"></i></span> Sign Out
+                        </a>
+                    </div>
                 </div>
             </div>
         </header>

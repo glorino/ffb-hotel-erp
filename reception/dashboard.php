@@ -66,7 +66,6 @@ $occupancy_rate = $stats['total_rooms'] > 0 ? round(($stats['occupied_rooms'] / 
 $revenue_change = ($stats['yesterday_revenue'] ?? 0) > 0 ? round((($stats['payments_today'] - $stats['yesterday_revenue']) / $stats['yesterday_revenue']) * 100) : 0;
 ?>
 
-<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <div>
             <nav aria-label="breadcrumb" class="mb-1">
@@ -176,7 +175,7 @@ $revenue_change = ($stats['yesterday_revenue'] ?? 0) > 0 ? round((($stats['payme
                     <?php
                     try {
                         $stmt = $db->prepare("
-                            SELECT b.*, c.first_name, c.last_name, rm.room_number, rt.name as room_type
+                            SELECT b.*, c.full_name, rm.room_number, rt.name as room_type
                             FROM bookings b
                             LEFT JOIN customers c ON b.customer_id = c.id
                             LEFT JOIN rooms rm ON b.room_id = rm.id
@@ -191,7 +190,7 @@ $revenue_change = ($stats['yesterday_revenue'] ?? 0) > 0 ? round((($stats['payme
                     ?>
                     <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded" style="background:rgba(25,135,84,0.05);border-left:3px solid #198754;">
                         <div class="flex-grow-1">
-                            <div class="fw-medium" style="font-size:0.85rem;"><?php echo htmlspecialchars(($a['first_name'] ?? '') . ' ' . ($a['last_name'] ?? 'Guest')); ?></div>
+                            <div class="fw-medium" style="font-size:0.85rem;"><?php echo htmlspecialchars($a['full_name'] ?? 'Guest'); ?></div>
                             <small class="text-muted"><?php echo htmlspecialchars($a['room_type'] ?? 'Room'); ?> &middot; <?php echo htmlspecialchars($a['room_number'] ?? '—'); ?></small>
                         </div>
                         <a href="check-in.php?booking=<?php echo $a['id']; ?>" class="btn btn-sm btn-outline-success py-0">Check In</a>
@@ -212,7 +211,7 @@ $revenue_change = ($stats['yesterday_revenue'] ?? 0) > 0 ? round((($stats['payme
                     <?php
                     try {
                         $stmt = $db->prepare("
-                            SELECT b.*, c.first_name, c.last_name, rm.room_number, rt.name as room_type
+                            SELECT b.*, c.full_name, rm.room_number, rt.name as room_type
                             FROM bookings b
                             LEFT JOIN customers c ON b.customer_id = c.id
                             LEFT JOIN rooms rm ON b.room_id = rm.id
@@ -227,7 +226,7 @@ $revenue_change = ($stats['yesterday_revenue'] ?? 0) > 0 ? round((($stats['payme
                     ?>
                     <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded" style="background:rgba(255,193,7,0.05);border-left:3px solid #ffc107;">
                         <div class="flex-grow-1">
-                            <div class="fw-medium" style="font-size:0.85rem;"><?php echo htmlspecialchars(($d['first_name'] ?? '') . ' ' . ($d['last_name'] ?? 'Guest')); ?></div>
+                            <div class="fw-medium" style="font-size:0.85rem;"><?php echo htmlspecialchars($d['full_name'] ?? 'Guest'); ?></div>
                             <small class="text-muted"><?php echo htmlspecialchars($d['room_type'] ?? 'Room'); ?> &middot; <?php echo htmlspecialchars($d['room_number'] ?? '—'); ?></small>
                         </div>
                         <a href="check-out.php?booking=<?php echo $d['id']; ?>" class="btn btn-sm btn-outline-warning py-0">Check Out</a>
@@ -282,12 +281,12 @@ $revenue_change = ($stats['yesterday_revenue'] ?? 0) > 0 ? round((($stats['payme
                             <tbody>
                                 <?php
                                 try {
-                                    $stmt = $db->prepare("SELECT b.*, c.first_name, c.last_name, rm.room_number FROM bookings b LEFT JOIN customers c ON b.customer_id = c.id LEFT JOIN rooms rm ON b.room_id = rm.id WHERE b.branch_id = ? ORDER BY b.created_at DESC LIMIT 8");
+                                    $stmt = $db->prepare("SELECT b.*, c.full_name, rm.room_number FROM bookings b LEFT JOIN customers c ON b.customer_id = c.id LEFT JOIN rooms rm ON b.room_id = rm.id WHERE b.branch_id = ? ORDER BY b.created_at DESC LIMIT 8");
                                     $stmt->execute([$branch_id]);
                                     while ($b = $stmt->fetch()):
                                 ?>
                                 <tr>
-                                    <td><strong><?php echo htmlspecialchars(($b['first_name'] ?? '') . ' ' . ($b['last_name'] ?? 'Guest')); ?></strong></td>
+                                    <td><strong><?php echo htmlspecialchars($b['full_name'] ?? 'Guest'); ?></strong></td>
                                     <td><?php echo htmlspecialchars($b['room_number'] ?? 'N/A'); ?></td>
                                     <td><small><?php echo formatDate($b['check_in_date']); ?></small></td>
                                     <td><small><?php echo formatDate($b['check_out_date']); ?></small></td>
@@ -295,6 +294,7 @@ $revenue_change = ($stats['yesterday_revenue'] ?? 0) > 0 ? round((($stats['payme
                                     <td><?php echo formatMoney($b['total_amount'] ?? 0); ?></td>
                                 </tr>
                                 <?php endwhile; ?>
+                                <?php } catch (Exception $e) {} ?>
                             </tbody>
                         </table>
                     </div>
@@ -321,11 +321,12 @@ $revenue_change = ($stats['yesterday_revenue'] ?? 0) > 0 ? round((($stats['payme
                                     while ($c = $stmt->fetch()):
                                 ?>
                                 <tr>
-                                    <td><strong><?php echo htmlspecialchars(($c['first_name'] ?? '') . ' ' . ($c['last_name'] ?? '')); ?></strong></td>
+                                    <td><strong><?php echo htmlspecialchars($c['full_name'] ?? ''); ?></strong></td>
                                     <td><small><?php echo htmlspecialchars($c['phone'] ?? '-'); ?></small></td>
                                     <td><span class="badge bg-secondary"><?php echo $c['total_bookings'] ?? 0; ?></span></td>
                                 </tr>
                                 <?php endwhile; ?>
+                                <?php } catch (Exception $e) {} ?>
                             </tbody>
                         </table>
                     </div>
@@ -333,7 +334,6 @@ $revenue_change = ($stats['yesterday_revenue'] ?? 0) > 0 ? round((($stats['payme
             </div>
         </div>
     </div>
-</div>
 
 <?php
 $rev_labels = []; $rev_data = [];

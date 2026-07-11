@@ -50,7 +50,6 @@ try {
     error_log('Customer dashboard error: ' . $e->getMessage());
 }
 ?>
-<div class="container-fluid">
     <div class="mb-4 p-4 rounded-4" style="background:linear-gradient(135deg, #0f1a2e 0%, #1a2744 50%, #0f1a2e 100%);border:1px solid rgba(201,168,76,0.2);">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
@@ -230,8 +229,10 @@ try {
                             <?php echo getBookingStatusBadge($b['booking_status']); ?>
                         </div>
                     </div>
-                    <?php endforeach; if (empty($bookings)): ?>
+                    <?php endforeach; ?>
+                    <?php if (empty($bookings)): ?>
                     <div class="text-center py-4 text-muted"><p class="mb-0">No upcoming bookings</p><a href="<?php echo $base_url; ?>booking.php" class="btn btn-sm btn-primary mt-2">Book Now</a></div>
+                    <?php endif; ?>
                     <?php } catch (Exception $e) { ?>
                     <div class="text-center py-4 text-danger">Error loading bookings</div>
                     <?php } ?>
@@ -265,8 +266,10 @@ try {
                             ?>
                         </div>
                     </div>
-                    <?php endforeach; if (empty($orders)): ?>
+                    <?php endforeach; ?>
+                    <?php if (empty($orders)): ?>
                     <div class="text-center py-4 text-muted"><p class="mb-0">No orders yet</p><a href="<?php echo $base_url; ?>order.php" class="btn btn-sm btn-success mt-2">Order Food</a></div>
+                    <?php endif; ?>
                     <?php } catch (Exception $e) { ?>
                     <div class="text-center py-4 text-danger">Error loading orders</div>
                     <?php } ?>
@@ -296,8 +299,10 @@ try {
                             <?php echo getPaymentStatusBadge($p['status']); ?>
                         </div>
                     </div>
-                    <?php endforeach; if (empty($payments)): ?>
+                    <?php endforeach; ?>
+                    <?php if (empty($payments)): ?>
                     <div class="text-center py-4 text-muted"><p class="mb-0">No payments yet</p></div>
+                    <?php endif; ?>
                     <?php } catch (Exception $e) { ?>
                     <div class="text-center py-4 text-danger">Error loading payments</div>
                     <?php } ?>
@@ -305,7 +310,6 @@ try {
             </div>
         </div>
     </div>
-</div>
 
 <?php
 $spend_labels = []; $spend_data = [];
@@ -327,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: <?php echo json_encode($spend_labels); ?>,
             datasets: [{
                 label: 'Spending (<?php echo CURRENCY_SYMBOL; ?>)', data: <?php echo json_encode($spend_data); ?>,
-                borderColor: '#c9a84c', backgroundColor: 'rgba(201,168,76,0.1)', fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#0f1a2e', pointBorderColor: '#c9a84c', pointBorderWidth: 2
+                borderColor: '#d4af37', backgroundColor: 'rgba(212,175,55,0.1)', fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#0f1a2e', pointBorderColor: '#d4af37', pointBorderWidth: 2
             }]
         },
         options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '<?php echo CURRENCY_SYMBOL; ?>' + v.toLocaleString() } }, x: { grid: { display: false } } } }

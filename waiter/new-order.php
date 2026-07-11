@@ -158,7 +158,7 @@ try {
                                 <div class="tab-pane fade <?php echo $i === 0 ? 'show active' : ''; ?>" id="cat<?php echo $cat['id']; ?>">
                                     <div class="row g-2">
                                         <?php
-                                        $stmt = $db->prepare("SELECT * FROM food_items WHERE branch_id = ? AND category_id = ? AND status = 'active' AND is_available = 1 ORDER BY name");
+                                        $stmt = $db->prepare("SELECT * FROM food_items WHERE branch_id = ? AND category_id = ? AND status = 'active' AND is_available = TRUE ORDER BY name");
                                         $stmt->execute([$branch_id, $cat['id']]);
                                         $foods = $stmt->fetchAll();
                                         foreach ($foods as $food):

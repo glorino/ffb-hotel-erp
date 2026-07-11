@@ -1,6 +1,6 @@
 <?php
-$page_title = 'Create Account - ' . APP_NAME;
 require_once __DIR__ . '/includes/public-header.php';
+$page_title = 'Create Account - ' . APP_NAME;
 
 if (isset($_SESSION['user_id'])) {
     header('Location: customer/dashboard.php');

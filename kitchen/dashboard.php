@@ -13,7 +13,6 @@ $branch_id = $_SESSION['branch_id'] ?? 0;
 $user_id = $_SESSION['user_id'] ?? 0;
 ?>
 
-<div class="container-fluid">
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="dashboard.php"><i class="bi bi-house-door"></i> Home</a></li>
@@ -40,7 +39,7 @@ $user_id = $_SESSION['user_id'] ?? 0;
         $stmt->execute([$branch_id]);
         $stats['completed_today'] = $stmt->fetchColumn();
 
-        $stmt = $db->prepare("SELECT COUNT(*) FROM food_items WHERE branch_id = ? AND is_available = 0 AND status = 'active'");
+        $stmt = $db->prepare("SELECT COUNT(*) FROM food_items WHERE branch_id = ? AND is_available = FALSE AND status = 'active'");
         $stmt->execute([$branch_id]);
         $stats['unavailable'] = $stmt->fetchColumn();
 
@@ -211,6 +210,7 @@ $user_id = $_SESSION['user_id'] ?? 0;
                                     </td>
                                 </tr>
                                 <?php endwhile; ?>
+                                <?php } catch (Exception $e) {} ?>
                             </tbody>
                         </table>
                     </div>
@@ -236,7 +236,6 @@ $user_id = $_SESSION['user_id'] ?? 0;
             </div>
         </div>
     </div>
-</div>
 
 <?php
 $chart_statuses = [];
@@ -276,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 labels: <?php echo json_encode($chart_statuses); ?>,
                 datasets: [{
                     data: <?php echo json_encode($chart_counts); ?>,
-                    backgroundColor: ['#ffc107', '#0dcaf0', '#198754', '#6c757d', '#dc3545'],
+                    backgroundColor: ['#f59e0b', '#0dcaf0', '#198754', '#6c757d', '#dc3545'],
                     borderWidth: 0
                 }]
             },

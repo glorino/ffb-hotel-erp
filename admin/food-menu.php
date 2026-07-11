@@ -36,7 +36,7 @@ if (isset($_GET['toggle_item']) && ctype_digit($_GET['toggle_item'])) {
     try {
         $stmt = $db->prepare("SELECT is_available FROM food_items WHERE id = ?"); $stmt->execute([$_GET['toggle_item']]);
         $f = $stmt->fetch();
-        if ($f) { $nv = $f['is_available'] ? 0 : 1; $stmt = $db->prepare("UPDATE food_items SET is_available = ? WHERE id = ?"); $stmt->execute([$nv, $_GET['toggle_item']]); echo '<div class="alert alert-success">Availability toggled.</div>'; }
+        if ($f) { $nv = $f['is_available'] ? false : true; $stmt = $db->prepare("UPDATE food_items SET is_available = ? WHERE id = ?"); $stmt->execute([$nv, $_GET['toggle_item']]); echo '<div class="alert alert-success">Availability toggled.</div>'; }
     } catch (Exception $e) { echo '<div class="alert alert-danger">' . htmlspecialchars($e->getMessage()) . '</div>'; }
 }
 
@@ -137,7 +137,7 @@ if (isset($_GET['delete_item']) && ctype_digit($_GET['delete_item'])) {
                     <?php
                     $cat_count = $db->query("SELECT COUNT(*) FROM food_categories")->fetchColumn();
                     $item_count = $db->query("SELECT COUNT(*) FROM food_items")->fetchColumn();
-                    $avail_count = $db->query("SELECT COUNT(*) FROM food_items WHERE is_available = 1")->fetchColumn();
+                    $avail_count = $db->query("SELECT COUNT(*) FROM food_items WHERE is_available = TRUE")->fetchColumn();
                     ?>
                     <p class="mb-1">Categories: <strong><?php echo $cat_count; ?></strong></p>
                     <p class="mb-1">Total Items: <strong><?php echo $item_count; ?></strong></p>
@@ -216,7 +216,7 @@ if (isset($_GET['delete_item']) && ctype_digit($_GET['delete_item'])) {
     <?php endforeach; ?>
     <?php if (empty($categories)): ?>
     <div class="text-center py-4 text-muted">No food categories yet. Add one above.</div>
-    <?php } ?>
+    <?php endif; ?>
     <?php } catch (Exception $e) { echo '<div class="alert alert-danger">' . htmlspecialchars($e->getMessage()) . '</div>'; } ?>
 </div>
 

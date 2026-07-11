@@ -98,12 +98,12 @@ $branch_id = $_SESSION['branch_id'] ?? 0;
                         <?php
                         try {
                             $stmt = $db->prepare("
-                                SELECT u.first_name, u.last_name, r.name as role_name, sd.shift_type, sd.start_time, sd.end_time, sd.status
+                                SELECT u.full_name, r.name as role_name, sd.status
                                 FROM users u
                                 JOIN roles r ON u.role_id = r.id
                                 LEFT JOIN staff_duty sd ON u.id = sd.user_id AND sd.shift_date = CURRENT_DATE
                                 WHERE u.branch_id = ? AND r.slug != 'customer'
-                                ORDER BY sd.status ASC, u.first_name ASC
+                                ORDER BY sd.status ASC, u.full_name ASC
                             ");
                             $stmt->execute([$branch_id]);
                             $staff = $stmt->fetchAll();
@@ -113,27 +113,17 @@ $branch_id = $_SESSION['branch_id'] ?? 0;
                             <td>
                                 <div class="d-flex align-items-center gap-2">
                                     <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;background:#e9ecef;color:#495057;font-size:13px;font-weight:600;">
-                                        <?php echo strtoupper(substr($s['first_name'] ?? '?', 0, 1) . substr($s['last_name'] ?? '?', 0, 1)); ?>
+                                        <?php echo strtoupper(substr($s['full_name'] ?? '?', 0, 1)); ?>
                                     </div>
-                                    <strong><?php echo htmlspecialchars(($s['first_name'] ?? '') . ' ' . ($s['last_name'] ?? '')); ?></strong>
+                                    <strong><?php echo htmlspecialchars($s['full_name'] ?? ''); ?></strong>
                                 </div>
                             </td>
                             <td><?php echo htmlspecialchars($s['role_name'] ?? 'N/A'); ?></td>
                             <td>
-                                <?php if ($s['shift_type']): ?>
-                                <span class="badge bg-<?php echo $s['shift_type'] === 'morning' ? 'info' : ($s['shift_type'] === 'afternoon' ? 'warning' : 'dark'); ?>">
-                                    <?php echo ucfirst($s['shift_type'] ?? 'N/A'); ?>
-                                </span>
-                                <?php else: ?>
                                 <span class="text-muted">—</span>
-                                <?php endif; ?>
                             </td>
                             <td>
-                                <?php if ($s['start_time']): ?>
-                                <small><?php echo date('h:i A', strtotime($s['start_time'])); ?> - <?php echo date('h:i A', strtotime($s['end_time'])); ?></small>
-                                <?php else: ?>
                                 <span class="text-muted">—</span>
-                                <?php endif; ?>
                             </td>
                             <td>
                                 <?php

@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
             $stmt->execute([$customer_id]);
             $session_id = $db->lastInsertId();
         }
-        $stmt = $db->prepare("INSERT INTO chat_messages (session_id, sender_type, message, created_at) VALUES (?, 'customer', ?, NOW())");
+        $stmt = $db->prepare("INSERT INTO chat_messages (chat_session_id, sender_type, message, created_at) VALUES (?, 'customer', ?, NOW())");
         $stmt->execute([$session_id, $message]);
         set_flash('success', 'Message sent');
     }
@@ -47,7 +47,7 @@ if (!$session_id) {
 
 $messages = [];
 try {
-    $stmt = $db->prepare("SELECT cm.* FROM chat_messages cm WHERE cm.session_id = ? ORDER BY cm.created_at ASC");
+    $stmt = $db->prepare("SELECT cm.* FROM chat_messages cm WHERE cm.chat_session_id = ? ORDER BY cm.created_at ASC");
     $stmt->execute([$session_id]);
     $messages = $stmt->fetchAll();
 } catch (Exception $e) {}

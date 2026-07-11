@@ -25,7 +25,6 @@ try {
     $stats = array_fill_keys(['to_clean','cleaned_today','occupied','maintenance','available','total_rooms'], 0);
 }
 ?>
-<div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-0">Housekeeping Dashboard</h1>
@@ -227,7 +226,6 @@ try {
             </div>
         </div>
     </div>
-</div>
 
 <?php
 $cleaning_labels = [];

@@ -28,7 +28,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 try {
-    $pdo = Database::getInstance();
+    $pdo = getDB();
 
     $stmt = $pdo->prepare("SELECT id, full_name FROM users WHERE email = :email AND status = 'active' LIMIT 1");
     $stmt->execute([':email' => $email]);

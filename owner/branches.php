@@ -153,7 +153,7 @@ require_once __DIR__ . '/../includes/dashboard-header.php';
                             <td><?php echo htmlspecialchars($b['city'] ?? 'N/A'); ?></td>
                             <td><?php echo htmlspecialchars($b['phone'] ?? 'N/A'); ?></td>
                             <td><small><?php echo htmlspecialchars($b['email'] ?? 'N/A'); ?></small></td>
-                            <td><?php echo htmlspecialchars($b['manager_name'] ?? '<span class="text-muted">Unassigned</span>'); ?></td>
+                            <td><?php echo $b['manager_name'] ? htmlspecialchars($b['manager_name']) : '<span class="text-muted">Unassigned</span>'; ?></td>
                             <td><span class="badge bg-secondary"><?php echo $b['total_rooms']; ?></span></td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">

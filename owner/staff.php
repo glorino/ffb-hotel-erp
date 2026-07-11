@@ -92,7 +92,7 @@ $role_filter = $_GET['role'] ?? '';
             </form>
         </div>
     </div>
-    <?php endif;
+    <?php endif; ?>
 
     <?php
     if (isset($_POST['toggle_status']) && verify_csrf($_POST['csrf_token'] ?? '')) {
@@ -118,7 +118,7 @@ $role_filter = $_GET['role'] ?? '';
         }
     }
     ?>
-
+    <?php
     if (isset($_POST['save_staff']) && verify_csrf($_POST['csrf_token'] ?? '')) {
         try {
             $stmt = $db->prepare("SELECT id FROM users WHERE email = ?");
